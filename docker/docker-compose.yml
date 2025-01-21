@@ -1,0 +1,26 @@
+version: "3"
+services:
+  postgres:
+    container_name: postgres-server
+    image: postgres:17
+    restart: always
+    shm_size: 128mb
+    ports:
+      - 5432:5432
+    env_file:
+      - develop.env
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data:rw
+  pgadmin:
+    container_name: postgres-pgadmin
+    image: dpage/pgadmin4:8.14
+    restart: always
+    shm_size: 128mb
+    ports:
+      - 4444:80
+    env_file:
+      - develop.env
+
+volumes:
+  postgres-volume:
+    name: postgres-server-storage
