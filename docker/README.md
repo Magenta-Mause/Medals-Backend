@@ -46,7 +46,7 @@ Depending on your installation / operation System, run `docker compose up -d --b
 Postgres will be available at `postgres://root:toor@127.0.0.1:5432/medals`
 The configuration can be checked in `develop.env` and is per default:
 - Username: `root`
-- Password: `root`
+- Password: `toor`
 
 #### PgAdmin4
 PgAdmin4 is the administration interface you can use to check / manually work with the data.
@@ -66,3 +66,4 @@ When you click on `Add New Server`, you'll be greeted with a modal. Enter the fo
    - Passwort: `toor`
 
 every other property should be left as it's default value.
+
