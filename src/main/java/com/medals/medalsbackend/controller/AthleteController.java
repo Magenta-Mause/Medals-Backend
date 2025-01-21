@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @RestController
 @RequestMapping("/api/athlete")
 @CrossOrigin("*")
 public class AthleteController {
+
     @GetMapping("/hello")
     public ResponseEntity<AthleteDTO> helloWorld() {
         try {
@@ -20,5 +22,19 @@ public class AthleteController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(), e);
         }
+    }
+
+    @PostMapping("/accept")
+    public ResponseEntity<List<AthleteDTO>> accept(@RequestBody List<AthleteDTO> athleteDTOList) {
+        try {
+            for (AthleteDTO athleteDTO : athleteDTOList) {
+                new AthleteDTO(athleteDTO.getId(), athleteDTO.getFirstName(), athleteDTO.getLastName(), athleteDTO.getEmail(), athleteDTO.getBirthdate(), athleteDTO.getGender());
+            }
+            System.out.println("All Athlete data valid");
+            return ResponseEntity.ok(athleteDTOList);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(), e);
+        }
+
     }
 }
