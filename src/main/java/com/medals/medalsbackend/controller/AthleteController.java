@@ -39,6 +39,13 @@ public class AthleteController {
         return ResponseEntity.ok(athleteDtoList);
     }
 
+    @DeleteMapping("/{athleteId}")
+    public ResponseEntity<Void> deleteAthlete(@PathVariable String athleteId) throws AthleteNotFoundException {
+        athleteService.deleteAthlete(athleteId);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+    }
+
     @GetMapping(value = "/{athleteId}")
     public ResponseEntity<AthleteDto> getAthlete(@PathVariable String athleteId) throws AthleteNotFoundException {
         return ResponseEntity.ok(objectMapper.convertValue(athleteService.getAthlete(athleteId), AthleteDto.class));

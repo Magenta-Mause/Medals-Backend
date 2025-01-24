@@ -41,6 +41,14 @@ public class AthleteService {
         return athleteRepository.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
     }
 
+    public void deleteAthlete(String athleteId) throws AthleteNotFoundException {
+        log.info("Executing delete athlete by id {}", athleteId);
+        if (!athleteRepository.existsById(athleteId)) {
+            throw AthleteNotFoundException.fromAthleteId(athleteId);
+        }
+        athleteRepository.deleteById(athleteId);
+    }
+
     public MedalCollection getAthleteMedalCollection(String athleteId) throws AthleteNotFoundException {
         log.info("Executing get athlete medal collection by id {}", athleteId);
         return athleteRepository.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId)).getMedalCollection();
