@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.entity;
 
+import com.medals.medalsbackend.dto.AthleteDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,4 +31,16 @@ public class Athlete {
 
     @Column(nullable = false)
     private Character gender;
+
+    public AthleteDTO toDTO() {
+        return AthleteDTO
+                .builder()
+                .id(id)
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .birthdate(birthdate)
+                .gender(gender)
+                .build();
+    }
 }

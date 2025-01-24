@@ -5,14 +5,18 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import org.hibernate.validator.constraints.UUID;
 
 import java.time.LocalDate;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class AthleteDTO {
-    public long id;
+    @UUID
+    public String id;
 
     @NotNull
     @Size(min = 1, max = 255)
@@ -33,5 +37,4 @@ public class AthleteDTO {
 
     @NotNull
     public char gender;
-
 }
