@@ -40,5 +40,6 @@ public class DummyData {
             Athlete.builder().firstName("Isabella").lastName("Walker").birthdate(LocalDate.of(2001, 2, 10)).email("isabella.walker@example.org").gender('f').totalMedal(MedalType.GOLD).medalCollection(MedalCollection.builder().medalEndurance(MedalType.BRONZE).medalCoordination(MedalType.SILVER).medalStrength(MedalType.GOLD).medalSpeed(MedalType.BRONZE).build()).build(),
             Athlete.builder().firstName("James").lastName("Young").birthdate(LocalDate.of(1997, 7, 8)).email("james.young@example.org").gender('m').totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build(),
             Athlete.builder().firstName("Mia").lastName("Hall").birthdate(LocalDate.of(1996, 8, 3)).email("mia.hall@example.org").gender('f').totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.GOLD).medalStrength(MedalType.BRONZE).medalSpeed(MedalType.SILVER).build()).build()
+
     );
 }
