@@ -15,16 +15,6 @@ import java.util.List;
 @RequestMapping("/api/athlete")
 @CrossOrigin("*")
 public class AthleteController {
-
-    @GetMapping("/hello")
-    public ResponseEntity<AthleteDTO> helloWorld() {
-        try {
-            return ResponseEntity.ok(new AthleteDTO(2, "test", "last name", "test@gmail.com", LocalDate.of(2025, 1, 21), 'd'));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(), e);
-        }
-    }
-
     @PostMapping("/accept")
     public ResponseEntity<List<AthleteDTO>> accept(@RequestBody @Valid List<AthleteDTO> athleteDTOList) {
         System.out.println("All athlete data valid");
