@@ -1,6 +1,7 @@
 package com.medals.medalsbackend.controller;
 
 import com.medals.medalsbackend.dto.AthleteDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,16 +26,9 @@ public class AthleteController {
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<List<AthleteDTO>> accept(@RequestBody List<AthleteDTO> athleteDTOList) {
-        try {
-            for (AthleteDTO athleteDTO : athleteDTOList) {
-                new AthleteDTO(athleteDTO.getId(), athleteDTO.getFirstName(), athleteDTO.getLastName(), athleteDTO.getEmail(), athleteDTO.getBirthdate(), athleteDTO.getGender());
-            }
-            System.out.println("All Athlete data valid");
-            return ResponseEntity.ok(athleteDTOList);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(), e);
-        }
-
+    public ResponseEntity<List<AthleteDTO>> accept(@RequestBody @Valid List<AthleteDTO> athleteDTOList) {
+        System.out.println("All athlete data valid");
+        return ResponseEntity.ok(athleteDTOList);
     }
+
 }
