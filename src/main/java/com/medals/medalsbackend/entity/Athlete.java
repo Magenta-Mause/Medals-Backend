@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Table(name = "athletes")
 public class Athlete {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
