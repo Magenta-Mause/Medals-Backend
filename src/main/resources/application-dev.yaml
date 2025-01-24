@@ -1,5 +1,6 @@
 spring:
-    datasource:
-        url: jdbc:postgresql://127.0.0.1:5432/medals
-        username: root
-        password: toor
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: update

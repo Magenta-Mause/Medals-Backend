@@ -1,10 +1,5 @@
 spring:
   application:
     name: Medals-Backend
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        ddl-auto: update
   profiles:
-    default: dev
+    default: local

@@ -1,14 +1,48 @@
 package com.medals.medalsbackend.service;
 
-import com.medals.medalsbackend.dto.AthleteDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medals.medalsbackend.DummyData;
+import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.Athlete;
+import com.medals.medalsbackend.entity.medal.MedalCollection;
+import com.medals.medalsbackend.exceptions.AthleteNotFoundException;
 import com.medals.medalsbackend.repository.AthleteRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AthleteService {
+
     private final AthleteRepository athleteRepository;
+    private final ObjectMapper objectMapper;
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void instantiateDummyData() {
+        log.info("Inserted {} dummy athletes", DummyData.ATHLETES.size());
+        athleteRepository.saveAll(DummyData.ATHLETES);
+    }
+
+    public Athlete insertAthlete(AthleteDto athleteDto) {
+        return athleteRepository.save(objectMapper.convertValue(athleteDto, Athlete.class));
+    }
+
+    public Athlete[] getAthletes() {
+        log.info("Executing get all athletes");
+        return athleteRepository.findAll().toArray(new Athlete[0]);
+    }
+
+    public Athlete getAthlete(String athleteId) throws AthleteNotFoundException {
+        log.info("Executing get athlete by id {}", athleteId);
+        return athleteRepository.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
+    }
+
+    public MedalCollection getAthleteMedalCollection(String athleteId) throws AthleteNotFoundException {
+        log.info("Executing get athlete medal collection by id {}", athleteId);
+        return athleteRepository.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId)).getMedalCollection();
+    }
 }
