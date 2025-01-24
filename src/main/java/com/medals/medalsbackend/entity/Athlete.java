@@ -1,13 +1,16 @@
 package com.medals.medalsbackend.entity;
 
 import jakarta.persistence.*;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "athletes")
-@Setter
 public class Athlete {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
