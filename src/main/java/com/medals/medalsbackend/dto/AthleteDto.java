@@ -21,8 +21,7 @@ public class AthleteDto {
     @NotNull
     public char gender;
 
-    @UUID
-    private String id;
+    private Long id;
 
     @NotNull
     @Size(min = 1, max = 255)

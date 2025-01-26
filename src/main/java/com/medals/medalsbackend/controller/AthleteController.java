@@ -40,24 +40,24 @@ public class AthleteController {
     }
 
     @DeleteMapping("/{athleteId}")
-    public ResponseEntity<Void> deleteAthlete(@PathVariable String athleteId) throws AthleteNotFoundException {
+    public ResponseEntity<Void> deleteAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException {
         athleteService.deleteAthlete(athleteId);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     }
 
     @GetMapping(value = "/{athleteId}")
-    public ResponseEntity<AthleteDto> getAthlete(@PathVariable String athleteId) throws AthleteNotFoundException {
+    public ResponseEntity<AthleteDto> getAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException {
         return ResponseEntity.ok(objectMapper.convertValue(athleteService.getAthlete(athleteId), AthleteDto.class));
     }
 
     @GetMapping(value = "/{athleteId}/medals")
-    public ResponseEntity<MedalCollection> getMedals(@PathVariable("athleteId") String athleteId) throws AthleteNotFoundException {
+    public ResponseEntity<MedalCollection> getMedals(@PathVariable Long athleteId) throws AthleteNotFoundException {
         return ResponseEntity.ok(athleteService.getAthleteMedalCollection(athleteId));
     }
 
     @GetMapping(value = "/{athleteId}/swimmingCertificate")
-    public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable("athleteId") String athleteId) throws AthleteNotFoundException {
+    public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException {
         return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
     }
 }

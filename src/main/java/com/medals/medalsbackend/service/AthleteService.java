@@ -36,12 +36,12 @@ public class AthleteService {
         return athleteRepository.findAll().toArray(new Athlete[0]);
     }
 
-    public Athlete getAthlete(String athleteId) throws AthleteNotFoundException {
+    public Athlete getAthlete(Long athleteId) throws AthleteNotFoundException {
         log.info("Executing get athlete by id {}", athleteId);
         return athleteRepository.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
     }
 
-    public void deleteAthlete(String athleteId) throws AthleteNotFoundException {
+    public void deleteAthlete(Long athleteId) throws AthleteNotFoundException {
         log.info("Executing delete athlete by id {}", athleteId);
         if (!athleteRepository.existsById(athleteId)) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
@@ -49,7 +49,7 @@ public class AthleteService {
         athleteRepository.deleteById(athleteId);
     }
 
-    public MedalCollection getAthleteMedalCollection(String athleteId) throws AthleteNotFoundException {
+    public MedalCollection getAthleteMedalCollection(Long athleteId) throws AthleteNotFoundException {
         log.info("Executing get athlete medal collection by id {}", athleteId);
         return athleteRepository.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId)).getMedalCollection();
     }
