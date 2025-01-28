@@ -35,14 +35,12 @@ public class AthleteController {
 
     @PostMapping(value = "/validate")
     public ResponseEntity<List<AthleteDto>> validateAthletes(@RequestBody @Valid List<AthleteDto> athleteDtoList) {
-        System.out.println("All athlete data valid");
         return ResponseEntity.ok(athleteDtoList);
     }
 
     @DeleteMapping("/{athleteId}")
     public ResponseEntity<Void> deleteAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException {
         athleteService.deleteAthlete(athleteId);
-
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     }
 

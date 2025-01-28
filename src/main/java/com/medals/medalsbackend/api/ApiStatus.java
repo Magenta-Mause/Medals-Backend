@@ -1,18 +1,35 @@
 package com.medals.medalsbackend.api;
 
 public enum ApiStatus {
+    INFORMATION,
     SUCCESS,
-    NOT_IMPLEMENTED,
-    REFER_HTTP_STATUS,
-    ERROR;
+    REDIRECT,
+    CLIENT_ERROR,
+    SERVER_ERROR;
+
+    public static ApiStatus fromCode(int code) {
+        if (code <= 199) {
+            return INFORMATION;
+        }
+        if (code <= 299) {
+            return SUCCESS;
+        }
+        if (code <= 399) {
+            return REDIRECT;
+        }
+        if (code <= 499) {
+            return CLIENT_ERROR;
+        }
+        return SERVER_ERROR;
+    }
 
     public String toString() {
-        switch (this) {
-            case SUCCESS -> { return "success"; }
-            case NOT_IMPLEMENTED -> { return "not implemented"; }
-            case REFER_HTTP_STATUS -> { return "other"; }
-            case ERROR -> { return "refer to http status code"; }
-            default -> { return "unknown"; }
-        }
+        return switch (this) {
+            case INFORMATION -> "information";
+            case SUCCESS -> "success";
+            case REDIRECT -> "redirect";
+            case CLIENT_ERROR -> "client_error";
+            case SERVER_ERROR -> "server_error";
+        };
     }
 }
