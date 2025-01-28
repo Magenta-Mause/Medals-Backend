@@ -38,7 +38,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
         String endpoint = request.getURI().getPath();
         Integer httpStatusCode = HttpStatusCaptureFilter.getHttpStatus();
         httpStatusCode = httpStatusCode == null ? 500 : httpStatusCode;
-        ApiResponse renderedResponse = ApiResponse.builder()
+        ApiResponse<Object> renderedResponse = ApiResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(httpStatusCode)
                 .message(ApiStatus.fromCode(httpStatusCode).toString())
