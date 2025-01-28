@@ -20,6 +20,7 @@ public class AthleteService {
 
     private final AthleteRepository athleteRepository;
     private final ObjectMapper objectMapper;
+    private final AthleteWebsocketMessageService athleteWebsocketMessageService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void instantiateDummyData() {
@@ -28,7 +29,9 @@ public class AthleteService {
     }
 
     public Athlete insertAthlete(AthleteDto athleteDto) {
-        return athleteRepository.save(objectMapper.convertValue(athleteDto, Athlete.class));
+        Athlete savedAthlete = athleteRepository.save(objectMapper.convertValue(athleteDto, Athlete.class));
+        athleteWebsocketMessageService.sendAthleteCreation(objectMapper.convertValue(savedAthlete, AthleteDto.class));
+        return savedAthlete;
     }
 
     public Athlete[] getAthletes() {
@@ -46,7 +49,13 @@ public class AthleteService {
         if (!athleteRepository.existsById(athleteId)) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
         }
+        athleteWebsocketMessageService.sendAthleteDelete(athleteId);
         athleteRepository.deleteById(athleteId);
+    }
+
+    public void updateAthlete(AthleteDto athleteDto) {
+        Athlete savedAthlete = athleteRepository.save(objectMapper.convertValue(athleteDto, Athlete.class));
+        athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(savedAthlete, AthleteDto.class));
     }
 
     public MedalCollection getAthleteMedalCollection(Long athleteId) throws AthleteNotFoundException {

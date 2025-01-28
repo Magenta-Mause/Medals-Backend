@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/athletes")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class AthleteController {
     private final AthleteService athleteService;
     private final ObjectMapper objectMapper;
