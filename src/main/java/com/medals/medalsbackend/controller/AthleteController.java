@@ -28,7 +28,7 @@ public class AthleteController {
         return ResponseEntity.ok(Arrays.stream(athleteService.getAthletes()).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<AthleteDto> postAthletes(@Valid @RequestBody AthleteDto athleteDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(athleteService.insertAthlete(athleteDto), AthleteDto.class));
     }
