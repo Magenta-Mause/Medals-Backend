@@ -7,7 +7,6 @@ import com.medals.medalsbackend.entity.Athlete;
 import com.medals.medalsbackend.entity.medal.MedalCollection;
 import com.medals.medalsbackend.exceptions.AthleteNotFoundException;
 import com.medals.medalsbackend.repository.AthleteRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -28,7 +27,7 @@ public class AthleteService {
         athleteRepository.saveAll(DummyData.ATHLETES);
     }
 
-    public Athlete insertAthlete(@Valid AthleteDto athleteDto) {
+    public Athlete insertAthlete(AthleteDto athleteDto) {
         return athleteRepository.save(objectMapper.convertValue(athleteDto, Athlete.class));
     }
 
