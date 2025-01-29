@@ -27,7 +27,7 @@ public class AthleteServiceTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .birthdate(LocalDate.of(2005, 5, 13))
-                .gender('m')
+                .gender(Athlete.Gender.MALE)
                 .build();
 
         // Act
@@ -49,7 +49,7 @@ public class AthleteServiceTest {
                 .lastName("Doe")
                 .email("john@doe")
                 .birthdate(LocalDate.of(2005, 5, 13))
-                .gender('m')
+                .gender(Athlete.Gender.FEMALE)
                 .build();
 
         // Act & Assert

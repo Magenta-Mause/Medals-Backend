@@ -1,6 +1,7 @@
 package com.medals.medalsbackend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.medals.medalsbackend.entity.Athlete;
 import com.medals.medalsbackend.entity.medal.MedalType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AthleteDto {
     @NotNull
-    public char gender;
+    public Athlete.Gender gender;
 
     private Long id;
 
