@@ -28,6 +28,7 @@ public class AthleteService {
     }
 
     public Athlete insertAthlete(AthleteDto athleteDto) {
+        log.info("Inserting Athlete: {}", objectMapper.convertValue(athleteDto, Athlete.class));
         return athleteRepository.save(objectMapper.convertValue(athleteDto, Athlete.class));
     }
 
