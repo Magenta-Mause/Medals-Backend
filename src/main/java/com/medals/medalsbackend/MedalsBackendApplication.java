@@ -9,5 +9,4 @@ public class MedalsBackendApplication {
   public static void main(String[] args) {
     SpringApplication.run(MedalsBackendApplication.class, args);
   }
-
 }
