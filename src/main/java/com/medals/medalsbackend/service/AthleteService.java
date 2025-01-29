@@ -6,11 +6,14 @@ import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.Athlete;
 import com.medals.medalsbackend.entity.medal.MedalCollection;
 import com.medals.medalsbackend.exceptions.AthleteNotFoundException;
+import com.medals.medalsbackend.exceptions.ErrorResponse;
+import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
 import com.medals.medalsbackend.repository.AthleteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -28,6 +31,7 @@ public class AthleteService {
     }
 
     public Athlete insertAthlete(AthleteDto athleteDto) {
+        athleteDto.setId(null);
         log.info("Inserting Athlete: {}", objectMapper.convertValue(athleteDto, Athlete.class));
         return athleteRepository.save(objectMapper.convertValue(athleteDto, Athlete.class));
     }

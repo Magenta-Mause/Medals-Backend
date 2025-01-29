@@ -26,6 +26,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         String endpoint = request.getURI().getPath();
         Integer httpStatusCode = HttpStatusCaptureFilter.getHttpStatus();
+        httpStatusCode = httpStatusCode == null ? 500 : httpStatusCode;
 
         return ApiResponse.builder()
                 .timestamp(LocalDateTime.now())
