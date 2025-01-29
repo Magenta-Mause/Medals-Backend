@@ -1,13 +1,13 @@
 package com.medals.medalsbackend.exceptions;
 
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 
 public class AthleteNotFoundException extends GenericAPIRequestException {
-    AthleteNotFoundException(Long athleteId) {
-        super("Athlete with id not found [id: " + athleteId + "]", HttpStatusCode.valueOf(404));
-    }
+  AthleteNotFoundException(Long athleteId) {
+    super("Athlete with id not found [id: " + athleteId + "]", HttpStatus.NOT_FOUND);
+  }
 
-    public static AthleteNotFoundException fromAthleteId(Long athleteId) {
-        return new AthleteNotFoundException(athleteId);
-    }
+  public static AthleteNotFoundException fromAthleteId(Long athleteId) {
+    return new AthleteNotFoundException(athleteId);
+  }
 }

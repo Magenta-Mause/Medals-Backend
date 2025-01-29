@@ -6,7 +6,6 @@ import com.medals.medalsbackend.entity.medal.MedalCollection;
 import com.medals.medalsbackend.entity.medal.MedalType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 
@@ -38,7 +37,7 @@ public class Athlete {
   private LocalDate birthdate;
 
   @Column(nullable = false)
-  private Character gender;
+  private Gender gender;
 
   @Column(nullable = false)
   @JsonProperty("swimming_certificate")
@@ -55,4 +54,15 @@ public class Athlete {
   @JsonIgnore
   private MedalCollection medalCollection;
 
+  public enum Gender { MALE, FEMALE, DIVERSE;
+
+    @Override
+    public String toString() {
+      return switch (this) {
+        case MALE -> "m";
+        case FEMALE -> "f";
+        case DIVERSE -> "d";
+      };
+    }
+  }
 }

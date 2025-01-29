@@ -39,6 +39,7 @@ public class HttpStatusCaptureFilter implements Filter {
                 super.sendError(sc, msg);
             }
         });
+
         statusThreadLocal.remove(); // Clean up
     }
 
