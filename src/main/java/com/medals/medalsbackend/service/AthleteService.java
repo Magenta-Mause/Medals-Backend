@@ -55,7 +55,8 @@ public class AthleteService {
     athleteRepository.deleteById(athleteId);
   }
 
-  public void updateAthlete(AthleteDto athleteDto) {
+  public void updateAthlete(Long athleteId, AthleteDto athleteDto) {
+    athleteDto.setId(athleteId);
     Athlete savedAthlete = athleteRepository.save(objectMapper.convertValue(athleteDto, Athlete.class));
     athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(savedAthlete, AthleteDto.class));
   }
