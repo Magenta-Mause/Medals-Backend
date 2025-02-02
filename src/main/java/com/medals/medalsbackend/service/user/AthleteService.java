@@ -34,8 +34,7 @@ public class AthleteService {
 
     public UserEntity insertAthlete(AthleteDto athleteDto) {
         athleteDto.setId(null);
-        Athlete athlete = objectMapper.convertValue(athleteDto, Athlete.class);
-        userEntityService.save(athleteDto.getEmail(), athlete);
+        Athlete athlete = (Athlete) userEntityService.save(athleteDto.getEmail(), objectMapper.convertValue(athleteDto, Athlete.class));
         log.info("Inserting Athlete: {}", athlete);
         athleteWebsocketMessageService.sendAthleteCreation(objectMapper.convertValue(athlete, AthleteDto.class));
         return athlete;

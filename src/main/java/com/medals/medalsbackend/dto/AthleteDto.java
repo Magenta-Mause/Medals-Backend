@@ -1,8 +1,9 @@
 package com.medals.medalsbackend.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.medals.MedalType;
+import com.medals.medalsbackend.entity.users.Athlete;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AthleteDto {
     @NotNull
     public Athlete.Gender gender;

@@ -27,13 +27,13 @@ public class UserEntityService {
     private final LoginEntryService loginEntryService;
     private final ObjectMapper objectMapper;
 
-    public void save(String email, UserEntity userEntity) {
+    public UserEntity save(String email, UserEntity userEntity) {
         try {
             loginEntryService.createLoginEntry(email, "test");
         } catch (EmailAlreadyExistsException ignored) {}
 
         try {
-            loginEntryService.addUserToLogin(email, userEntity);
+             return loginEntryService.addUserToLogin(email, userEntity);
         } catch (EmailDoesntExistException e) {
             throw new RuntimeException(e);
         }

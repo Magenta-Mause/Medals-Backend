@@ -2,7 +2,7 @@ spring:
   application:
     name: Medals-Backend
   profiles:
-    default: dev
+    default: local
 cors:
   allowedOrigins:
     - http://localhost:5173

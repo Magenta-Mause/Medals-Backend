@@ -46,13 +46,14 @@ public class LoginEntryService {
         return jwtService.buildRefreshToken(loginEntry);
     }
 
-    public void addUserToLogin(String email, UserEntity user) throws EmailDoesntExistException {
+    public UserEntity addUserToLogin(String email, UserEntity user) throws EmailDoesntExistException {
         if (!loginEntryRepository.existsById(email)) {
             throw new EmailDoesntExistException(email);
         }
         LoginEntry loginEntry = loginEntryRepository.getReferenceById(email);
         loginEntry.addUser(user);
         loginEntryRepository.save(loginEntry);
+        return loginEntry.getUsers().getLast();
     }
 
 }
