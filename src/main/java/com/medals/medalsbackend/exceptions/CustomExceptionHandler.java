@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @ControllerAdvice
 public class CustomExceptionHandler {
 
@@ -20,7 +22,8 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> internalErrorHandler(Exception ex, WebRequest request) {
-        return ResponseEntity.internalServerError().body(ex.getMessage());
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.internalServerError().body("Internal Server Error");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

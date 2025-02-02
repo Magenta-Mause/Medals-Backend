@@ -1,8 +1,8 @@
 package com.medals.medalsbackend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.medals.medalsbackend.entity.Athlete;
-import com.medals.medalsbackend.entity.medal.MedalType;
+import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.medals.MedalType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

@@ -2,9 +2,9 @@ package com.medals.medalsbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.AthleteDto;
-import com.medals.medalsbackend.entity.medal.MedalCollection;
+import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.exceptions.AthleteNotFoundException;
-import com.medals.medalsbackend.service.AthleteService;
+import com.medals.medalsbackend.service.user.AthleteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
+
 
 @RestController
-@RequestMapping("/api/v1/athletes")
+@RequestMapping(BASE_PATH + "/athletes")
 @RequiredArgsConstructor
 public class AthleteController {
     private final AthleteService athleteService;

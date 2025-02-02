@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.entity.medal;
+package com.medals.medalsbackend.entity.medals;
 
 public enum MedalType {
     GOLD,

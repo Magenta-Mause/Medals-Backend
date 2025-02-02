@@ -2,8 +2,13 @@ spring:
   application:
     name: Medals-Backend
   profiles:
-    default: local
+    default: dev
 cors:
   allowedOrigins:
     - http://localhost:5173
     - http://192.168.178.21:5173
+app:
+  security:
+    identity-token-expiration-time: 3600000 # 1 hour
+    refresh-token-expiration-time: 2678400000 # 1 month
+    secret-key: 2bdff806c775df3d3a9a720924294d3f6dfa4e4e8f65183294bc8b8f043987ac # jwt secret key (REPLACE IN PRODUCTION!!)

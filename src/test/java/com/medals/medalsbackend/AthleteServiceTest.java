@@ -1,8 +1,8 @@
 package com.medals.medalsbackend;
 
 import com.medals.medalsbackend.dto.AthleteDto;
-import com.medals.medalsbackend.entity.Athlete;
-import com.medals.medalsbackend.service.AthleteService;
+import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.service.user.AthleteService;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
