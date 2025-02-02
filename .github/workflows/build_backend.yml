@@ -3,11 +3,15 @@ name: Build and Test Backend
 on: push
 
 jobs:
+
   test-backend:
     name: Test Backend
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
       - name: Setup
         uses: ./.github/actions/setup
 
@@ -19,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
       - name: Setup
         uses: ./.github/actions/setup
 
@@ -31,6 +38,9 @@ jobs:
     needs: [test-backend, check-build]
     # if: github.ref == 'refs/heads/main'
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
       - name: Setup
         uses: ./.github/actions/setup
 
