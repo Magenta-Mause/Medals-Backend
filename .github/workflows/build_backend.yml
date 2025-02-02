@@ -28,7 +28,7 @@ jobs:
   publish-build:
     name: Publish Backend
     runs-on: ubuntu-latest
-    needs: lint
+    needs: [test-backend, check-build]
     # if: github.ref == 'refs/heads/main'
     steps:
       - name: Setup
