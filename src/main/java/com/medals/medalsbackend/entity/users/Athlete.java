@@ -62,8 +62,4 @@ public class Athlete extends UserEntity {
         }
     }
 
-    public Athlete email(String email) {
-        this.email = email;
-        return this;
-    }
 }
