@@ -3,38 +3,57 @@ name: Build and Test Backend
 on: push
 
 jobs:
-  build-backend:
-    name: Build Backend
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-
-      - name: Step up JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: "temurin"
-          java-version: "21"
-          cache: "maven"
-
-      - name: Build with Maven
-        run: mvn clean install -DskipTests
-
   test-backend:
     name: Test Backend
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-
-      - name: Step up JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: "temurin"
-          java-version: "21"
-          cache: "maven"
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Test the application
         run: mvn test
+
+  check-build:
+    name: Build Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+  publish-build:
+    name: Publish Backend
+    runs-on: ubuntu-latest
+    needs: lint
+    # if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.MEDALS_DOCKER_USERNAME }}
+          password: ${{ secrets.MEDALS_DOCKER_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build . -t ${{vars.MEDALS_DOCKER_USERNAME}}/medals-backend
+
+      - name: Push Docker image
+        run: docker push ${{vars.MEDALS_DOCKER_USERNAME}}/medals-backend
+
+#      - name: Deploy to server
+#        uses: appleboy/ssh-action@v1.2.0
+#        with:
+#          host: ${{ secrets.MEDALS_DEPLOYMENT_HOST }}
+#          username: ${{ secrets.MEDALS_DEPLOYMENT_USERNAME }}
+#          key: ${{ secrets.MEDALS_DEPLOYMENT_SSH_TOKEN }}
+#          port: ${{ secrets.MEDALS_DEPLOYMENT_PORT }}
+#          script: sudo systemctl restart medals-frontend
