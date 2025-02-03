@@ -2,11 +2,12 @@ spring:
   application:
     name: Medals-Backend
   profiles:
-    default: local
+    default: dev
 cors:
   allowedOrigins:
     - http://localhost:5173
     - http://192.168.178.21:5173
+    - http://localhost:3000
 app:
   security:
     identity-token-expiration-time: 3600000 # 1 hour

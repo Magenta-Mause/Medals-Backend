@@ -1,14 +1,16 @@
 package com.medals.medalsbackend.controller.authorization;
 
 import com.medals.medalsbackend.dto.authorization.UserLoginDto;
+import com.medals.medalsbackend.entity.LoginEntry;
 import com.medals.medalsbackend.entity.UserEntity;
 import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
+import com.medals.medalsbackend.security.jwt.JwtTokenInvalidException;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.user.UserEntityService;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
-import com.medals.medalsbackend.service.user.login.JwtService;
 import com.medals.medalsbackend.service.user.login.LoginDoesntMatchException;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
+import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,12 +38,12 @@ public class AuthorizationController {
             ResponseCookie responseCookie = ResponseCookie.from("refreshToken", jwtRefreshToken)
                     .httpOnly(true)
                     .secure(false)
-                    .domain("localhost")
+                    .path("/")
                     .maxAge(jwtUtils.getRefreshTokenValidityDuration() / 1000)
                     .build();
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .header(HttpHeaders.SET_COOKIE, responseCookie.getValue())
+                    .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                     .body("Success");
         } catch (EmailDoesntExistException | LoginDoesntMatchException e) {
             throw GenericAPIRequestException.builder()
@@ -51,8 +53,28 @@ public class AuthorizationController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, deleteCookie.toString()).body("Success");
+    }
+
+    @GetMapping("/token")
+    public ResponseEntity<String> getToken(@CookieValue(name = "refreshToken") String refreshToken) throws JwtTokenInvalidException, EmailDoesntExistException {
+        String userEmail = jwtService.getUserEmailFromRefreshToken(refreshToken);
+        LoginEntry loginEntry = loginEntryService.getByEmail(userEmail).orElseThrow(() -> new EmailDoesntExistException(userEmail));
+        String identityToken = jwtService.buildIdentityToken(loginEntry);
+        return ResponseEntity.ok(identityToken);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<UserEntity> getUserEntity(@PathVariable Long id) throws GenericAPIRequestException {
+    public ResponseEntity<UserEntity> getUserEntity(@PathVariable Long id) {
         return ResponseEntity.ok().body(userEntityService.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString())));
     }
 }

@@ -2,59 +2,76 @@ package com.medals.medalsbackend.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.security.config.JwtConfigurationProperties;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @EnableConfigurationProperties(JwtConfigurationProperties.class)
 public class JwtUtils {
 
-    private final JwtConfigurationProperties properties;
+    private final JwtParser jwtParser;
+    private final JwtConfigurationProperties jwtConfigurationProperties;
+    private final Key signingKey;
     private final ObjectMapper objectMapper;
 
-    private Key getSigningKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(properties.secretKey());
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    @SneakyThrows
     public String generateToken(JwtTokenBody tokenBody) {
-        Map<String, Object> claims = Map.of(
-                "email", tokenBody.getEmail(),
+        Map<String, Object> claims = tokenBody.getTokenType() == JwtTokenBody.TokenType.IDENTITY_TOKEN ? Map.of(
                 "tokenType", tokenBody.getTokenType(),
                 "users", tokenBody.getAuthorizedUsers()
+        ) : Map.of(
+                "tokenType", tokenBody.getTokenType()
         );
 
         long tokenValidityDuration = tokenBody.getTokenType() == JwtTokenBody.TokenType.IDENTITY_TOKEN ?
-                properties.identityTokenExpirationTime() :
-                properties.refreshTokenExpirationTime();
+                jwtConfigurationProperties.identityTokenExpirationTime() :
+                jwtConfigurationProperties.refreshTokenExpirationTime();
 
         return Jwts.builder()
                 .serializeToJsonWith(new JacksonSerializer<>(objectMapper))
                 .setIssuedAt(new Date())
+                .setAudience("medals-backend")
                 .setSubject(tokenBody.getEmail())
                 .setExpiration(new Date(new Date().getTime() + tokenValidityDuration))
                 .addClaims(claims)
-                .signWith(getSigningKey())
+                .signWith(signingKey)
                 .compact();
     }
 
+    public String validateToken(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
+        try {
+            Claims claims = jwtParser.parseClaimsJws(token).getBody();
+            String subject = claims.getSubject();
+            claims.getExpiration();
+            if (!"medals-backend".equals(claims.getAudience())) {
+                throw new SecurityException("Missing/Bad audience claim");
+            }
+            if (!tokenType.toString().equals(claims.get("tokenType"))) {
+                throw new SecurityException("Token is not refresh token");
+            }
+            return subject;
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SecurityException | AssertionError e) {
+            throw new JwtTokenInvalidException();
+        } catch (Exception e) {
+            log.error("Error while parsing JWT refresh token", e);
+            throw new JwtTokenInvalidException();
+        }
+    }
+
     public long getRefreshTokenValidityDuration() {
-        return properties.refreshTokenExpirationTime();
+        return jwtConfigurationProperties.refreshTokenExpirationTime();
     }
 
     public long getIdentityTokenValidityDuration() {
-        return properties.identityTokenExpirationTime();
+        return jwtConfigurationProperties.identityTokenExpirationTime();
     }
 }

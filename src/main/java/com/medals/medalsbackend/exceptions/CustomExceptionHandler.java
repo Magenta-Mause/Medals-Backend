@@ -4,21 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
 public class CustomExceptionHandler {
-
-    private String getPath(WebRequest request) {
-        return Arrays.stream(request.getDescription(false).split("=")).toList().get(1);
-    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> internalErrorHandler(Exception ex, WebRequest request) {
@@ -34,6 +30,11 @@ public class CustomExceptionHandler {
         }));
 
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<String> handleMissingCookieException(MissingRequestCookieException e, WebRequest request) {
+        return ResponseEntity.badRequest().body("Missing Cookie '" + e.getCookieName() + "'");
     }
 
     @ExceptionHandler(GenericAPIRequestException.class)

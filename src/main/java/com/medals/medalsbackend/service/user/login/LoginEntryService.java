@@ -3,6 +3,7 @@ package com.medals.medalsbackend.service.user.login;
 import com.medals.medalsbackend.entity.LoginEntry;
 import com.medals.medalsbackend.entity.UserEntity;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
+import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
