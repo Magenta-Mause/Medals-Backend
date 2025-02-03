@@ -10,5 +10,5 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/medals
     username: postgres
-    password: localDataBaseReCovered
+    password: localDataBasePassword
     driver-class-name: org.postgresql.Driver
