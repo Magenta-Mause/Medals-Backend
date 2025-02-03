@@ -3,23 +3,10 @@ name: Build and Test Backend
 on: push
 
 jobs:
-  test-backend:
-    name: Test Backend
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Setup
-        uses: ./.github/actions/setup
-
-      - name: Test the application
-        run: mvn test
-
-  check-build:
+  build:
     name: Build Backend
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
 
     steps:
       - name: Check out repository
@@ -29,12 +16,11 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn clean install
 
   publish-build:
     name: Publish Backend
     runs-on: ubuntu-latest
-    needs: [test-backend, check-build]
     # if: github.ref == 'refs/heads/main'
     steps:
       - name: Check out repository
@@ -44,7 +30,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn clean install
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
