@@ -34,7 +34,6 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
             return body;
         }
 
-
         String endpoint = request.getURI().getPath();
         Integer httpStatusCode = HttpStatusCaptureFilter.getHttpStatus();
         httpStatusCode = httpStatusCode == null ? 500 : httpStatusCode;

@@ -1,21 +1,25 @@
-package com.medals.medalsbackend.entity.medal;
+package com.medals.medalsbackend.entity.medals;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.medals.medalsbackend.entity.users.Athlete;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Table(name = "medal_collections")
 @Getter
 @Setter
 @Builder
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedalCollection {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "id")
+    private Athlete athlete;
 
     @Column
     @JsonProperty("endurance")
