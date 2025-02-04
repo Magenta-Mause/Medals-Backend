@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.service.mail.mailApi;
+package com.medals.medalsbackend.service.notifications.mail.mailApi;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

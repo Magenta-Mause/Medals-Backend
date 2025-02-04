@@ -1,9 +1,12 @@
 package com.medals.medalsbackend.controller.authorization;
 
+import com.medals.medalsbackend.dto.authorization.SetPasswordDto;
 import com.medals.medalsbackend.dto.authorization.UserLoginDto;
-import com.medals.medalsbackend.entity.LoginEntry;
-import com.medals.medalsbackend.entity.UserEntity;
+import com.medals.medalsbackend.entity.users.LoginEntry;
+import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
+import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.security.jwt.JwtTokenInvalidException;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.user.UserEntityService;
@@ -73,8 +76,9 @@ public class AuthorizationController {
         return ResponseEntity.ok(identityToken);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserEntity> getUserEntity(@PathVariable Long id) {
-        return ResponseEntity.ok().body(userEntityService.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString())));
+    @PostMapping("/setPassword")
+    public ResponseEntity<String> setPassword(@RequestBody SetPasswordDto setPasswordDto) throws OneTimeCodeExpiredException, OneTimeCodeNotFoundException {
+        loginEntryService.setPassword(setPasswordDto.getOneTimeCode(), setPasswordDto.getPassword());
+        return ResponseEntity.ok("Success");
     }
 }

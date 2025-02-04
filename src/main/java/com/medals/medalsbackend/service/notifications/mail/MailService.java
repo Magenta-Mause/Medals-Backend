@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.service.mail;
+package com.medals.medalsbackend.service.notifications.mail;
 
 import org.springframework.stereotype.Service;
 

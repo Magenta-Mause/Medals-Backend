@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.entity;
+package com.medals.medalsbackend.entity.users;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,7 +1,7 @@
-package com.medals.medalsbackend.service.mail.mailApi;
+package com.medals.medalsbackend.service.notifications.mail.mailApi;
 
 import com.medals.medalsbackend.client.mail.MailClient;
-import com.medals.medalsbackend.service.mail.MailService;
+import com.medals.medalsbackend.service.notifications.mail.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;

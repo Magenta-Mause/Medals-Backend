@@ -3,7 +3,7 @@ package com.medals.medalsbackend.repository;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
-import com.medals.medalsbackend.entity.UserEntity;
+import com.medals.medalsbackend.entity.users.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

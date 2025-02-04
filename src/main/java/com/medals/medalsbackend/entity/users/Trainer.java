@@ -1,7 +1,6 @@
 package com.medals.medalsbackend.entity.users;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.medals.medalsbackend.entity.UserEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;

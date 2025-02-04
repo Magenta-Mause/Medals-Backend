@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.entity;
+package com.medals.medalsbackend.entity.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

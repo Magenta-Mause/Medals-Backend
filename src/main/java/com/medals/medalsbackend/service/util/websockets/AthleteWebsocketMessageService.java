@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.service;
+package com.medals.medalsbackend.service.util.websockets;
 
 import com.medals.medalsbackend.dto.AthleteDto;
 import lombok.RequiredArgsConstructor;

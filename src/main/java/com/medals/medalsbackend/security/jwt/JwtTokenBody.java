@@ -1,6 +1,6 @@
 package com.medals.medalsbackend.security.jwt;
 
-import com.medals.medalsbackend.entity.UserEntity;
+import com.medals.medalsbackend.entity.users.UserEntity;
 import lombok.Builder;
 import lombok.Data;
 
