@@ -3,6 +3,7 @@ package com.medals.medalsbackend.service.user.login;
 import com.medals.medalsbackend.entity.LoginEntry;
 import com.medals.medalsbackend.entity.UserEntity;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
+import com.medals.medalsbackend.service.mail.MailService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class LoginEntryService {
     private final LoginEntryRepository loginEntryRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final MailService mailService;
     private final JwtService jwtService;
 
     public void createLoginEntry(String email, String password) throws EmailAlreadyExistsException {
@@ -26,6 +28,10 @@ public class LoginEntryService {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .build();
+
+        mailService.sendEmail(email, "Medals Account Creation", """
+                Hello there, we just created an account for you!
+                """);
 
         loginEntryRepository.save(loginEntry);
     }
