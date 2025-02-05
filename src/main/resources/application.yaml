@@ -16,3 +16,5 @@ app:
   email:
     url: "https://google.com" # supply with email api endpoint
     author: "noreply@medals.com"
+  otc:
+    set-password-token-validity-duration: 604800000 # 1 week

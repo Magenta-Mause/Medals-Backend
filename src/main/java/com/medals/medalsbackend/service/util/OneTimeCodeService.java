@@ -9,6 +9,7 @@ import com.medals.medalsbackend.service.notifications.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -16,10 +17,12 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@EnableConfigurationProperties(OneTimeCodeConfiguration.class)
 public class OneTimeCodeService {
 
   private final OneTimeCodeRepository oneTimeCodeRepository;
   private final NotificationService notificationService;
+  private final OneTimeCodeConfiguration oneTimeCodeConfiguration;
 
   public OneTimeCode createSetPasswordToken(String email) {
     OneTimeCode oneTimeCode;
@@ -29,6 +32,7 @@ public class OneTimeCodeService {
           .authorizedEmail(email)
           .type(OneTimeCodeType.SET_PASSWORD)
           .oneTimeCode(UUID.randomUUID().toString())
+          .expiresAt(System.currentTimeMillis() + oneTimeCodeConfiguration.setPasswordTokenValidityDuration())
           .build();
         oneTimeCodeRepository.save(oneTimeCode);
         break;
