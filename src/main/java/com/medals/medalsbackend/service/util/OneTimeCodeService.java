@@ -49,7 +49,7 @@ public class OneTimeCodeService {
     if (oneTimeCode == null) {
       throw new OneTimeCodeNotFoundException();
     }
-    if (oneTimeCode.expiresAt >= System.currentTimeMillis()) {
+    if (oneTimeCode.expiresAt < System.currentTimeMillis()) {
       throw new OneTimeCodeExpiredException();
     }
     return oneTimeCode.authorizedEmail;
