@@ -67,6 +67,7 @@ public class AthleteService {
     }
 
     public void updateAthlete(Long athleteId, AthleteDto athleteDto) {
+        log.info("Updating athlete with ID: {}", athleteId);
         athleteDto.setId(athleteId);
         Athlete savedAthlete = (Athlete) userEntityService.update(objectMapper.convertValue(athleteDto, Athlete.class));
         athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(savedAthlete, AthleteDto.class));
