@@ -22,6 +22,7 @@ public class AthleteServiceTest {
   @Autowired
   private AthleteService athleteService;
 
+  @SneakyThrows
   @Test
   public void testAthleteCreation() {
     // Prepare
