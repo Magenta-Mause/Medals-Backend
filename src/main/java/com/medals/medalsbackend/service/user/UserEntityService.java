@@ -46,7 +46,6 @@ public class UserEntityService {
 
   @SneakyThrows
   public Optional<UserEntity> findById(long id) {
-    log.info("User: {}", objectMapper.writeValueAsString(userEntityRepository.findById(id).orElse(null)));
     return userEntityRepository.findById(id);
   }
 
