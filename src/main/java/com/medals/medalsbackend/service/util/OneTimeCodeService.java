@@ -37,7 +37,7 @@ public class OneTimeCodeService {
         oneTimeCodeRepository.save(oneTimeCode);
         break;
       } catch (Exception e) {
-        log.warn("Exception occured while creating one time code: {}", e.getMessage());
+        log.warn("Exception occurred while creating one time code: {}", e.getMessage());
       }
     }
     notificationService.sendSetPasswordNotification(email, oneTimeCode.oneTimeCode);
