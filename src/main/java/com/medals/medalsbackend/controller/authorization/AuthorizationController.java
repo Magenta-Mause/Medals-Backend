@@ -4,9 +4,9 @@ import com.medals.medalsbackend.dto.authorization.SetPasswordDto;
 import com.medals.medalsbackend.dto.authorization.UserLoginDto;
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
+import com.medals.medalsbackend.exceptions.JwtTokenInvalidException;
 import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeNotFoundException;
-import com.medals.medalsbackend.exceptions.JwtTokenInvalidException;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.user.UserEntityService;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
@@ -15,7 +15,6 @@ import com.medals.medalsbackend.service.user.login.LoginEntryService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -76,7 +75,6 @@ public class AuthorizationController {
         return ResponseEntity.ok(identityToken);
     }
 
-    @SneakyThrows
     @PostMapping("/setPassword")
     public ResponseEntity<String> setPassword(@Valid @RequestBody SetPasswordDto setPasswordDto) throws OneTimeCodeExpiredException, OneTimeCodeNotFoundException {
         loginEntryService.setPassword(setPasswordDto.getOneTimeCode(), setPasswordDto.getPassword());

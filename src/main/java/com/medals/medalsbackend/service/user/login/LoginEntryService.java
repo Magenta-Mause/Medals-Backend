@@ -2,6 +2,7 @@ package com.medals.medalsbackend.service.user.login;
 
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.UserEntity;
+import com.medals.medalsbackend.exceptions.InternalException;
 import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
@@ -21,7 +22,7 @@ public class LoginEntryService {
   private final JwtService jwtService;
   private final OneTimeCodeService oneTimeCodeService;
 
-  public void createLoginEntry(String email) throws EmailAlreadyExistsException {
+  public void createLoginEntry(String email) throws EmailAlreadyExistsException, InternalException {
     if (loginEntryRepository.existsById(email)) {
       throw new EmailAlreadyExistsException(email);
     }

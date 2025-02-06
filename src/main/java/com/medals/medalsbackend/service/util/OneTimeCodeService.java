@@ -2,7 +2,7 @@ package com.medals.medalsbackend.service.util;
 
 import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCode;
 import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
-import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
+import com.medals.medalsbackend.exceptions.InternalException;
 import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -26,7 +25,7 @@ public class OneTimeCodeService {
     private final NotificationService notificationService;
     private final OneTimeCodeConfiguration oneTimeCodeConfiguration;
 
-    public OneTimeCode createSetPasswordToken(String email) throws GenericAPIRequestException {
+    public OneTimeCode createSetPasswordToken(String email) throws InternalException {
         int tries = 20;
         while (tries > 0) {
             try {
@@ -44,7 +43,7 @@ public class OneTimeCodeService {
             }
             tries--;
         }
-        throw new GenericAPIRequestException("Internal error while creating one time code", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new InternalException("Internal error while creating one time code");
     }
 
     public String getEmailFromSetPasswordToken(String setPasswordToken) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {

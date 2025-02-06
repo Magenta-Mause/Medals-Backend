@@ -7,9 +7,9 @@ import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exceptions.AthleteNotFoundException;
+import com.medals.medalsbackend.exceptions.InternalException;
 import com.medals.medalsbackend.service.util.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -28,11 +28,15 @@ public class AthleteService {
     public void instantiateDummies() {
         log.info("Inserted {} dummy athletes", DummyData.ATHLETES.size());
         DummyData.ATHLETES.forEach(athlete -> {
-            userEntityService.save(athlete.getEmail(), athlete);
+            try {
+                userEntityService.save(athlete.getEmail(), athlete);
+            } catch (InternalException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
-    public UserEntity insertAthlete(AthleteDto athleteDto) {
+    public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {
         athleteDto.setId(null);
         Athlete athlete = (Athlete) userEntityService.save(athleteDto.getEmail(), objectMapper.convertValue(athleteDto, Athlete.class));
         log.info("Inserting Athlete: {}", athlete);
@@ -40,7 +44,6 @@ public class AthleteService {
         return athlete;
     }
 
-    @SneakyThrows
     public Athlete[] getAthletes() {
         Athlete[] athletes = userEntityService.getAllAthletes().toArray(new Athlete[0]);
         log.info("Executing get all athletes: {}", athletes.length);
