@@ -16,7 +16,7 @@ public class TrainerService {
     private final UserEntityService userEntityService;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void instantiateDummys() {
+    public void instantiateDummies() {
         DummyData.TRAINERS.forEach(this::createTrainer);
     }
 

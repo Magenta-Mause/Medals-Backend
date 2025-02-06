@@ -3,9 +3,9 @@ package com.medals.medalsbackend.service.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
 import com.medals.medalsbackend.dto.AthleteDto;
-import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exceptions.AthleteNotFoundException;
 import com.medals.medalsbackend.service.util.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -26,7 +25,7 @@ public class AthleteService {
     private final UserEntityService userEntityService;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void instantiateDummyData() {
+    public void instantiateDummies() {
         log.info("Inserted {} dummy athletes", DummyData.ATHLETES.size());
         DummyData.ATHLETES.forEach(athlete -> {
             userEntityService.save(athlete.getEmail(), athlete);
