@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class OneTimeCodeExpiredException extends GenericAPIRequestException {
   public OneTimeCodeExpiredException() {
-    super("One Time Code expired", HttpStatus.BAD_REQUEST);
+    super("One time code expired", HttpStatus.BAD_REQUEST);
   }
 }

@@ -2,7 +2,7 @@ package com.medals.medalsbackend.service.user.login.jwt;
 
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
-import com.medals.medalsbackend.security.jwt.JwtTokenInvalidException;
+import com.medals.medalsbackend.exceptions.JwtTokenInvalidException;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import org.springframework.stereotype.Service;
 
