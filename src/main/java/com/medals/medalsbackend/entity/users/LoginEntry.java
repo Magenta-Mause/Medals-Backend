@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "Login_entry")
+@Entity(name = "login_entry")
 @Builder
 @Getter
 @Setter
@@ -19,7 +19,7 @@ public class LoginEntry {
     @Column
     private String password;
 
-    @OneToMany(mappedBy = "loginEntry", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "login_entry", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserEntity> users = new ArrayList<>();
 
     public void addUser(UserEntity user) {
