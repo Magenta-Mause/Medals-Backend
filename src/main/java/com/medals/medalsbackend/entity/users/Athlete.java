@@ -37,7 +37,7 @@ public class Athlete extends UserEntity {
     @OneToOne(mappedBy = "athlete", cascade = CascadeType.ALL, orphanRemoval = true)
     private MedalCollection medalCollection;
 
-    protected String type = "ATHLETE";
+    protected UserType type = UserType.ATHLETE;
 
     public enum Gender {
         MALE, FEMALE, DIVERSE;

@@ -24,7 +24,7 @@ public abstract class UserEntity {
   protected String email;
 
   @Column(name = "type")
-  protected String type;
+  protected UserType type;
 
   @Column(name = "first_name", nullable = false)
   @JsonProperty("first_name")

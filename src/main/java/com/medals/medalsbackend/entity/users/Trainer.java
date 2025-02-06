@@ -18,5 +18,5 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class Trainer extends UserEntity {
-    protected String type = "TRAINER";
+    protected UserType type = UserType.TRAINER;
 }

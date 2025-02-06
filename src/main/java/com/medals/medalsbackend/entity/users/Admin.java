@@ -17,5 +17,5 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class Admin extends UserEntity {
-  protected String type = "ADMIN";
+  protected UserType type = UserType.ADMIN;
 }
