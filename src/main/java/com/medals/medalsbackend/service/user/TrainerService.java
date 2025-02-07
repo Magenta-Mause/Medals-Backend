@@ -21,7 +21,7 @@ public class TrainerService {
 
     private final UserEntityService userEntityService;
     private final Environment environment;
-    @Value("${app.dummies.enable}")
+    @Value("${app.dummies.enabled}")
     private boolean insertDummies;
 
     @EventListener(ApplicationReadyEvent.class)
