@@ -13,7 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Slf4j
 @Service
@@ -23,17 +26,20 @@ public class AthleteService {
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
+    private final Environment environment;
 
     @EventListener(ApplicationReadyEvent.class)
     public void instantiateDummies() {
-        log.info("Inserted {} dummy athletes", DummyData.ATHLETES.size());
-        DummyData.ATHLETES.forEach(athlete -> {
-            try {
-                userEntityService.save(athlete.getEmail(), athlete);
-            } catch (InternalException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        if (!Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
+            log.info("Inserted {} dummy athletes", DummyData.ATHLETES.size());
+            DummyData.ATHLETES.forEach(athlete -> {
+                try {
+                    userEntityService.save(athlete.getEmail(), athlete);
+                } catch (InternalException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
 
     public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {

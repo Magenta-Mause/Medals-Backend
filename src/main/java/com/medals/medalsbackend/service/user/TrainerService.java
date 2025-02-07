@@ -7,8 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -17,16 +19,19 @@ import java.util.List;
 public class TrainerService {
 
     private final UserEntityService userEntityService;
+    private final Environment environment;
 
     @EventListener(ApplicationReadyEvent.class)
     public void instantiateDummies() {
-        DummyData.TRAINERS.forEach(trainer -> {
-            try {
-                createTrainer(trainer);
-            } catch (InternalException internalException) {
-                log.error(internalException.getMessage(), internalException);
-            }
-        });
+        if (!Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
+            DummyData.TRAINERS.forEach(trainer -> {
+                try {
+                    createTrainer(trainer);
+                } catch (InternalException internalException) {
+                    log.error(internalException.getMessage(), internalException);
+                }
+            });
+        }
     }
 
     public Trainer createTrainer(Trainer trainer) throws InternalException {

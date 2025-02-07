@@ -37,6 +37,7 @@ public class JwtUtils {
                 jwtConfigurationProperties.identityTokenExpirationTime() :
                 jwtConfigurationProperties.refreshTokenExpirationTime();
 
+        log.info("Expiration time: {}", tokenValidityDuration);
         return Jwts.builder()
                 .serializeToJsonWith(new JacksonSerializer<>(objectMapper))
                 .setIssuedAt(new Date())
@@ -57,10 +58,14 @@ public class JwtUtils {
                 throw new SecurityException("Missing/Bad audience claim");
             }
             if (!tokenType.toString().equals(claims.get("tokenType"))) {
-                throw new SecurityException("Token is not refresh token");
+                throw new SecurityException("Token type is not matching");
+            }
+            if (claims.getSubject() == null) {
+                throw new SecurityException("Missing/Bad subject claim");
             }
             return subject;
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SecurityException | AssertionError e) {
+            log.error("Error validating token", e);
             throw new JwtTokenInvalidException();
         } catch (Exception e) {
             log.error("Error while parsing JWT refresh token", e);

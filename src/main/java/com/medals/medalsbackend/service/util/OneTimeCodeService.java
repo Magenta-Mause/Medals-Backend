@@ -54,6 +54,9 @@ public class OneTimeCodeService {
         if (oneTimeCode.expiresAt < System.currentTimeMillis()) {
             throw new OneTimeCodeExpiredException();
         }
+        if (oneTimeCode.type != OneTimeCodeType.SET_PASSWORD) {
+            throw new OneTimeCodeNotFoundException();
+        }
         return oneTimeCode.authorizedEmail;
     }
 

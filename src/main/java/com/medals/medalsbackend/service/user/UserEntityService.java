@@ -1,6 +1,5 @@
 package com.medals.medalsbackend.service.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
@@ -24,7 +23,6 @@ import java.util.Optional;
 public class UserEntityService {
     private final UserEntityRepository userEntityRepository;
     private final LoginEntryService loginEntryService;
-    private final ObjectMapper objectMapper;
 
     @Transactional
     public UserEntity save(String email, UserEntity userEntity) throws InternalException {

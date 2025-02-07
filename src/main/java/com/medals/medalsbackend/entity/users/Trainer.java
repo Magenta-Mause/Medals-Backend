@@ -1,12 +1,9 @@
 package com.medals.medalsbackend.entity.users;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -15,8 +12,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @DiscriminatorValue("TRAINER")
 @AllArgsConstructor
-@NoArgsConstructor
 @SuperBuilder
 public class Trainer extends UserEntity {
-    protected UserType type = UserType.TRAINER;
+    protected final UserType type = UserType.TRAINER;
 }
