@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.service;
+package com.medals.medalsbackend.service.util.websockets;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
