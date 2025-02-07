@@ -1,15 +1,11 @@
 package com.medals.medalsbackend;
 
 import com.medals.medalsbackend.entity.users.Admin;
-import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.service.user.AdminService;
 import com.medals.medalsbackend.service.user.UserEntityService;
-import com.medals.medalsbackend.service.user.login.LoginEntryService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
