@@ -10,7 +10,7 @@ cors:
     - http://localhost:3000
 app:
   dummies:
-    enabled: false
+    enabled: true
   admin:
     enabled: true
     admin-email: "jabbekeipert@gmail.com"

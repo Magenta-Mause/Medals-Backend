@@ -4,6 +4,7 @@ import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.exceptions.InternalException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.event.EventListener;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @EnableConfigurationProperties(AdminCreationConfiguration.class)
@@ -28,11 +30,13 @@ public class AdminService {
             return;
         }
 
-        createAdmin(Admin.builder()
+        log.info("Initializing admin");
+        Admin admin = createAdmin(Admin.builder()
                 .email(adminCreationConfiguration.adminEmail())
                 .firstName(adminCreationConfiguration.adminFirstName())
                 .lastName(adminCreationConfiguration.adminLastName())
-                .build()
+                .build();
+        log.info("Initiated admin: {}", admin);
         );
     }
 
