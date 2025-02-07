@@ -9,6 +9,13 @@ cors:
     - http://192.168.178.21:5173
     - http://localhost:3000
 app:
+  dummies:
+    enable: false
+  admin:
+    enabled: true
+    admin-email: "jabbekeipert@gmail.com"
+    admin-first-name: "Janne"
+    admin-last-name: "Keipert"
   security:
     identity-token-expiration-time: 3600000 # 1 hour
     refresh-token-expiration-time: 2678400000 # 1 month

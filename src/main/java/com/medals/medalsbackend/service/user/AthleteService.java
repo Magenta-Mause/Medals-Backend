@@ -11,6 +11,7 @@ import com.medals.medalsbackend.exceptions.InternalException;
 import com.medals.medalsbackend.service.util.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
@@ -27,19 +28,23 @@ public class AthleteService {
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
     private final Environment environment;
+    @Value("${app.dummies.enable}")
+    private boolean insertDummies;
 
     @EventListener(ApplicationReadyEvent.class)
     public void instantiateDummies() {
-        if (!Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
-            log.info("Inserted {} dummy athletes", DummyData.ATHLETES.size());
-            DummyData.ATHLETES.forEach(athlete -> {
-                try {
-                    userEntityService.save(athlete.getEmail(), athlete);
-                } catch (InternalException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+        if (!insertDummies || Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
+            return;
         }
+
+        log.info("Inserting {} dummy athletes", DummyData.ATHLETES.size());
+        DummyData.ATHLETES.forEach(athlete -> {
+            try {
+                userEntityService.save(athlete.getEmail(), athlete);
+            } catch (InternalException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {
