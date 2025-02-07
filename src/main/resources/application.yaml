@@ -12,7 +12,7 @@ app:
   dummies:
     enabled: true
   admin:
-    enabled: true
+    enabled: false
     admin-email: "jabbekeipert@gmail.com"
     admin-first-name: "Janne"
     admin-last-name: "Keipert"

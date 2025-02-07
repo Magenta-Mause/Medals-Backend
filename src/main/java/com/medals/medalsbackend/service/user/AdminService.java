@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,10 @@ public class AdminService {
     private final Environment environment;
 
     @SneakyThrows
+    @Profile("!test")
     @EventListener(ApplicationReadyEvent.class)
     public void initiateAdmin() {
-        if (!adminCreationConfiguration.enabled() || Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
+        if (!adminCreationConfiguration.enabled()) {
             return;
         }
 

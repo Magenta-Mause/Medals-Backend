@@ -13,11 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 
 @Slf4j
 @Service
@@ -32,8 +31,9 @@ public class AthleteService {
     private boolean insertDummies;
 
     @EventListener(ApplicationReadyEvent.class)
+    @Profile("!test")
     public void instantiateDummies() {
-        if (!insertDummies || Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
+        if (!insertDummies) {
             return;
         }
 
