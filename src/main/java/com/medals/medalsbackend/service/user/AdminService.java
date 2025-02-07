@@ -9,7 +9,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -22,7 +21,6 @@ public class AdminService {
 
     private final UserEntityService userEntityService;
     private final AdminCreationConfiguration adminCreationConfiguration;
-    private final Environment environment;
 
     @SneakyThrows
     @Profile("!test")
@@ -33,12 +31,14 @@ public class AdminService {
         }
 
         log.info("Initializing admin");
-        Admin admin = createAdmin(Admin.builder()
-                .email(adminCreationConfiguration.adminEmail())
-                .firstName(adminCreationConfiguration.adminFirstName())
-                .lastName(adminCreationConfiguration.adminLastName())
-                .build());
-        log.info("Initiated admin: {}", admin);
+        Arrays.stream(adminCreationConfiguration.admins()).toList().forEach(admin -> {
+            try {
+                createAdmin(admin);
+            } catch (InternalException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        log.info("Initiated {} admins", adminCreationConfiguration.admins().length);
     }
 
     public Admin createAdmin(Admin admin) throws InternalException {
