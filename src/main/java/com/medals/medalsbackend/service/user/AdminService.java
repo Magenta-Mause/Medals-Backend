@@ -35,9 +35,8 @@ public class AdminService {
                 .email(adminCreationConfiguration.adminEmail())
                 .firstName(adminCreationConfiguration.adminFirstName())
                 .lastName(adminCreationConfiguration.adminLastName())
-                .build();
+                .build());
         log.info("Initiated admin: {}", admin);
-        );
     }
 
     public Admin createAdmin(Admin admin) throws InternalException {
