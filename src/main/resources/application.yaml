@@ -13,9 +13,6 @@ app:
     enabled: true
   admin:
     enabled: true
-    admin-email: "jabbekeipert@gmail.com"
-    admin-first-name: "Janne"
-    admin-last-name: "Keipert"
     admins:
       - email: "jabbekeipert@gmail.com"
         first-name: "Janne"
