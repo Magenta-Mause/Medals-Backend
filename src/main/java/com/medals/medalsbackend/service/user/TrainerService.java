@@ -5,12 +5,13 @@ import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.exceptions.InternalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -20,18 +21,24 @@ public class TrainerService {
 
     private final UserEntityService userEntityService;
     private final Environment environment;
+    @Value("${app.dummies.enabled}")
+    private boolean insertDummies;
 
     @EventListener(ApplicationReadyEvent.class)
+    @Profile("!test")
     public void instantiateDummies() {
-        if (!Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
-            DummyData.TRAINERS.forEach(trainer -> {
-                try {
-                    createTrainer(trainer);
-                } catch (InternalException internalException) {
-                    log.error(internalException.getMessage(), internalException);
-                }
-            });
+        if (!insertDummies) {
+            return;
         }
+
+        log.info("Inserting {} dummy trainers", DummyData.TRAINERS.size());
+        DummyData.TRAINERS.forEach(trainer -> {
+            try {
+                createTrainer(trainer);
+            } catch (InternalException internalException) {
+                log.error(internalException.getMessage(), internalException);
+            }
+        });
     }
 
     public Trainer createTrainer(Trainer trainer) throws InternalException {

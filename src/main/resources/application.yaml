@@ -9,6 +9,17 @@ cors:
     - http://192.168.178.21:5173
     - http://localhost:3000
 app:
+  dummies:
+    enabled: true
+  admin:
+    enabled: true
+    admins:
+      - email: "jabbekeipert@gmail.com"
+        first-name: "Janne"
+        last-name: "Keipert"
+      - email: "keipertjanne@gmail.com"
+        first-name: "Janne Wanja"
+        last-name: "Keipert"
   security:
     identity-token-expiration-time: 3600000 # 1 hour
     refresh-token-expiration-time: 2678400000 # 1 month

@@ -37,7 +37,6 @@ public class JwtUtils {
                 jwtConfigurationProperties.identityTokenExpirationTime() :
                 jwtConfigurationProperties.refreshTokenExpirationTime();
 
-        log.info("Expiration time: {}", tokenValidityDuration);
         return Jwts.builder()
                 .serializeToJsonWith(new JacksonSerializer<>(objectMapper))
                 .setIssuedAt(new Date())

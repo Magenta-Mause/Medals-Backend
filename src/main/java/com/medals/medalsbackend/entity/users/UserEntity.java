@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Setter
@@ -15,6 +16,7 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @SuperBuilder
 @NoArgsConstructor
+@ToString
 public abstract class UserEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,6 +39,7 @@ public abstract class UserEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "email", nullable = false, referencedColumnName = "email")
   @JsonIgnore
+  @ToString.Exclude
   private LoginEntry loginEntry;
 
 }
