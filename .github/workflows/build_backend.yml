@@ -19,7 +19,7 @@ jobs:
   publish-build:
     name: Publish Backend
     runs-on: ubuntu-latest
-    # if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
