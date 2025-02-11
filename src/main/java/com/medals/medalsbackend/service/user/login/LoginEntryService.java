@@ -7,6 +7,7 @@ import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeExpiredExcepti
 import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
+import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.util.OneTimeCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,7 +23,7 @@ public class LoginEntryService {
   private final JwtService jwtService;
   private final OneTimeCodeService oneTimeCodeService;
 
-  public void createLoginEntry(String email) throws EmailAlreadyExistsException, InternalException {
+  public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException, InternalException {
     if (loginEntryRepository.existsById(email)) {
       throw new EmailAlreadyExistsException(email);
     }
@@ -32,8 +33,12 @@ public class LoginEntryService {
       .password(null)
       .build();
 
-    oneTimeCodeService.createSetPasswordToken(email);
+    oneTimeCodeService.createSetPasswordToken(email, OneTimeCodeCreationReason.ACCOUNT_CREATED);
     loginEntryRepository.save(loginEntry);
+  }
+
+  public void createLoginEntry(String email) throws EmailAlreadyExistsException, InternalException {
+    createLoginEntry(email, OneTimeCodeCreationReason.ACCOUNT_CREATED);
   }
 
   public void setPassword(String oneTimeCode, String password) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {

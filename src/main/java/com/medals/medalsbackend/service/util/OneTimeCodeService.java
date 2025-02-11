@@ -25,7 +25,7 @@ public class OneTimeCodeService {
     private final NotificationService notificationService;
     private final OneTimeCodeConfiguration oneTimeCodeConfiguration;
 
-    public OneTimeCode createSetPasswordToken(String email) throws InternalException {
+    public OneTimeCode createSetPasswordToken(String email, OneTimeCodeCreationReason reason) throws InternalException {
         int tries = 20;
         while (tries > 0) {
             try {
@@ -36,7 +36,7 @@ public class OneTimeCodeService {
                         .expiresAt(System.currentTimeMillis() + oneTimeCodeConfiguration.setPasswordTokenValidityDuration())
                         .build();
                 oneTimeCodeRepository.save(oneTimeCode);
-                notificationService.sendSetPasswordNotification(email, oneTimeCode.oneTimeCode);
+                notificationService.sendSetPasswordNotification(email, oneTimeCode.oneTimeCode, reason);
                 return oneTimeCode;
             } catch (Exception e) {
                 log.warn("Exception occurred while creating one time code: {}", e.getMessage());
@@ -44,6 +44,10 @@ public class OneTimeCodeService {
             tries--;
         }
         throw new InternalException("Internal error while creating one time code");
+    }
+
+    public OneTimeCode createSetPasswordToken(String email) throws InternalException {
+        return createSetPasswordToken(email, OneTimeCodeCreationReason.ACCOUNT_CREATED);
     }
 
     public String getEmailFromSetPasswordToken(String setPasswordToken) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
