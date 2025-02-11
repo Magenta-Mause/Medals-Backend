@@ -15,3 +15,6 @@ spring:
 app:
   email:
     url: https://projektejwkk.de/_____mailGen
+    templates:
+      set-password-notification: "template_account_created.html"
+      invite-trainer: "template_trainer_invitation.html"
