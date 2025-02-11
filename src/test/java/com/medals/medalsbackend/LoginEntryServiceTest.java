@@ -10,6 +10,7 @@ import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginDoesntMatchException;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
+import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.util.OneTimeCodeService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class LoginEntryServiceTest {
     public void testLoginEntryCreationTriggersEmailSending() {
         when(loginEntryRepository.existsById(any())).thenReturn(false);
         loginEntryService.createLoginEntry("test@gmail.com");
-        verify(oneTimeCodeService, times(1)).createSetPasswordToken(eq("test@gmail.com"));
+        verify(oneTimeCodeService, times(1)).createSetPasswordToken(eq("test@gmail.com"), eq(OneTimeCodeCreationReason.ACCOUNT_CREATED));
     }
 
     @Test

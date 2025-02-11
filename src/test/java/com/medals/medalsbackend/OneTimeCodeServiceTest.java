@@ -7,6 +7,7 @@ import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeNotFoundExcept
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.util.OneTimeCodeConfiguration;
+import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.util.OneTimeCodeService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ public class OneTimeCodeServiceTest {
 
         ArgumentCaptor<OneTimeCode> oneTimeCodeArgumentCaptor = ArgumentCaptor.forClass(OneTimeCode.class);
         verify(oneTimeCodeRepository, times(1)).save(oneTimeCodeArgumentCaptor.capture());
-        verify(notificationService, times(1)).sendSetPasswordNotification(eq("email"), any());
+        verify(notificationService, times(1)).sendSetPasswordNotification(eq("email"), any(), eq(OneTimeCodeCreationReason.ACCOUNT_CREATED));
         assertEquals("email", oneTimeCodeArgumentCaptor.getValue().authorizedEmail);
         assertEquals(OneTimeCodeType.SET_PASSWORD, oneTimeCodeArgumentCaptor.getValue().type);
         assertTrue(System.currentTimeMillis() <= oneTimeCodeArgumentCaptor.getValue().expiresAt && oneTimeCodeArgumentCaptor.getValue().expiresAt <= System.currentTimeMillis() + 100L);
