@@ -23,7 +23,6 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendEmail(String receiver, String subject, String message) {
         if (Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
-            log.info("Sending email to {}, subject: {}, message: {}", receiver, subject, message);
             return;
         }
         mailClient.sendMail(configuration.author(), receiver, message, subject);
