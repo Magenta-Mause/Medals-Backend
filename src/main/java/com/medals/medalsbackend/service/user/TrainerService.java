@@ -2,12 +2,9 @@ package com.medals.medalsbackend.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
-import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
-import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
-import com.medals.medalsbackend.exceptions.AthleteNotFoundException;
 import com.medals.medalsbackend.exceptions.InternalException;
 import com.medals.medalsbackend.exceptions.TrainerNotFoundException;
 import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
@@ -76,12 +73,19 @@ public class TrainerService {
         userEntityService.deleteById(trainerId);
     }
 
-    public Object getTrainer(Long trainerId) throws TrainerNotFoundException {
+    public Trainer getTrainer(Long trainerId) throws TrainerNotFoundException {
         log.info("Executing get trainer by id {}", trainerId);
         try {
             return (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
         } catch (Exception e) {
             throw TrainerNotFoundException.fromTrainerId(trainerId);
         }
+    }
+
+    public void updateTrainer(Long trainerId, TrainerDto trainerDto) {
+        log.info("Updating trainer with ID: {}", trainerId);
+        trainerDto.setId(trainerId);
+        Trainer savedTrainer = (Trainer) userEntityService.update(objectMapper.convertValue(trainerDto, Trainer.class));
+        // TODO: Maybe send websocket message here also?
     }
 }
