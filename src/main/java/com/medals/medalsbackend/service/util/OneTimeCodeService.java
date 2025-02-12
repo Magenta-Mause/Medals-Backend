@@ -2,9 +2,9 @@ package com.medals.medalsbackend.service.util;
 
 import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCode;
 import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
-import com.medals.medalsbackend.exceptions.InternalException;
-import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeExpiredException;
-import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import jakarta.transaction.Transactional;
@@ -25,28 +25,46 @@ public class OneTimeCodeService {
     private final NotificationService notificationService;
     private final OneTimeCodeConfiguration oneTimeCodeConfiguration;
 
-    public OneTimeCode createSetPasswordToken(String email) throws InternalException {
+    public OneTimeCode generateOneTimeCode(OneTimeCodeType type, String email, long validityDuration) throws InternalException {
         int tries = 20;
         while (tries > 0) {
             try {
                 OneTimeCode oneTimeCode = OneTimeCode.builder()
-                        .authorizedEmail(email)
-                        .type(OneTimeCodeType.SET_PASSWORD)
-                        .oneTimeCode(UUID.randomUUID().toString())
-                        .expiresAt(System.currentTimeMillis() + oneTimeCodeConfiguration.setPasswordTokenValidityDuration())
+                        .oneTimeCode(UUID.randomUUID().toString()).authorizedEmail(email)
+                        .type(type)
+                        .expiresAt(System.currentTimeMillis() + validityDuration)
                         .build();
                 oneTimeCodeRepository.save(oneTimeCode);
-                notificationService.sendSetPasswordNotification(email, oneTimeCode.oneTimeCode);
                 return oneTimeCode;
             } catch (Exception e) {
-                log.warn("Exception occurred while creating one time code: {}", e.getMessage());
+                log.warn("Generating one time code failed; {} Tries remaining", tries, e);
             }
             tries--;
         }
-        throw new InternalException("Internal error while creating one time code");
+        throw new InternalException("Couldnt generate one time code");
     }
 
-    public String getEmailFromSetPasswordToken(String setPasswordToken) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
+    public OneTimeCode createSetPasswordToken(String email) {
+        try {
+            OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.SET_PASSWORD, email, oneTimeCodeConfiguration.setPasswordTokenValidityDuration());
+            notificationService.sendSetPasswordNotification(email, oneTimeCode.oneTimeCode);
+            return oneTimeCode;
+        } catch (InternalException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public OneTimeCode createResetPasswordToken(String email) {
+        try {
+            OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.RESET_PASSWORD, email, oneTimeCodeConfiguration.resetPasswordTokenValidityDuration());
+            notificationService.sendResetPasswordNotification(email, oneTimeCode.oneTimeCode);
+            return oneTimeCode;
+        } catch (InternalException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getEmailFromOneTimeCode(String setPasswordToken, OneTimeCodeType oneTimeCodeType) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
         OneTimeCode oneTimeCode = oneTimeCodeRepository.findByOneTimeCode(setPasswordToken);
         if (oneTimeCode == null) {
             throw new OneTimeCodeNotFoundException();
@@ -54,7 +72,7 @@ public class OneTimeCodeService {
         if (oneTimeCode.expiresAt < System.currentTimeMillis()) {
             throw new OneTimeCodeExpiredException();
         }
-        if (oneTimeCode.type != OneTimeCodeType.SET_PASSWORD) {
+        if (oneTimeCode.type != oneTimeCodeType) {
             throw new OneTimeCodeNotFoundException();
         }
         return oneTimeCode.authorizedEmail;
@@ -70,4 +88,5 @@ public class OneTimeCodeService {
         }
         oneTimeCodeRepository.deleteAllByOneTimeCode(oneTimeCode);
     }
+
 }

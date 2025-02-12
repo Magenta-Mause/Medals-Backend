@@ -2,7 +2,7 @@ package com.medals.medalsbackend.service.user;
 
 import com.medals.medalsbackend.DummyData;
 import com.medals.medalsbackend.entity.users.Trainer;
-import com.medals.medalsbackend.exceptions.InternalException;
+import com.medals.medalsbackend.exception.InternalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

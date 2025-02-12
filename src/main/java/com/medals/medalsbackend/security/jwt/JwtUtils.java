@@ -1,7 +1,7 @@
 package com.medals.medalsbackend.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medals.medalsbackend.exceptions.JwtTokenInvalidException;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.security.config.JwtConfigurationProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;

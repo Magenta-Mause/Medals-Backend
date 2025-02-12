@@ -4,7 +4,8 @@ import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.UserEntity;
-import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
+import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginDoesntMatchException;
@@ -56,7 +57,7 @@ public class LoginEntryServiceTest {
     @Test
     @SneakyThrows
     public void testSetPasswordTokenValidity() {
-        when(oneTimeCodeService.getEmailFromSetPasswordToken(any())).thenReturn("test@gmail.com");
+        when(oneTimeCodeService.getEmailFromOneTimeCode(any(), any())).thenReturn("test@gmail.com");
         when(loginEntryRepository.getReferenceById(any())).thenReturn(LoginEntry.builder().email("test@gmail.com").build());
         when(bCryptPasswordEncoder.encode(any())).thenReturn("encryptedPassword");
 
@@ -133,7 +134,7 @@ public class LoginEntryServiceTest {
     @SneakyThrows
     @Test
     public void testSetPasswordThrowsException() {
-        when(oneTimeCodeService.getEmailFromSetPasswordToken(eq("testToken"))).thenThrow(OneTimeCodeExpiredException.class);
+        when(oneTimeCodeService.getEmailFromOneTimeCode(eq("testToken"), eq(OneTimeCodeType.SET_PASSWORD))).thenThrow(OneTimeCodeExpiredException.class);
         assertThrows(OneTimeCodeExpiredException.class, () -> loginEntryService.setPassword("testToken", "newPassword"));
     }
 }
