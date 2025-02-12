@@ -30,22 +30,14 @@ public class NotificationService {
 
     public void sendCreateAccountNotification(String email, String oneTimeCode) {
       String link = "http://localhost:5173/setPassword?oneTimeCode=" + oneTimeCode;
-      try {
         String text = templateService.generateSetPasswordNotification(email, link);
         mailService.sendEmail(email, "Medals - Account Creation", text);
-      } catch (Exception e) {
-        log.error("Failed to send email: " + e);
-      }
     }
 
     public void sendInviteTrainerNotification(String email, String oneTimeCode) {
 
         String link = "http://localhost:5173/setPassword?oneTimeCode=" + oneTimeCode;
-        try {
-            String text = templateService.generateInviteTrainerNotification(email, link);
-            mailService.sendEmail(email, "Medals - Trainer Creation", text);
-        } catch (Exception e) {
-            log.error("Failed to send email: " + e);
-        }
+        String text = templateService.generateInviteTrainerNotification(email, link);
+        mailService.sendEmail(email, "Medals - Trainer Creation", text);
     }
 }
