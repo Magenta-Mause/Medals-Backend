@@ -88,7 +88,7 @@ public class AuthorizationController {
 
     @PostMapping("/resetPassword")
     public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) throws OneTimeCodeExpiredException, OneTimeCodeNotFoundException {
-        loginEntryService.resetPassword(resetPasswordDto.getToken(), resetPasswordDto.getNewPassword());
+        loginEntryService.resetPassword(resetPasswordDto.getPassword(), resetPasswordDto.getToken());
         return ResponseEntity.ok("Success");
     }
 }

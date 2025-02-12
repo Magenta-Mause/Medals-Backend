@@ -79,7 +79,7 @@ public class NotificationService {
                 
                         <div class="header">🥇 Medals</div>
                            \s
-                        <h2>Your password was being reset</h2>
+                        <h2>Your password was reset</h2>
                         <p>Hello,</p>
                         <p>You just reset your password</p>
                 
@@ -90,7 +90,6 @@ public class NotificationService {
                         <h2>Passwort zurückgesetzt</h2>
                         <p>Hallo,</p>
                         <p>Du hast gerade dein Passwort zurückgesetzt</p>
-                        <p><a class="button" href="">Hier drücken für Passwort Reset</a></p>
                         <p>Falls sie ihr Passwort nicht geändert haben, kontaktieren Sie bitte einen Administrator und setzen sie ihr Passwort zurück.</p>
                         <div class="footer">
                         <p>Medals Team</p>
@@ -184,7 +183,7 @@ public class NotificationService {
                   <h2>Passwort zurücksetzen</h2>
                   <p>Hallo,</p>
                   <p>Wir haben eine Anfrage zum Zurücksetzen Ihres Passworts erhalten. Klicken Sie auf die Schaltfläche unten, um ein neues Passwort zu setzen.</p>
-                  <p><a class="button" href="">Hier drücken für Passwort Reset</a></p>
+                  <p><a class="button" href="{link}">Passwort zurücksetzen</a></p>
                   <p>Falls die Schaltfläche nicht funktioniert, verwenden Sie bitte diesen Link: \s
                   <br><a href="{link}">{link}</a></p>
                     <p>Falls Sie kein neues Passwort anfordern wollten, können Sie diese E-Mail ignorieren. Ihr Passwort bleibt unverändert.</p>
@@ -270,8 +269,7 @@ public class NotificationService {
                     <p>Hello,</p>
                     <p>We have just created an account for you. Please set a password to access your account.</p>
                     <p>Use this link to create your password:</p>
-                    <p><a class="button" href="{link}"
-                ">Set Password</a></p>
+                    <p><a class="button" href="{link}">Set Password</a></p>
                 <p>If the button does not work, please use this link: \s
                 <br><a href="{link}">{link}</a></p>
                 <p>If you did not request this or are not interested, you can simply ignore this email.</p>

@@ -64,8 +64,8 @@ public class OneTimeCodeService {
         }
     }
 
-    public String getEmailFromOneTimeCode(String setPasswordToken, OneTimeCodeType oneTimeCodeType) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
-        OneTimeCode oneTimeCode = oneTimeCodeRepository.findByOneTimeCode(setPasswordToken);
+    public String getEmailFromOneTimeCode(String incomingOneTimeCode, OneTimeCodeType oneTimeCodeType) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
+        OneTimeCode oneTimeCode = oneTimeCodeRepository.findByOneTimeCode(incomingOneTimeCode);
         if (oneTimeCode == null) {
             throw new OneTimeCodeNotFoundException();
         }

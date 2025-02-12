@@ -7,5 +7,5 @@ import org.hibernate.validator.constraints.Length;
 public class ResetPasswordDto {
     public String token;
     @Length(min = 8)
-    public String newPassword;
+    public String password;
 }
