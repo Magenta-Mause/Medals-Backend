@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,9 +30,9 @@
                     <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555; line-height: 1.5; text-align: left;">
                         <p>Hello,</p>
                         <p>You have been invited by the Medals administration team to join as a trainer. Click the button below to accept the invitation and set up your trainer account.</p>
-                        <p><a href="%1$s" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Accept Invitation</a></p>
+                        <p><a th:href="${otpLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Accept Invitation</a></p>
                         <p>If the button does not work, use this link:<br>
-                            <a href="%1$s" style="color: #007bff; text-decoration: none;">%1$s</a>
+                            <a th:href="${otpLink}" th:text="${otpLink}" style="color: #007bff; text-decoration: none;"></a>
                         </p>
                         <p>If you did not expect this invitation, you can safely ignore this email.</p>
                     </td>
@@ -49,9 +49,9 @@
                     <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555; line-height: 1.5; text-align: left;">
                         <p>Hallo,</p>
                         <p>Sie wurden vom Medals-Administrationsteam eingeladen, als Trainer beizutreten. Klicken Sie auf die Schaltfläche unten, um die Einladung anzunehmen und Ihr Trainerkonto einzurichten.</p>
-                        <p><a href="%1$s" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Einladung annehmen</a></p>
+                        <p><a th:href="${otpLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Einladung annehmen</a></p>
                         <p>Falls die Schaltfläche nicht funktioniert, verwenden Sie bitte diesen Link:<br>
-                            <a href="%1$s" style="color: #007bff; text-decoration: none;">%1$s</a>
+                            <a th:href="${otpLink}" th:text="${otpLink}" style="color: #007bff; text-decoration: none;"></a>
                         </p>
                         <p>Falls Sie diese Einladung nicht erwartet haben, können Sie diese E-Mail ignorieren.</p>
                     </td>
