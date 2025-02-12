@@ -1,4 +1,4 @@
-package com.medals.medalsbackend;
+package com.medals.medalsbackend.services;
 
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
@@ -46,8 +46,21 @@ public class LoginEntryServiceTest {
     @InjectMocks
     private LoginEntryService loginEntryService;
 
-    @SneakyThrows
     @Test
+    @SneakyThrows
+    public void testPasswordReset() {
+        when(oneTimeCodeService.getEmailFromOneTimeCode(eq("test"), eq(OneTimeCodeType.SET_PASSWORD))).thenReturn("admin@example.org");
+        when(loginEntryRepository.getReferenceById(eq("admin@example.org"))).thenReturn(LoginEntry.builder().email("admin@example.org").password("oldPassword").build());
+        loginEntryService.createLoginEntry("admin@example.org");
+        loginEntryService.setPassword("test", "newPassword");
+
+        ArgumentCaptor<LoginEntry> loginEntryArgumentCaptor = ArgumentCaptor.forClass(LoginEntry.class);
+        verify(loginEntryRepository, times(2)).save(loginEntryArgumentCaptor.capture());
+        assertEquals("admin@example.org", loginEntryArgumentCaptor.getValue().getEmail());
+    }
+
+    @Test
+    @SneakyThrows
     public void testLoginEntryCreationTriggersEmailSending() {
         when(loginEntryRepository.existsById(any())).thenReturn(false);
         loginEntryService.createLoginEntry("test@gmail.com");

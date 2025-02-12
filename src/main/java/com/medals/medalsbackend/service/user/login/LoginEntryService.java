@@ -64,7 +64,7 @@ public class LoginEntryService {
     }
 
     public Optional<LoginEntry> getByEmail(String email) {
-        return loginEntryRepository.findById(email);
+        return Optional.of(loginEntryRepository.getReferenceById(email));
     }
 
     public LoginEntry checkLogin(String email, String password) throws EmailDoesntExistException, LoginDoesntMatchException {

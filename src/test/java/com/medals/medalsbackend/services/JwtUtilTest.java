@@ -1,4 +1,4 @@
-package com.medals.medalsbackend;
+package com.medals.medalsbackend.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

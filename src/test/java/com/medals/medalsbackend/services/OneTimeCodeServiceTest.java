@@ -1,4 +1,4 @@
-package com.medals.medalsbackend;
+package com.medals.medalsbackend.services;
 
 import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCode;
 import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
