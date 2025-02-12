@@ -16,7 +16,7 @@ import java.util.List;
 import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 
 @RestController
-@RequestMapping(BASE_PATH + "/trainer")
+@RequestMapping(BASE_PATH + "/trainers")
 @RequiredArgsConstructor
 public class TrainerController {
     private final TrainerService trainerService;

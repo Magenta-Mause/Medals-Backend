@@ -19,7 +19,7 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 
 
 @RestController
-@RequestMapping(BASE_PATH + "/athlete")
+@RequestMapping(BASE_PATH + "/athletes")
 @RequiredArgsConstructor
 public class AthleteController {
     private final AthleteService athleteService;
