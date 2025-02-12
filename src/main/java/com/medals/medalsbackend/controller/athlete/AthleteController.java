@@ -19,19 +19,19 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 
 
 @RestController
-@RequestMapping(BASE_PATH + "/athletes")
+@RequestMapping(BASE_PATH + "/athlete")
 @RequiredArgsConstructor
 public class AthleteController {
     private final AthleteService athleteService;
     private final ObjectMapper objectMapper;
 
     @GetMapping
-    public ResponseEntity<AthleteDto[]> getAthletes() {
+    public ResponseEntity<AthleteDto[]> getAthlete() {
         return ResponseEntity.ok(Arrays.stream(athleteService.getAthletes()).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
     }
 
     @PostMapping
-    public ResponseEntity<AthleteDto> postAthletes(@Valid @RequestBody AthleteDto athleteDto) throws InternalException {
+    public ResponseEntity<AthleteDto> postAthlete(@Valid @RequestBody AthleteDto athleteDto) throws InternalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(athleteService.insertAthlete(athleteDto), AthleteDto.class));
     }
 

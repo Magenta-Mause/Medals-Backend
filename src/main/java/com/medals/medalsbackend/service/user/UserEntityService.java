@@ -9,6 +9,7 @@ import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.service.user.login.EmailAlreadyExistsException;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
+import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,9 @@ public class UserEntityService {
     private final LoginEntryService loginEntryService;
 
     @Transactional
-    public UserEntity save(String email, UserEntity userEntity) throws InternalException {
+    public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) throws InternalException {
         try {
-            loginEntryService.createLoginEntry(email);
+            loginEntryService.createLoginEntry(email, reason);
         } catch (EmailAlreadyExistsException ignored) {
         }
 
@@ -36,6 +37,11 @@ public class UserEntityService {
         } catch (EmailDoesntExistException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Transactional
+    public UserEntity save(String email, UserEntity userEntity) throws InternalException {
+        return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED);
     }
 
     public UserEntity update(UserEntity userEntity) {

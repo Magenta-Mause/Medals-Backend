@@ -8,5 +8,5 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "app.email.templates")
 public class MailTemplateConfiguration {
     private String setPasswordNotification;
-    private String inviteTrainer;
+    private String inviteTrainerNotification;
 }

@@ -30,6 +30,6 @@ public class MailTemplateService {
     public String generateInviteTrainerNotification(String email, String link) {
         Context context = new Context();
         context.setVariable("otpLink", link);
-        return templateEngine.process(configuration.getSetPasswordNotification(), context);
+        return templateEngine.process(configuration.getInviteTrainerNotification(), context);
     }
 }

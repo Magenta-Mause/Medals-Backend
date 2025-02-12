@@ -33,7 +33,7 @@ public class LoginEntryService {
       .password(null)
       .build();
 
-    oneTimeCodeService.createSetPasswordToken(email, OneTimeCodeCreationReason.ACCOUNT_CREATED);
+    oneTimeCodeService.createSetPasswordToken(email, reason);
     loginEntryRepository.save(loginEntry);
   }
 

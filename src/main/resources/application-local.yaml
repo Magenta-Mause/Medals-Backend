@@ -17,4 +17,4 @@ app:
     url: https://projektejwkk.de/_____mailGen
     templates:
       set-password-notification: "template_account_created.html"
-      invite-trainer: "template_trainer_invitation.html"
+      invite-trainer-notification: "template_trainer_invitation.html"

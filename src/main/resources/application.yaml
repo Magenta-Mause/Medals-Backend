@@ -28,6 +28,6 @@ app:
     author: "noreply@medals.com"
     templates:
       set-password-notification: "template_account_created"
-      invite-trainer: "template_trainer_invitation"
+      invite-trainer-notification: "template_trainer_invitation"
   otc:
     set-password-token-validity-duration: 604800000 # 1 week

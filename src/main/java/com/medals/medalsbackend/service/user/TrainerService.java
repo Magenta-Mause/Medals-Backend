@@ -1,8 +1,16 @@
 package com.medals.medalsbackend.service.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
+import com.medals.medalsbackend.dto.AthleteDto;
+import com.medals.medalsbackend.dto.TrainerDto;
+import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
+import com.medals.medalsbackend.entity.users.UserEntity;
+import com.medals.medalsbackend.exceptions.AthleteNotFoundException;
 import com.medals.medalsbackend.exceptions.InternalException;
+import com.medals.medalsbackend.exceptions.TrainerNotFoundException;
+import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainerService {
 
+    private final ObjectMapper objectMapper;
     private final UserEntityService userEntityService;
     private final Environment environment;
     @Value("${app.dummies.enabled}")
@@ -46,7 +55,33 @@ public class TrainerService {
         return trainer;
     }
 
+    public UserEntity insertTrainer(TrainerDto trainerDto) throws InternalException {
+        trainerDto.setId(null);
+        Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED);
+        log.info("Inserting Trainer: {}", trainer);
+        // TODO: Maybe send websocket message here also?
+        return trainer;
+    }
+
     public List<Trainer> getAllTrainers() {
         return userEntityService.getAllTrainers();
+    }
+
+    public void deleteTrainer(Long trainerId) throws TrainerNotFoundException {
+        log.info("Executing delete trainer by id {}", trainerId);
+        if (!userEntityService.existsById(trainerId)) {
+            throw TrainerNotFoundException.fromTrainerId(trainerId);
+        }
+        // TODO: Maybe send websocket message here also?
+        userEntityService.deleteById(trainerId);
+    }
+
+    public Object getTrainer(Long trainerId) throws TrainerNotFoundException {
+        log.info("Executing get trainer by id {}", trainerId);
+        try {
+            return (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
+        } catch (Exception e) {
+            throw TrainerNotFoundException.fromTrainerId(trainerId);
+        }
     }
 }
