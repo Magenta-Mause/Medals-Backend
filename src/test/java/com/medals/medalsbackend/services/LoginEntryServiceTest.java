@@ -50,7 +50,7 @@ public class LoginEntryServiceTest {
     @SneakyThrows
     public void testPasswordReset() {
         when(oneTimeCodeService.getEmailFromOneTimeCode(eq("test"), eq(OneTimeCodeType.SET_PASSWORD))).thenReturn("admin@example.org");
-        when(loginEntryRepository.getReferenceById(eq("admin@example.org"))).thenReturn(LoginEntry.builder().email("admin@example.org").password("oldPassword").build());
+        when(loginEntryRepository.findById(eq("admin@example.org"))).thenReturn(Optional.of(LoginEntry.builder().email("admin@example.org").password("oldPassword").build()));
         loginEntryService.createLoginEntry("admin@example.org");
         loginEntryService.setPassword("test", "newPassword");
 
@@ -71,13 +71,13 @@ public class LoginEntryServiceTest {
     @SneakyThrows
     public void testSetPasswordTokenValidity() {
         when(oneTimeCodeService.getEmailFromOneTimeCode(any(), any())).thenReturn("test@gmail.com");
-        when(loginEntryRepository.getReferenceById(any())).thenReturn(LoginEntry.builder().email("test@gmail.com").build());
+        when(loginEntryRepository.findById("test@gmail.com")).thenReturn(Optional.of(LoginEntry.builder().email("test@gmail.com").build()));
         when(bCryptPasswordEncoder.encode(any())).thenReturn("encryptedPassword");
 
         ArgumentCaptor<LoginEntry> loginEntryArgumentCaptor = ArgumentCaptor.forClass(LoginEntry.class);
 
         loginEntryService.setPassword("test", "newPassword");
-        verify(loginEntryRepository, times(1)).getReferenceById("test@gmail.com");
+        verify(loginEntryRepository, times(1)).findById("test@gmail.com");
         verify(loginEntryRepository, times(1)).save(loginEntryArgumentCaptor.capture());
 
         assertEquals("test@gmail.com", loginEntryArgumentCaptor.getValue().getEmail());
@@ -113,7 +113,7 @@ public class LoginEntryServiceTest {
     @SneakyThrows
     public void testAddUserToLoginEntry() {
         when(loginEntryRepository.existsById("test@gmail.com")).thenReturn(true);
-        when(loginEntryRepository.getReferenceById("test@gmail.com")).thenReturn(LoginEntry.builder().email("test@gmail.com").users(new ArrayList<>()).build());
+        when(loginEntryRepository.findById("test@gmail.com")).thenReturn(Optional.of(LoginEntry.builder().email("test@gmail.com").users(new ArrayList<>()).build()));
         loginEntryService.addUserToLogin("test@gmail.com", Admin.builder().email("test@gmail.com").firstName("AdminFirstName").lastName("AdminLastName").build());
         ArgumentCaptor<LoginEntry> loginEntryArgumentCaptor = ArgumentCaptor.forClass(LoginEntry.class);
         verify(loginEntryRepository, times(1)).save(loginEntryArgumentCaptor.capture());

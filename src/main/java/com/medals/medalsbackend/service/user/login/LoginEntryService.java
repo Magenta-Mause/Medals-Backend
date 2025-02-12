@@ -14,81 +14,77 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class LoginEntryService {
-    private final LoginEntryRepository loginEntryRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final OneTimeCodeService oneTimeCodeService;
-    private final NotificationService notificationService;
+  private final LoginEntryRepository loginEntryRepository;
+  private final BCryptPasswordEncoder passwordEncoder;
+  private final JwtService jwtService;
+  private final OneTimeCodeService oneTimeCodeService;
+  private final NotificationService notificationService;
 
-    public void createLoginEntry(String email) throws EmailAlreadyExistsException, InternalException {
-        if (loginEntryRepository.existsById(email)) {
-            throw new EmailAlreadyExistsException(email);
-        }
-
-        LoginEntry loginEntry = LoginEntry.builder()
-                .email(email)
-                .password(null)
-                .build();
-
-        oneTimeCodeService.createSetPasswordToken(email);
-        loginEntryRepository.save(loginEntry);
+  public void createLoginEntry(String email) throws EmailAlreadyExistsException, InternalException {
+    if (loginEntryRepository.existsById(email)) {
+      throw new EmailAlreadyExistsException(email);
     }
 
-    public void initiateResetPasswordRequest(String email) throws EmailDoesntExistException {
-        if (!loginEntryRepository.existsById(email)) {
-            throw new EmailDoesntExistException(email);
-        }
-        oneTimeCodeService.createResetPasswordToken(email);
+    LoginEntry loginEntry = LoginEntry.builder()
+      .email(email)
+      .password(null)
+      .build();
+
+    oneTimeCodeService.createSetPasswordToken(email);
+    loginEntryRepository.save(loginEntry);
+  }
+
+  public void initiateResetPasswordRequest(String email) throws EmailDoesntExistException {
+    if (!loginEntryRepository.existsById(email)) {
+      throw new EmailDoesntExistException(email);
     }
+    oneTimeCodeService.createResetPasswordToken(email);
+  }
 
-    public void setPassword(String oneTimeCode, String password) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
-        String email = oneTimeCodeService.getEmailFromOneTimeCode(oneTimeCode, OneTimeCodeType.SET_PASSWORD);
-        LoginEntry loginEntry = loginEntryRepository.getReferenceById(email);
-        loginEntry.setPassword(passwordEncoder.encode(password));
-        loginEntryRepository.save(loginEntry);
-        oneTimeCodeService.deleteOneTimeCode(oneTimeCode);
+  public void setPassword(String oneTimeCode, String password) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
+    String email = oneTimeCodeService.getEmailFromOneTimeCode(oneTimeCode, OneTimeCodeType.SET_PASSWORD);
+    LoginEntry loginEntry = loginEntryRepository.findById(email).get();
+    loginEntry.setPassword(passwordEncoder.encode(password));
+    loginEntryRepository.save(loginEntry);
+    oneTimeCodeService.deleteOneTimeCode(oneTimeCode);
+  }
+
+  public void resetPassword(String newPassword, String oneTimeCode) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
+    String userEmail = oneTimeCodeService.getEmailFromOneTimeCode(oneTimeCode, OneTimeCodeType.RESET_PASSWORD);
+    LoginEntry loginEntry = loginEntryRepository.findById(userEmail).get();
+    loginEntry.setPassword(passwordEncoder.encode(newPassword));
+    loginEntryRepository.save(loginEntry);
+    oneTimeCodeService.deleteOneTimeCode(oneTimeCode);
+    notificationService.sendPasswordResetNotification(userEmail);
+  }
+
+  public LoginEntry checkLogin(String email, String password) throws EmailDoesntExistException, LoginDoesntMatchException {
+    LoginEntry loginEntry = loginEntryRepository.findById(email).orElseThrow(() -> new EmailDoesntExistException(email));
+    if (!passwordEncoder.matches(password, loginEntry.getPassword())) {
+      throw new LoginDoesntMatchException(null);
     }
+    return loginEntry;
+  }
 
-    public void resetPassword(String newPassword, String oneTimeCode) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
-        String userEmail = oneTimeCodeService.getEmailFromOneTimeCode(oneTimeCode, OneTimeCodeType.RESET_PASSWORD);
-        LoginEntry loginEntry = loginEntryRepository.getReferenceById(userEmail);
-        loginEntry.setPassword(passwordEncoder.encode(newPassword));
-        loginEntryRepository.save(loginEntry);
-        oneTimeCodeService.deleteOneTimeCode(oneTimeCode);
-        notificationService.sendPasswordResetNotification(userEmail);
+  public String buildJwtRefreshToken(String email, String password) throws EmailDoesntExistException, LoginDoesntMatchException {
+    LoginEntry loginEntry = checkLogin(email, password);
+    return jwtService.buildRefreshToken(loginEntry);
+  }
+
+  public UserEntity addUserToLogin(String email, UserEntity user) throws EmailDoesntExistException {
+    if (!loginEntryRepository.existsById(email)) {
+      throw new EmailDoesntExistException(email);
     }
+    LoginEntry loginEntry = loginEntryRepository.findById(email).get();
+    loginEntry.addUser(user);
+    loginEntryRepository.save(loginEntry);
+    return loginEntry.getUsers().getLast();
+  }
 
-    public Optional<LoginEntry> getByEmail(String email) {
-        return Optional.of(loginEntryRepository.getReferenceById(email));
-    }
-
-    public LoginEntry checkLogin(String email, String password) throws EmailDoesntExistException, LoginDoesntMatchException {
-        LoginEntry loginEntry = getByEmail(email).orElseThrow(() -> new EmailDoesntExistException(email));
-        if (!passwordEncoder.matches(password, loginEntry.getPassword())) {
-            throw new LoginDoesntMatchException(null);
-        }
-        return loginEntry;
-    }
-
-    public String buildJwtRefreshToken(String email, String password) throws EmailDoesntExistException, LoginDoesntMatchException {
-        LoginEntry loginEntry = checkLogin(email, password);
-        return jwtService.buildRefreshToken(loginEntry);
-    }
-
-    public UserEntity addUserToLogin(String email, UserEntity user) throws EmailDoesntExistException {
-        if (!loginEntryRepository.existsById(email)) {
-            throw new EmailDoesntExistException(email);
-        }
-        LoginEntry loginEntry = loginEntryRepository.getReferenceById(email);
-        loginEntry.addUser(user);
-        loginEntryRepository.save(loginEntry);
-        return loginEntry.getUsers().getLast();
-    }
-
-
+  public LoginEntry getLoginEntry(String userEmail) throws EmailDoesntExistException {
+    return loginEntryRepository.findById(userEmail).orElseThrow(() -> new EmailDoesntExistException(userEmail));
+  }
 }

@@ -69,7 +69,7 @@ public class AuthorizationController {
     @GetMapping("/token")
     public ResponseEntity<String> getToken(@CookieValue(name = "refreshToken") String refreshToken) throws JwtTokenInvalidException, EmailDoesntExistException {
         String userEmail = jwtService.getUserEmailFromRefreshToken(refreshToken);
-        LoginEntry loginEntry = loginEntryService.getByEmail(userEmail).orElseThrow(() -> new EmailDoesntExistException(userEmail));
+        LoginEntry loginEntry = loginEntryService.getLoginEntry(userEmail);
         String identityToken = jwtService.buildIdentityToken(loginEntry);
         return ResponseEntity.ok(identityToken);
     }
