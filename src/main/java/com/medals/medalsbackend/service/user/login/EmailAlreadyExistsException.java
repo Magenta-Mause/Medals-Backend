@@ -1,6 +1,6 @@
 package com.medals.medalsbackend.service.user.login;
 
-import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
+import com.medals.medalsbackend.exception.GenericAPIRequestException;
 import org.springframework.http.HttpStatus;
 
 public class EmailAlreadyExistsException extends GenericAPIRequestException {

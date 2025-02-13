@@ -29,3 +29,4 @@ app:
     author: "noreply@medals.com"
   otc:
     set-password-token-validity-duration: 604800000 # 1 week
+    reset-password-token-validity-duration: 3600000 # 1 hour

@@ -1,6 +1,7 @@
-package com.medals.medalsbackend.exceptions;
+package com.medals.medalsbackend.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,7 +35,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(MissingRequestCookieException.class)
     public ResponseEntity<String> handleMissingCookieException(MissingRequestCookieException e, WebRequest request) {
-        return ResponseEntity.badRequest().body("Missing Cookie '" + e.getCookieName() + "'");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing Cookie '" + e.getCookieName() + "'");
     }
 
     @ExceptionHandler(GenericAPIRequestException.class)
