@@ -26,7 +26,7 @@ public class AthleteController {
     private final ObjectMapper objectMapper;
 
     @GetMapping
-    public ResponseEntity<AthleteDto[]> getAthlete() {
+    public ResponseEntity<AthleteDto[]> getAthletes() {
         return ResponseEntity.ok(Arrays.stream(athleteService.getAthletes()).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
     }
 
