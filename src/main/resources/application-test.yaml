@@ -9,8 +9,5 @@ app:
   email:
     url: "https://google.com" # supply with email api endpoint
     author: "noreply@medals.com"
-    templates:
-      set-password-notification: "template_account_created.html"
-      invite-trainer: "template_trainer_invitation.html"
   otc:
     set-password-token-validity-duration: 604800000 # 1 week
