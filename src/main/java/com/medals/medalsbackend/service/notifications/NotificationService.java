@@ -1,7 +1,7 @@
 package com.medals.medalsbackend.service.notifications;
 
 import com.medals.medalsbackend.service.notifications.mail.MailService;
-import com.medals.medalsbackend.service.notifications.mail.templates.MailTemplateService;
+import com.medals.medalsbackend.service.notifications.mail.MailTemplateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

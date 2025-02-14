@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.service.onetimecode;
 
+import com.medals.medalsbackend.config.OneTimeCodeConfiguration;
 import com.medals.medalsbackend.entity.onetimecode.OneTimeCode;
 import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.exception.InternalException;

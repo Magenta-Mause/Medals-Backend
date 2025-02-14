@@ -6,7 +6,7 @@ import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredExceptio
 import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
-import com.medals.medalsbackend.service.onetimecode.OneTimeCodeConfiguration;
+import com.medals.medalsbackend.config.OneTimeCodeConfiguration;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

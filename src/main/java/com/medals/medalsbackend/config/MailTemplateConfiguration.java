@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.service.notifications.mail.templates;
+package com.medals.medalsbackend.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

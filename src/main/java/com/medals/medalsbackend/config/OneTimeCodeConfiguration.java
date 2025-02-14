@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.service.onetimecode;
+package com.medals.medalsbackend.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

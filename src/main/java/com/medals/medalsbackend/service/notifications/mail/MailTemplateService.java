@@ -1,17 +1,12 @@
-package com.medals.medalsbackend.service.notifications.mail.templates;
+package com.medals.medalsbackend.service.notifications.mail;
 
+import com.medals.medalsbackend.config.MailTemplateConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @Slf4j
 @RequiredArgsConstructor
