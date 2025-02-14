@@ -80,10 +80,7 @@ public class LoginEntryService {
   }
 
   public UserEntity addUserToLogin(String email, UserEntity user) throws EmailDoesntExistException {
-    if (!loginEntryRepository.existsById(email)) {
-      throw new EmailDoesntExistException(email);
-    }
-    LoginEntry loginEntry = loginEntryRepository.findById(email).get();
+    LoginEntry loginEntry = loginEntryRepository.findById(email).orElseThrow(() -> new EmailDoesntExistException(email));
     loginEntry.addUser(user);
     loginEntryRepository.save(loginEntry);
     return loginEntry.getUsers().getLast();
