@@ -49,7 +49,7 @@ public class OneTimeCodeService {
         try {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.SET_PASSWORD, email, oneTimeCodeConfiguration.setPasswordTokenValidityDuration());
             switch (reason) {
-                case ACCOUNT_CREATED -> notificationService.sendSetPasswordNotification(email, oneTimeCode.oneTimeCode);
+                case ACCOUNT_CREATED -> notificationService.sendCreateAccountNotification(email, oneTimeCode.oneTimeCode);
                 case ACCOUNT_INVITED -> notificationService.sendInviteTrainerNotification(email, oneTimeCode.oneTimeCode);
             }
             return oneTimeCode;
