@@ -6,6 +6,7 @@ import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.service.user.TrainerService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,7 @@ public class TrainerServiceTest {
     Trainer resultAthlete = (Trainer) trainerService.insertTrainer(trainer);
 
     Assertions.assertThat(resultAthlete).isNotNull();
+    Assertions.assertThat(resultAthlete.getId()).isNotNull();
     Assertions.assertThat(resultAthlete.getEmail()).isEqualTo("john@doe.com");
     Assertions.assertThat(resultAthlete.getFirstName()).isEqualTo("John");
     Assertions.assertThat(resultAthlete.getLastName()).isEqualTo("Doe");

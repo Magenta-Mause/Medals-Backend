@@ -42,7 +42,7 @@ public class OneTimeCodeServiceTest {
 
         ArgumentCaptor<OneTimeCode> oneTimeCodeArgumentCaptor = ArgumentCaptor.forClass(OneTimeCode.class);
         verify(oneTimeCodeRepository, times(1)).save(oneTimeCodeArgumentCaptor.capture());
-        verify(notificationService, times(1)).sendSetPasswordNotification(eq("email"), any());
+        verify(notificationService, times(1)).sendCreateAccountNotification(eq("email"), any());
         assertEquals("email", oneTimeCodeArgumentCaptor.getValue().authorizedEmail);
         assertEquals(OneTimeCodeType.SET_PASSWORD, oneTimeCodeArgumentCaptor.getValue().type);
         assertTrue(System.currentTimeMillis() <= oneTimeCodeArgumentCaptor.getValue().expiresAt && oneTimeCodeArgumentCaptor.getValue().expiresAt <= System.currentTimeMillis() + 100L);
