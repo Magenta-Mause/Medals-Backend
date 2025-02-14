@@ -3,7 +3,7 @@ package com.medals.medalsbackend.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.service.user.TrainerService;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,10 +32,10 @@ public class TrainerControllerTest {
   @Autowired
   private TrainerService trainerService;
 
-  private TrainerDto testTrainer;
+  private static TrainerDto testTrainer;
 
-  @BeforeEach
-  public void setup() {
+  @BeforeAll
+  public static void setup() {
     testTrainer = TrainerDto.builder()
             .id(1L)
             .firstName("John")
