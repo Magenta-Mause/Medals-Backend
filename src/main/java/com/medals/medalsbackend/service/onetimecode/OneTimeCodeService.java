@@ -1,10 +1,10 @@
 package com.medals.medalsbackend.service.onetimecode;
 
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCode;
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCode;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import jakarta.transaction.Transactional;
