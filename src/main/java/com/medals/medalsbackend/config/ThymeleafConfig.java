@@ -18,7 +18,7 @@ public class ThymeleafConfig {
     @Bean
     public ClassLoaderTemplateResolver templateResolver() {
         ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
-        resolver.setPrefix("web_templates/");
+        resolver.setPrefix("email_templates/");
         resolver.setSuffix(".html");
         resolver.setTemplateMode("HTML");
         resolver.setCharacterEncoding("UTF-8");
