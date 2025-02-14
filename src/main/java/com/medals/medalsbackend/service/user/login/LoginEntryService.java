@@ -9,8 +9,8 @@ import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundExcepti
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
-import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
-import com.medals.medalsbackend.service.util.OneTimeCodeService;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

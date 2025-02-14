@@ -9,7 +9,7 @@ import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.service.user.login.EmailAlreadyExistsException;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
-import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

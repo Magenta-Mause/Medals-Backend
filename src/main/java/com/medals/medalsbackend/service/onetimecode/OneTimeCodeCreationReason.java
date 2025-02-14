@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.service.util;
+package com.medals.medalsbackend.service.onetimecode;
 
 public enum OneTimeCodeCreationReason {
     ACCOUNT_CREATED,

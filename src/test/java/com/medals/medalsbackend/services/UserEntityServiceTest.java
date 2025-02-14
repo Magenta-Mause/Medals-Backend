@@ -3,7 +3,7 @@ package com.medals.medalsbackend.services;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.service.user.UserEntityService;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
-import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

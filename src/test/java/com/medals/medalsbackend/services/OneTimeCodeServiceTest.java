@@ -6,9 +6,8 @@ import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredExceptio
 import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
-import com.medals.medalsbackend.service.util.OneTimeCodeConfiguration;
-import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
-import com.medals.medalsbackend.service.util.OneTimeCodeService;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeConfiguration;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
