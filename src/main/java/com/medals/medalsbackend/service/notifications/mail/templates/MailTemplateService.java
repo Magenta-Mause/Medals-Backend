@@ -23,19 +23,19 @@ public class MailTemplateService {
 
     public String generateSetPasswordNotification(String email, String link) {
         Context context = new Context();
-        context.setVariable("otpLink", link);
+        context.setVariable("otcLink", link);
         return templateEngine.process(configuration.getSetPasswordNotification(), context);
     }
 
     public String generateInviteTrainerNotification(String email, String link) {
         Context context = new Context();
-        context.setVariable("otpLink", link);
+        context.setVariable("otcLink", link);
         return templateEngine.process(configuration.getInviteTrainerNotification(), context);
     }
 
     public String generatePasswordResetNotification(String email, String link) {
         Context context = new Context();
-        context.setVariable("otpLink", link);
+        context.setVariable("otcLink", link);
         return templateEngine.process(configuration.getResetPasswordNotification(), context);
     }
 
