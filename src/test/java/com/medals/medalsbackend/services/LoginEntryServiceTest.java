@@ -113,7 +113,6 @@ public class LoginEntryServiceTest {
   @Test
   @SneakyThrows
   public void testAddUserToLoginEntry() {
-    when(loginEntryRepository.existsById("test@gmail.com")).thenReturn(true);
     when(loginEntryRepository.findById("test@gmail.com")).thenReturn(Optional.of(LoginEntry.builder().email("test@gmail.com").users(new ArrayList<>()).build()));
     loginEntryService.addUserToLogin("test@gmail.com", Admin.builder().email("test@gmail.com").firstName("AdminFirstName").lastName("AdminLastName").build());
     ArgumentCaptor<LoginEntry> loginEntryArgumentCaptor = ArgumentCaptor.forClass(LoginEntry.class);
@@ -128,7 +127,6 @@ public class LoginEntryServiceTest {
 
   @Test
   public void testAddUserToLoginEmailDoesntExistException() {
-    when(loginEntryRepository.existsById("test@gmail.com")).thenReturn(false);
     assertThrows(EmailDoesntExistException.class, () -> loginEntryService.addUserToLogin("test@gmail.com", Athlete.builder().build()));
   }
 
