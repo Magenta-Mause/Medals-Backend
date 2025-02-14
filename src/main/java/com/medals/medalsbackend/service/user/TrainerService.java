@@ -8,6 +8,7 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.service.util.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.service.util.websockets.TrainerWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,7 @@ public class TrainerService {
     private final ObjectMapper objectMapper;
     private final UserEntityService userEntityService;
     private final Environment environment;
+    private final TrainerWebsocketMessageService trainerWebsocketMessageService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
 
@@ -56,7 +58,7 @@ public class TrainerService {
         trainerDto.setId(null);
         Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED);
         log.info("Inserting Trainer: {}", trainer);
-        // TODO: Maybe send websocket message here also?
+        trainerWebsocketMessageService.sendTrainerCreation(objectMapper.convertValue(trainer, TrainerDto.class));
         return trainer;
     }
 
@@ -69,7 +71,7 @@ public class TrainerService {
         if (!userEntityService.existsById(trainerId)) {
             throw TrainerNotFoundException.fromTrainerId(trainerId);
         }
-        // TODO: Maybe send websocket message here also?
+        trainerWebsocketMessageService.sendTrainerDelete(trainerId);
         userEntityService.deleteById(trainerId);
     }
 
@@ -86,6 +88,6 @@ public class TrainerService {
         log.info("Updating trainer with ID: {}", trainerId);
         trainerDto.setId(trainerId);
         Trainer savedTrainer = (Trainer) userEntityService.update(objectMapper.convertValue(trainerDto, Trainer.class));
-        // TODO: Maybe send websocket message here also?
+        trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
     }
 }
