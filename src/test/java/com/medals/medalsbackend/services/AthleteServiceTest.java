@@ -1,4 +1,4 @@
-package com.medals.medalsbackend;
+package com.medals.medalsbackend.services;
 
 import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.users.Athlete;

@@ -6,8 +6,8 @@ import org.hibernate.validator.constraints.Length;
 
 @Data
 @Builder
-public class SetPasswordDto {
-  private String oneTimeCode;
-  @Length(min=8)
-  private String password;
+public class ResetPasswordDto {
+    public String token;
+    @Length(min = 8)
+    public String password;
 }

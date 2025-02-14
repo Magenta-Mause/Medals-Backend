@@ -10,6 +10,7 @@ cors:
     - http://localhost:5173
     - http://192.168.178.21:5173
     - http://localhost:3000
+    - http://stratsync.com
 app:
   dummies:
     enabled: true
@@ -29,5 +30,8 @@ app:
     templates:
       set-password-notification: "template_account_created"
       invite-trainer-notification: "template_trainer_invitation"
+      reset-password-notification: "template_reset_password"
+      password-reset-notification: "template_password_reset"
   otc:
     set-password-token-validity-duration: 604800000 # 1 week
+    reset-password-token-validity-duration: 3600000 # 1 hour

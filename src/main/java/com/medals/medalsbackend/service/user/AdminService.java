@@ -1,7 +1,7 @@
 package com.medals.medalsbackend.service.user;
 
 import com.medals.medalsbackend.entity.users.Admin;
-import com.medals.medalsbackend.exceptions.InternalException;
+import com.medals.medalsbackend.exception.InternalException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

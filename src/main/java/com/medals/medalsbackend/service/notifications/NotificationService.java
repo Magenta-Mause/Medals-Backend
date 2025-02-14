@@ -17,27 +17,37 @@ public class NotificationService {
     private final MailTemplateService templateService;
 
     public void sendSetPasswordNotification(String email, String oneTimeCode, OneTimeCodeCreationReason reason) {
-      switch (reason) {
-        case ACCOUNT_CREATED -> sendCreateAccountNotification(email, oneTimeCode);
-        case ACCOUNT_INVITED -> sendInviteTrainerNotification(email, oneTimeCode);
-        default -> log.warn("Invalid OneTimeCodeCreationReason supplied: " + reason);
-      }
+        switch (reason) {
+            case ACCOUNT_CREATED -> sendCreateAccountNotification(email, oneTimeCode);
+            case ACCOUNT_INVITED -> sendInviteTrainerNotification(email, oneTimeCode);
+            case ACCOUNT_RESET_PASSWORD -> sendResetPasswordNotification(email, oneTimeCode);
+            default -> log.warn("Invalid OneTimeCodeCreationReason supplied: " + reason);
+        }
     }
 
-  public void sendSetPasswordNotification(String email, String oneTimeCode) {
-    sendSetPasswordNotification(email, oneTimeCode, OneTimeCodeCreationReason.ACCOUNT_CREATED);
-  }
+    public void sendSetPasswordNotification(String email, String oneTimeCode) {
+        sendSetPasswordNotification(email, oneTimeCode, OneTimeCodeCreationReason.ACCOUNT_CREATED);
+    }
+
+    public void sendResetPasswordNotification(String email, String oneTimeCode) {
+        String link = "http://localhost:5173/resetPassword?oneTimeCode=" + oneTimeCode;
+        String text = templateService.generatePasswordResetNotification(email, link);
+        mailService.sendEmail(email, "Medals - Reset Password", text);
+    }
 
     public void sendCreateAccountNotification(String email, String oneTimeCode) {
-      String link = "http://localhost:5173/setPassword?oneTimeCode=" + oneTimeCode;
+        String link = "http://localhost:5173/setPassword?oneTimeCode=" + oneTimeCode;
         String text = templateService.generateSetPasswordNotification(email, link);
         mailService.sendEmail(email, "Medals - Account Creation", text);
     }
 
     public void sendInviteTrainerNotification(String email, String oneTimeCode) {
-
         String link = "http://localhost:5173/setPassword?oneTimeCode=" + oneTimeCode;
         String text = templateService.generateInviteTrainerNotification(email, link);
         mailService.sendEmail(email, "Medals - Trainer Creation", text);
+    }
+
+    public void sendPasswordResetNotification(String email) {
+        String text = templateService.generatePasswordResetNotification(email);
     }
 }

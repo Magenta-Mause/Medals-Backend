@@ -1,6 +1,6 @@
-package com.medals.medalsbackend.exceptions.oneTimeCode;
+package com.medals.medalsbackend.exception.oneTimeCode;
 
-import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
+import com.medals.medalsbackend.exception.GenericAPIRequestException;
 import org.springframework.http.HttpStatus;
 
 public class OneTimeCodeExpiredException extends GenericAPIRequestException {

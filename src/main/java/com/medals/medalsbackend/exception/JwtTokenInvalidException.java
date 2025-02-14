@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.exceptions;
+package com.medals.medalsbackend.exception;
 
 import org.springframework.http.HttpStatus;
 

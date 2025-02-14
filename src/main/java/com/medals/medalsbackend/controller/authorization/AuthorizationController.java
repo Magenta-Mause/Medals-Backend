@@ -1,14 +1,14 @@
 package com.medals.medalsbackend.controller.authorization;
 
+import com.medals.medalsbackend.dto.authorization.ResetPasswordDto;
 import com.medals.medalsbackend.dto.authorization.SetPasswordDto;
-import com.medals.medalsbackend.dto.authorization.UserLoginDto;
+import com.medals.medalsbackend.dto.authorization.LoginUserDto;
 import com.medals.medalsbackend.entity.users.LoginEntry;
-import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
-import com.medals.medalsbackend.exceptions.JwtTokenInvalidException;
-import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeExpiredException;
-import com.medals.medalsbackend.exceptions.oneTimeCode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.exception.GenericAPIRequestException;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
+import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
-import com.medals.medalsbackend.service.user.UserEntityService;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginDoesntMatchException;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
@@ -31,12 +31,11 @@ public class AuthorizationController {
     private final LoginEntryService loginEntryService;
     private final JwtService jwtService;
     private final JwtUtils jwtUtils;
-    private final UserEntityService userEntityService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) throws GenericAPIRequestException {
+    public ResponseEntity<String> login(@RequestBody LoginUserDto loginUserDto) throws GenericAPIRequestException {
         try {
-            String jwtRefreshToken = loginEntryService.buildJwtRefreshToken(userLoginDto.getEmail(), userLoginDto.getPassword());
+            String jwtRefreshToken = loginEntryService.buildJwtRefreshToken(loginUserDto.getEmail(), loginUserDto.getPassword());
             ResponseCookie responseCookie = ResponseCookie.from("refreshToken", jwtRefreshToken)
                     .httpOnly(true)
                     .secure(false)
@@ -70,7 +69,7 @@ public class AuthorizationController {
     @GetMapping("/token")
     public ResponseEntity<String> getToken(@CookieValue(name = "refreshToken") String refreshToken) throws JwtTokenInvalidException, EmailDoesntExistException {
         String userEmail = jwtService.getUserEmailFromRefreshToken(refreshToken);
-        LoginEntry loginEntry = loginEntryService.getByEmail(userEmail).orElseThrow(() -> new EmailDoesntExistException(userEmail));
+        LoginEntry loginEntry = loginEntryService.getLoginEntry(userEmail);
         String identityToken = jwtService.buildIdentityToken(loginEntry);
         return ResponseEntity.ok(identityToken);
     }
@@ -78,6 +77,18 @@ public class AuthorizationController {
     @PostMapping("/setPassword")
     public ResponseEntity<String> setPassword(@Valid @RequestBody SetPasswordDto setPasswordDto) throws OneTimeCodeExpiredException, OneTimeCodeNotFoundException {
         loginEntryService.setPassword(setPasswordDto.getOneTimeCode(), setPasswordDto.getPassword());
+        return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/resetPassword/{email}")
+    public ResponseEntity<String> startResetPasswordFlow(@PathVariable String email) throws EmailDoesntExistException {
+        loginEntryService.initiateResetPasswordRequest(email);
+        return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) throws OneTimeCodeExpiredException, OneTimeCodeNotFoundException {
+        loginEntryService.resetPassword(resetPasswordDto.getPassword(), resetPasswordDto.getToken());
         return ResponseEntity.ok("Success");
     }
 }

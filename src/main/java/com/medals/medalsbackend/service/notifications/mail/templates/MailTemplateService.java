@@ -32,4 +32,15 @@ public class MailTemplateService {
         context.setVariable("otpLink", link);
         return templateEngine.process(configuration.getInviteTrainerNotification(), context);
     }
+
+    public String generatePasswordResetNotification(String email, String link) {
+        Context context = new Context();
+        context.setVariable("otpLink", link);
+        return templateEngine.process(configuration.getResetPasswordNotification(), context);
+    }
+
+    public String generatePasswordResetNotification(String email) {
+        Context context = new Context();
+        return templateEngine.process(configuration.getPasswordResetNotification(), context);
+    }
 }

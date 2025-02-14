@@ -2,8 +2,8 @@ package com.medals.medalsbackend.controller.trainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.TrainerDto;
-import com.medals.medalsbackend.exceptions.InternalException;
-import com.medals.medalsbackend.exceptions.TrainerNotFoundException;
+import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.service.user.TrainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

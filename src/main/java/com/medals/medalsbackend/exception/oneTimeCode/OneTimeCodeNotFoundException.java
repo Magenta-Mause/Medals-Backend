@@ -1,8 +1,7 @@
-package com.medals.medalsbackend.exceptions.oneTimeCode;
+package com.medals.medalsbackend.exception.oneTimeCode;
 
-import com.medals.medalsbackend.exceptions.GenericAPIRequestException;
+import com.medals.medalsbackend.exception.GenericAPIRequestException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 public class OneTimeCodeNotFoundException extends GenericAPIRequestException {
   public OneTimeCodeNotFoundException() {
