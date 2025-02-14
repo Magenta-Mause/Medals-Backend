@@ -1,4 +1,4 @@
-package com.medals.medalsbackend;
+package com.medals.medalsbackend.services;
 
 import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
@@ -28,17 +28,14 @@ public class TrainerServiceTest {
   @SneakyThrows
   @Test
   public void testTrainerCreation() {
-    // Prepare
     TrainerDto trainer = TrainerDto.builder()
       .firstName("John")
       .lastName("Doe")
       .email("john@doe.com")
       .build();
 
-    // Act
     Trainer resultAthlete = (Trainer) trainerService.insertTrainer(trainer);
 
-    // Assert
     Assertions.assertThat(resultAthlete).isNotNull();
     Assertions.assertThat(resultAthlete.getEmail()).isEqualTo("john@doe.com");
     Assertions.assertThat(resultAthlete.getFirstName()).isEqualTo("John");
