@@ -38,10 +38,6 @@ public class LoginEntryService {
     loginEntryRepository.save(loginEntry);
   }
 
-  public void createLoginEntry(String email) throws EmailAlreadyExistsException, InternalException {
-    createLoginEntry(email, OneTimeCodeCreationReason.ACCOUNT_CREATED);
-  }
-
   public void initiateResetPasswordRequest(String email) throws EmailDoesntExistException {
     if (!loginEntryRepository.existsById(email)) {
       throw new EmailDoesntExistException(email);
