@@ -59,10 +59,6 @@ public class OneTimeCodeService {
         }
     }
 
-    public OneTimeCode createSetPasswordToken(String email) {
-        return createSetPasswordToken(email, OneTimeCodeCreationReason.ACCOUNT_CREATED);
-    }
-
     public OneTimeCode createResetPasswordToken(String email) {
         try {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.RESET_PASSWORD, email, oneTimeCodeConfiguration.resetPasswordTokenValidityDuration());

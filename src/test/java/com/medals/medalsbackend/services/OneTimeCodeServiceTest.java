@@ -7,6 +7,7 @@ import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundExcepti
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.config.OneTimeCodeConfiguration;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ public class OneTimeCodeServiceTest {
     @SneakyThrows
     public void testSetPasswordToken() {
         when(oneTimeCodeConfiguration.setPasswordTokenValidityDuration()).thenReturn(100L);
-        oneTimeCodeService.createSetPasswordToken("email");
+        oneTimeCodeService.createSetPasswordToken("email", OneTimeCodeCreationReason.ACCOUNT_CREATED);
 
         ArgumentCaptor<OneTimeCode> oneTimeCodeArgumentCaptor = ArgumentCaptor.forClass(OneTimeCode.class);
         verify(oneTimeCodeRepository, times(1)).save(oneTimeCodeArgumentCaptor.capture());
