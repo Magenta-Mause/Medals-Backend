@@ -1,13 +1,14 @@
 package com.medals.medalsbackend.services;
 
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCode;
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCode;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
-import com.medals.medalsbackend.service.util.OneTimeCodeConfiguration;
-import com.medals.medalsbackend.service.util.OneTimeCodeService;
+import com.medals.medalsbackend.config.OneTimeCodeConfiguration;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,11 +38,11 @@ public class OneTimeCodeServiceTest {
     @SneakyThrows
     public void testSetPasswordToken() {
         when(oneTimeCodeConfiguration.setPasswordTokenValidityDuration()).thenReturn(100L);
-        oneTimeCodeService.createSetPasswordToken("email");
+        oneTimeCodeService.createSetPasswordToken("email", OneTimeCodeCreationReason.ACCOUNT_CREATED);
 
         ArgumentCaptor<OneTimeCode> oneTimeCodeArgumentCaptor = ArgumentCaptor.forClass(OneTimeCode.class);
         verify(oneTimeCodeRepository, times(1)).save(oneTimeCodeArgumentCaptor.capture());
-        verify(notificationService, times(1)).sendSetPasswordNotification(eq("email"), any());
+        verify(notificationService, times(1)).sendCreateAccountNotification(eq("email"), any());
         assertEquals("email", oneTimeCodeArgumentCaptor.getValue().authorizedEmail);
         assertEquals(OneTimeCodeType.SET_PASSWORD, oneTimeCodeArgumentCaptor.getValue().type);
         assertTrue(System.currentTimeMillis() <= oneTimeCodeArgumentCaptor.getValue().expiresAt && oneTimeCodeArgumentCaptor.getValue().expiresAt <= System.currentTimeMillis() + 100L);

@@ -2,14 +2,15 @@ package com.medals.medalsbackend.service.user.login;
 
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.UserEntity;
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
-import com.medals.medalsbackend.service.util.OneTimeCodeService;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class LoginEntryService {
   private final OneTimeCodeService oneTimeCodeService;
   private final NotificationService notificationService;
 
-  public void createLoginEntry(String email) throws EmailAlreadyExistsException, InternalException {
+  public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException, InternalException {
     if (loginEntryRepository.existsById(email)) {
       throw new EmailAlreadyExistsException(email);
     }
@@ -33,7 +34,7 @@ public class LoginEntryService {
       .password(null)
       .build();
 
-    oneTimeCodeService.createSetPasswordToken(email);
+    oneTimeCodeService.createSetPasswordToken(email, reason);
     loginEntryRepository.save(loginEntry);
   }
 
@@ -75,10 +76,7 @@ public class LoginEntryService {
   }
 
   public UserEntity addUserToLogin(String email, UserEntity user) throws EmailDoesntExistException {
-    if (!loginEntryRepository.existsById(email)) {
-      throw new EmailDoesntExistException(email);
-    }
-    LoginEntry loginEntry = loginEntryRepository.findById(email).get();
+    LoginEntry loginEntry = loginEntryRepository.findById(email).orElseThrow(() -> new EmailDoesntExistException(email));
     loginEntry.addUser(user);
     loginEntryRepository.save(loginEntry);
     return loginEntry.getUsers().getLast();

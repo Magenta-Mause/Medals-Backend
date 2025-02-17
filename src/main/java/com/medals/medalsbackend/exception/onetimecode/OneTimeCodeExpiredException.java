@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.exception.oneTimeCode;
+package com.medals.medalsbackend.exception.onetimecode;
 
 import com.medals.medalsbackend.exception.GenericAPIRequestException;
 import org.springframework.http.HttpStatus;

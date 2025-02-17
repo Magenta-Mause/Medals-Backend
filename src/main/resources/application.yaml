@@ -3,23 +3,23 @@ spring:
     name: Medals-Backend
   profiles:
     default: local
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration
 cors:
   allowedOrigins:
     - http://localhost:5173
     - http://192.168.178.21:5173
     - http://localhost:3000
+    - http://stratsync.com
 app:
   dummies:
     enabled: true
   admin:
     enabled: true
     admins:
-      - email: "jabbekeipert@gmail.com"
-        first-name: "Janne"
-        last-name: "Keipert"
-      - email: "keipertjanne@gmail.com"
-        first-name: "Janne Wanja"
-        last-name: "Keipert"
+      - email: "example@example.org"
+        first-name: "Mighty"
+        last-name: "God"
   security:
     identity-token-expiration-time: 3600000 # 1 hour
     refresh-token-expiration-time: 2678400000 # 1 month
@@ -27,6 +27,11 @@ app:
   email:
     url: "https://google.com" # supply with email api endpoint
     author: "noreply@medals.com"
+    templates:
+      set-password-notification: "template_account_created"
+      invite-trainer-notification: "template_trainer_invitation"
+      reset-password-notification: "template_reset_password"
+      password-reset-notification: "template_password_reset"
   otc:
     set-password-token-validity-duration: 604800000 # 1 week
     reset-password-token-validity-duration: 3600000 # 1 hour

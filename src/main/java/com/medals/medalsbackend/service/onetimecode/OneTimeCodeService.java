@@ -1,10 +1,11 @@
-package com.medals.medalsbackend.service.util;
+package com.medals.medalsbackend.service.onetimecode;
 
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCode;
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
+import com.medals.medalsbackend.config.OneTimeCodeConfiguration;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCode;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import jakarta.transaction.Transactional;
@@ -44,10 +45,14 @@ public class OneTimeCodeService {
         throw new InternalException("Couldnt generate one time code");
     }
 
-    public OneTimeCode createSetPasswordToken(String email) {
+
+    public OneTimeCode createSetPasswordToken(String email, OneTimeCodeCreationReason reason) {
         try {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.SET_PASSWORD, email, oneTimeCodeConfiguration.setPasswordTokenValidityDuration());
-            notificationService.sendSetPasswordNotification(email, oneTimeCode.oneTimeCode);
+            switch (reason) {
+                case ACCOUNT_CREATED -> notificationService.sendCreateAccountNotification(email, oneTimeCode.oneTimeCode);
+                case ACCOUNT_INVITED -> notificationService.sendInviteTrainerNotification(email, oneTimeCode.oneTimeCode);
+            }
             return oneTimeCode;
         } catch (InternalException e) {
             throw new RuntimeException(e);

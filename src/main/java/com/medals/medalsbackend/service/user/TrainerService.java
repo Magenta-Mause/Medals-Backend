@@ -1,8 +1,14 @@
 package com.medals.medalsbackend.service.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
+import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.entity.users.Trainer;
+import com.medals.medalsbackend.entity.users.UserEntity;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.service.websockets.TrainerWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +25,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainerService {
 
+    private final ObjectMapper objectMapper;
     private final UserEntityService userEntityService;
     private final Environment environment;
+    private final TrainerWebsocketMessageService trainerWebsocketMessageService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
 
@@ -46,7 +54,40 @@ public class TrainerService {
         return trainer;
     }
 
+    public UserEntity insertTrainer(TrainerDto trainerDto) throws InternalException {
+        trainerDto.setId(null);
+        Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED);
+        log.info("Inserting Trainer: {}", trainer);
+        trainerWebsocketMessageService.sendTrainerCreation(objectMapper.convertValue(trainer, TrainerDto.class));
+        return trainer;
+    }
+
     public List<Trainer> getAllTrainers() {
         return userEntityService.getAllTrainers();
+    }
+
+    public void deleteTrainer(Long trainerId) throws TrainerNotFoundException {
+        log.info("Executing delete trainer by id {}", trainerId);
+        if (!userEntityService.existsById(trainerId)) {
+            throw TrainerNotFoundException.fromTrainerId(trainerId);
+        }
+        trainerWebsocketMessageService.sendTrainerDelete(trainerId);
+        userEntityService.deleteById(trainerId);
+    }
+
+    public Trainer getTrainer(Long trainerId) throws TrainerNotFoundException {
+        log.info("Executing get trainer by id {}", trainerId);
+        try {
+            return (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
+        } catch (Exception e) {
+            throw TrainerNotFoundException.fromTrainerId(trainerId);
+        }
+    }
+
+    public void updateTrainer(Long trainerId, TrainerDto trainerDto) {
+        log.info("Updating trainer with ID: {}", trainerId);
+        trainerDto.setId(trainerId);
+        Trainer savedTrainer = (Trainer) userEntityService.update(objectMapper.convertValue(trainerDto, Trainer.class));
+        trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
     }
 }

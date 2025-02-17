@@ -4,14 +4,15 @@ import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.UserEntity;
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginDoesntMatchException;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
-import com.medals.medalsbackend.service.util.OneTimeCodeService;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +52,7 @@ public class LoginEntryServiceTest {
   public void testPasswordReset() {
     when(oneTimeCodeService.getEmailFromOneTimeCode(eq("test"), eq(OneTimeCodeType.SET_PASSWORD))).thenReturn("admin@example.org");
     when(loginEntryRepository.findById(eq("admin@example.org"))).thenReturn(Optional.of(LoginEntry.builder().email("admin@example.org").password("oldPassword").build()));
-    loginEntryService.createLoginEntry("admin@example.org");
+    loginEntryService.createLoginEntry("admin@example.org", OneTimeCodeCreationReason.ACCOUNT_CREATED);
     loginEntryService.setPassword("test", "newPassword");
 
     ArgumentCaptor<LoginEntry> loginEntryArgumentCaptor = ArgumentCaptor.forClass(LoginEntry.class);
@@ -63,8 +64,8 @@ public class LoginEntryServiceTest {
   @SneakyThrows
   public void testLoginEntryCreationTriggersEmailSending() {
     when(loginEntryRepository.existsById(any())).thenReturn(false);
-    loginEntryService.createLoginEntry("test@gmail.com");
-    verify(oneTimeCodeService, times(1)).createSetPasswordToken(eq("test@gmail.com"));
+    loginEntryService.createLoginEntry("test@gmail.com", OneTimeCodeCreationReason.ACCOUNT_CREATED);
+    verify(oneTimeCodeService, times(1)).createSetPasswordToken(eq("test@gmail.com"), eq(OneTimeCodeCreationReason.ACCOUNT_CREATED));
   }
 
   @Test
@@ -112,7 +113,6 @@ public class LoginEntryServiceTest {
   @Test
   @SneakyThrows
   public void testAddUserToLoginEntry() {
-    when(loginEntryRepository.existsById("test@gmail.com")).thenReturn(true);
     when(loginEntryRepository.findById("test@gmail.com")).thenReturn(Optional.of(LoginEntry.builder().email("test@gmail.com").users(new ArrayList<>()).build()));
     loginEntryService.addUserToLogin("test@gmail.com", Admin.builder().email("test@gmail.com").firstName("AdminFirstName").lastName("AdminLastName").build());
     ArgumentCaptor<LoginEntry> loginEntryArgumentCaptor = ArgumentCaptor.forClass(LoginEntry.class);
@@ -127,7 +127,6 @@ public class LoginEntryServiceTest {
 
   @Test
   public void testAddUserToLoginEmailDoesntExistException() {
-    when(loginEntryRepository.existsById("test@gmail.com")).thenReturn(false);
     assertThrows(EmailDoesntExistException.class, () -> loginEntryService.addUserToLogin("test@gmail.com", Athlete.builder().build()));
   }
 
