@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.entity.util.oneTimeCodes;
+package com.medals.medalsbackend.entity.util.onetimecode;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

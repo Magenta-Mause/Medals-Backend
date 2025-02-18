@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.entity.util.oneTimeCodes;
+package com.medals.medalsbackend.entity.util.onetimecode;
 
 public enum OneTimeCodeType {
   SET_PASSWORD,

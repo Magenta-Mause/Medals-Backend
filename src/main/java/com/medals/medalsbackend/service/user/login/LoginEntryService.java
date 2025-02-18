@@ -2,10 +2,10 @@ package com.medals.medalsbackend.service.user.login;
 
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.UserEntity;
-import com.medals.medalsbackend.entity.util.oneTimeCodes.OneTimeCodeType;
+import com.medals.medalsbackend.entity.util.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeExpiredException;
-import com.medals.medalsbackend.exception.oneTimeCode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
+import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;

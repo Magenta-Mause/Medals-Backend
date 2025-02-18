@@ -2,10 +2,15 @@ package com.medals.medalsbackend;
 
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.medals.MedalType;
+import com.medals.medalsbackend.entity.performancerecording.Discipline;
+import com.medals.medalsbackend.entity.performancerecording.DisciplineCategory;
+import com.medals.medalsbackend.entity.performancerecording.DisciplineRatingMetric;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class DummyData {
@@ -29,9 +34,9 @@ public class DummyData {
     );
 
     public static final List<Athlete> ATHLETES = List.of(
-            Athlete.builder().email("paul@example.org").firstName("John").lastName("Reiter").birthdate(LocalDate.of(2003, 3, 7)).gender(Athlete.Gender.MALE).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.GOLD).medalSpeed(MedalType.SILVER).build()).build(),
-            Athlete.builder().email("paul@example.org").firstName("Jane").lastName("Reiter").birthdate(LocalDate.of(2004, 4, 10)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.GOLD).medalCollection(MedalCollection.builder().medalEndurance(MedalType.BRONZE).medalCoordination(MedalType.SILVER).medalStrength(MedalType.GOLD).medalSpeed(MedalType.BRONZE).build()).build(),
-            Athlete.builder().email("emily@example.org").firstName("Emily").lastName("Johnson").birthdate(LocalDate.of(2005, 5, 13)).gender(Athlete.Gender.DIVERSE).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build()
+            Athlete.builder().email("paul@example.org").firstName("John").lastName("Reiter").birthdate(LocalDate.of(2010, 3, 7)).gender(Athlete.Gender.MALE).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.GOLD).medalSpeed(MedalType.SILVER).build()).build(),
+            Athlete.builder().email("paul@example.org").firstName("Jane").lastName("Reiter").birthdate(LocalDate.of(2009, 4, 10)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.GOLD).medalCollection(MedalCollection.builder().medalEndurance(MedalType.BRONZE).medalCoordination(MedalType.SILVER).medalStrength(MedalType.GOLD).medalSpeed(MedalType.BRONZE).build()).build(),
+            Athlete.builder().email("emily@example.org").firstName("Emily").lastName("Johnson").birthdate(LocalDate.of(2008, 5, 13)).gender(Athlete.Gender.DIVERSE).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build()
             /* Athlete.builder().email("test@gmx.de").firstName("Sarah").lastName("Davis").birthdate(LocalDate.of(2002, 2, 14)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.GOLD).medalCollection(MedalCollection.builder().medalEndurance(MedalType.BRONZE).medalCoordination(MedalType.SILVER).medalStrength(MedalType.GOLD).medalSpeed(MedalType.SILVER).build()).build(),
             Athlete.builder().email("test@gmx.de").firstName("Chris").lastName("Taylor").birthdate(LocalDate.of(2003, 11, 3)).gender(Athlete.Gender.MALE).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build(),
             Athlete.builder().email("test@gmx.de").firstName("Jessica").lastName("Wilson").birthdate(LocalDate.of(1999, 6, 24)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.GOLD).medalStrength(MedalType.BRONZE).medalSpeed(MedalType.BRONZE).build()).build(),
@@ -56,7 +61,77 @@ public class DummyData {
             Athlete.builder().email("test@gmx.de").firstName("Sophia").lastName("Adams").birthdate(LocalDate.of(1998, 9, 30)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build(),
             Athlete.builder().email("test@gmx.de").firstName("William").lastName("Robinson").birthdate(LocalDate.of(2004, 12, 19)).gender(Athlete.Gender.MALE).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.GOLD).medalStrength(MedalType.BRONZE).medalSpeed(MedalType.SILVER).build()).build(),
             Athlete.builder().email("test@gmx.de").firstName("Isabella").lastName("Walker").birthdate(LocalDate.of(2001, 2, 10)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.GOLD).medalCollection(MedalCollection.builder().medalEndurance(MedalType.BRONZE).medalCoordination(MedalType.SILVER).medalStrength(MedalType.GOLD).medalSpeed(MedalType.BRONZE).build()).build(),
-            Athlete.builder().email("test@gmx.de").firstName("James").lastName("Young").birthdate(LocalDate.of(1997, 7, 8)).gender(Athlete.Gender.MALE).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build(),
-            Athlete.builder().email("test@gmx.de").firstName("Mia").lastName("Hall").birthdate(LocalDate.of(1996, 8, 3)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.GOLD).medalStrength(MedalType.BRONZE).medalSpeed(MedalType.SILVER).build()).build() */
+            Athlete.builder().email("test@gmx.de").firstName("James").lastName("Young").birthdate(LocalDate.of(1997, 7, 8)).gender(Athlete.Gender.MALE).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build(), Athlete.builder().email("test@gmx.de").firstName("Mia").lastName("Hall").birthdate(LocalDate.of(1996, 8, 3)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.GOLD).medalStrength(MedalType.BRONZE).medalSpeed(MedalType.SILVER).build()).build() */
     );
+
+    private static double convertTime(int minutes, int seconds) {
+        return minutes * 60 + seconds;
+    }
+
+    public static Collection<DisciplineRatingMetric> getDisciplineRatingMetric() {
+        Collection<DisciplineRatingMetric> ratings = new ArrayList<>();
+        Discipline run800 = Discipline.builder()
+                .name("800 m Lauf")
+                .unit("seconds")
+                .category(DisciplineCategory.ENDURANCE)
+                .moreBetter(false)
+                .validIn(2025)
+                .build();
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .bronzeRating(convertTime(5, 40))
+                .silverRating(convertTime(5, 0))
+                .goldRating(convertTime(4, 15))
+                .discipline(run800)
+                .startAge(6)
+                .endAge(7)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .bronzeRating(convertTime(5, 35))
+                .silverRating(convertTime(4, 50))
+                .goldRating(convertTime(4, 10))
+                .discipline(run800)
+                .startAge(8)
+                .endAge(9)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .bronzeRating(convertTime(5, 20))
+                .silverRating(convertTime(4, 40))
+                .goldRating(convertTime(4, 0))
+                .discipline(run800)
+                .startAge(10)
+                .endAge(11)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .bronzeRating(convertTime(5, 10))
+                .silverRating(convertTime(4, 25))
+                .goldRating(convertTime(3, 45))
+                .discipline(run800)
+                .startAge(12)
+                .endAge(13)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .bronzeRating(convertTime(5, 0))
+                .silverRating(convertTime(4, 20))
+                .goldRating(convertTime(3, 35))
+                .discipline(run800)
+                .startAge(14)
+                .endAge(15)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .bronzeRating(convertTime(4, 50))
+                .silverRating(convertTime(4, 5))
+                .goldRating(convertTime(3, 25))
+                .discipline(run800)
+                .startAge(16)
+                .endAge(17)
+                .build());
+
+        return ratings;
+    }
 }
