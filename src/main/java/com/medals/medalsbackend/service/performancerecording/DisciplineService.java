@@ -68,7 +68,6 @@ public class DisciplineService {
         return disciplineRatingMetricRepository.save(disciplineRatingMetric);
     }
 
-
     public Collection<DisciplineRatingMetric> getDisciplineRatingMetricsForAthlete(Athlete athlete, int selectedYear) {
         int age = selectedYear - athlete.getBirthdate().getYear();
         return disciplineRatingMetricRepository.getAllByAge(selectedYear, age);
