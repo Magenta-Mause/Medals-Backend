@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.authorization.LoginUserDto;
 import com.medals.medalsbackend.dto.authorization.ResetPasswordDto;
 import com.medals.medalsbackend.dto.authorization.SetPasswordDto;
-import com.medals.medalsbackend.entity.util.onetimecode.OneTimeCode;
-import com.medals.medalsbackend.entity.util.onetimecode.OneTimeCodeType;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCode;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
 import jakarta.servlet.http.Cookie;
 import lombok.SneakyThrows;
@@ -58,7 +59,7 @@ public class AuthControllerTest {
   public void initializeDemoUser() {
     loginEntryRepository.deleteAll();
     oneTimeCodeRepository.deleteAll();
-    loginEntryService.createLoginEntry("test@example.org");
+    loginEntryService.createLoginEntry("test@example.org", OneTimeCodeCreationReason.ACCOUNT_CREATED);
     String oneTimeCode = oneTimeCodeRepository.getAll().stream().filter(otc -> otc.authorizedEmail.equals("test@example.org")).findFirst().get().oneTimeCode;
     SetPasswordDto setUserPasswordDto = SetPasswordDto.builder()
       .password("newPassword")

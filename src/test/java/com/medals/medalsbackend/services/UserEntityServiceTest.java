@@ -3,6 +3,7 @@ package com.medals.medalsbackend.services;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.service.user.UserEntityService;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class UserEntityServiceTest {
     public void testUserEntityCreationCreatesLoginEntry() {
         userEntityService.save("test@gmail.com", Trainer.builder().email("test@gmail.com").firstName("tom").lastName("tailor").build());
 
-        verify(loginEntryService, times(1)).createLoginEntry(eq("test@gmail.com"));
+        verify(loginEntryService, times(1)).createLoginEntry(eq("test@gmail.com"), eq(OneTimeCodeCreationReason.ACCOUNT_CREATED));
         verify(loginEntryService, times(1)).addUserToLogin(eq("test@gmail.com"), any());
     }
 

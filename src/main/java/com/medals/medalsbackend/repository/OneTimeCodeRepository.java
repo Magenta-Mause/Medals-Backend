@@ -1,6 +1,6 @@
 package com.medals.medalsbackend.repository;
 
-import com.medals.medalsbackend.entity.util.onetimecode.OneTimeCode;
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

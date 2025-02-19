@@ -31,7 +31,7 @@ public class AthleteController {
     }
 
     @PostMapping
-    public ResponseEntity<AthleteDto> postAthletes(@Valid @RequestBody AthleteDto athleteDto) throws InternalException {
+    public ResponseEntity<AthleteDto> postAthlete(@Valid @RequestBody AthleteDto athleteDto) throws InternalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(athleteService.insertAthlete(athleteDto), AthleteDto.class));
     }
 
