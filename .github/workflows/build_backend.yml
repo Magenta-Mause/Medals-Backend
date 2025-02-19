@@ -40,12 +40,3 @@ jobs:
 
       - name: Push Docker image
         run: docker push ${{vars.MEDALS_DOCKER_USERNAME}}/medals-backend
-
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.MEDALS_DEPLOYMENT_HOST }}
-          username: ${{ secrets.MEDALS_DEPLOYMENT_USERNAME }}
-          key: ${{ secrets.MEDALS_DEPLOYMENT_SSH_TOKEN }}
-          port: ${{ secrets.MEDALS_DEPLOYMENT_PORT }}
-          script: sudo systemctl restart medals-deployment
