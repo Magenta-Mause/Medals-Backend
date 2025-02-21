@@ -8,6 +8,8 @@ import com.medals.medalsbackend.exception.performancerecording.DisciplineNotFoun
 import com.medals.medalsbackend.exception.performancerecording.NoMatchingDisciplineRatingFoundForAge;
 import com.medals.medalsbackend.repository.DisciplineRatingMetricRepository;
 import com.medals.medalsbackend.repository.DisciplineRepository;
+import com.medals.medalsbackend.service.websockets.DisciplineWebsocketMessagingService;
+import com.medals.medalsbackend.service.websockets.RatingMetricWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,8 @@ import java.util.Set;
 public class DisciplineService {
     private final DisciplineRatingMetricRepository disciplineRatingMetricRepository;
     private final DisciplineRepository disciplineRepository;
+    private final DisciplineWebsocketMessagingService disciplineWebsocketMessagingService;
+    private final RatingMetricWebsocketMessageService ratingMetricWebsocketMessageService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
 
@@ -54,18 +58,48 @@ public class DisciplineService {
     public Discipline insertDiscipline(Discipline discipline) {
         discipline.setId(null);
         log.info("Inserting discipline {}", discipline);
-        return disciplineRepository.save(discipline);
+        Discipline inserted = disciplineRepository.save(discipline);
+        disciplineWebsocketMessagingService.sendDisciplineCreation(discipline);
+        return inserted;
+    }
+
+    public void deleteDiscipline(long disciplineId) {
+        disciplineRepository.deleteById(disciplineId);
+        disciplineWebsocketMessagingService.sendDisciplineDeletion(disciplineId);
+    }
+
+    public void updateDiscipline(long id, Discipline discipline) {
+        discipline.setId(id);
+        Discipline updated = disciplineRepository.save(discipline);
+        disciplineWebsocketMessagingService.sendDisciplineUpdate(updated);
     }
 
     public DisciplineRatingMetric insertDisciplineRatingMetric(long disciplineId, DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
         disciplineRatingMetric.setId(null);
         disciplineRatingMetric.setDiscipline(getDisciplineById(disciplineId));
-        return disciplineRatingMetricRepository.save(disciplineRatingMetric);
+        DisciplineRatingMetric inserted = disciplineRatingMetricRepository.save(disciplineRatingMetric);
+        ratingMetricWebsocketMessageService.sendRatingMetricCreation(inserted);
+        return inserted;
     }
 
     public DisciplineRatingMetric insertDisciplineRatingMetric(DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
         disciplineRatingMetric.setId(null);
-        return disciplineRatingMetricRepository.save(disciplineRatingMetric);
+        DisciplineRatingMetric inserted = disciplineRatingMetricRepository.save(disciplineRatingMetric);
+        ratingMetricWebsocketMessageService.sendRatingMetricCreation(inserted);
+        return inserted;
+    }
+
+    public void deleteDisciplineRatingMetric(Long id) {
+        disciplineRatingMetricRepository.deleteById(id);
+        disciplineWebsocketMessagingService.sendDisciplineDeletion(id);
+    }
+
+    public DisciplineRatingMetric updateDisciplineRatingMetric(Long id, Long disciplineId, DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
+        disciplineRatingMetric.setId(id);
+        disciplineRatingMetric.setDiscipline(getDisciplineById(disciplineId));
+        DisciplineRatingMetric updated = disciplineRatingMetricRepository.save(disciplineRatingMetric);
+        ratingMetricWebsocketMessageService.sendRatingMetricUpdate(updated);
+        return updated;
     }
 
     public Collection<DisciplineRatingMetric> getDisciplineRatingMetricsForAthlete(Athlete athlete, int selectedYear) {
@@ -91,5 +125,9 @@ public class DisciplineService {
 
     public Collection<DisciplineRatingMetric> getDisciplineRatingsForSelectedYear(int selectedYear) {
         return disciplineRatingMetricRepository.getDisciplineRatingMetricBySelectedYear(selectedYear);
+    }
+
+    public Collection<Discipline> getDisciplines() {
+        return disciplineRepository.findAll();
     }
 }

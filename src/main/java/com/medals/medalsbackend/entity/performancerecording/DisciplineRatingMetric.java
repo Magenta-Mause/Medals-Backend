@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.entity.performancerecording;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -21,14 +22,19 @@ public class DisciplineRatingMetric {
     private Discipline discipline;
 
     @Column(nullable = false)
+    @JsonProperty("start_age")
     private int startAge;
     @Column(nullable = false)
+    @JsonProperty("end_age")
     private int endAge;
 
     @Column(nullable = false)
+    @JsonProperty("bronze_rating")
     private double bronzeRating;
     @Column(nullable = false)
+    @JsonProperty("silver_rating")
     private double silverRating;
     @Column(nullable = false)
+    @JsonProperty("gold_rating")
     private double goldRating;
 }

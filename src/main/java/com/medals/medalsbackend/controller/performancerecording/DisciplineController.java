@@ -16,15 +16,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(BaseController.BASE_PATH + "/performance-recordings/disciplines")
+@RequestMapping(BaseController.BASE_PATH + "/disciplines")
 @RequiredArgsConstructor
 public class DisciplineController {
     private final DisciplineService disciplineService;
     private final AthleteService athleteService;
 
     @GetMapping
-    public ResponseEntity<Collection<Discipline>> getDisciplines(@RequestParam("selected_year") int selectedYear) throws AthleteNotFoundException {
-        return ResponseEntity.ok(disciplineService.getDisciplinesForSelectedYear(selectedYear));
+    public ResponseEntity<Collection<Discipline>> getDisciplines(@RequestParam(value = "selected_year", required = false) int selectedYear) throws AthleteNotFoundException {
+        if (selectedYear != 0) {
+            return ResponseEntity.ok(disciplineService.getDisciplinesForSelectedYear(selectedYear));
+        }
+        return ResponseEntity.ok(disciplineService.getDisciplines());
+        
     }
 
     @PostMapping

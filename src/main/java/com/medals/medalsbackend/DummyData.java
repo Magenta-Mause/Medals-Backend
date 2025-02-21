@@ -71,7 +71,7 @@ public class DummyData {
     public static Collection<DisciplineRatingMetric> getDisciplineRatingMetric() {
         Collection<DisciplineRatingMetric> ratings = new ArrayList<>();
         Discipline run800 = Discipline.builder()
-                .name("800 m Lauf")
+                .name("800m Lauf")
                 .unit("seconds")
                 .category(DisciplineCategory.ENDURANCE)
                 .moreBetter(false)

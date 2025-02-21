@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.medals.medalsbackend.entity.users.Athlete;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -30,14 +31,9 @@ public class PerformanceRecording {
     @JsonIgnore
     private Athlete athlete;
 
-    @Column(name = "discipline_rating_id", insertable = false, updatable = false)
-    @JsonProperty("discipline_rating_id")
-    private long disciplineRatingId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discipline_rating_id", nullable = false)
-    @ToString.Exclude
-    @JsonIgnore
+    @JsonProperty("discipline_rating_metric")
     private DisciplineRatingMetric disciplineRatingMetric;
 
     @Column(name = "rating_value", nullable = false)

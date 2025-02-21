@@ -34,6 +34,11 @@ public class PerformanceRecordingController {
                 .body(performanceRecording);
     }
 
+    @GetMapping
+    public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings() {
+        return ResponseEntity.ok(performanceRecordingService.getAllPerformanceRecordings());
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException {
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(athleteService.getAthlete(userId)));
