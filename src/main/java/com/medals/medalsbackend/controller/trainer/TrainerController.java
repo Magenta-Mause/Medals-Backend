@@ -22,6 +22,11 @@ public class TrainerController {
     private final TrainerService trainerService;
     private final ObjectMapper objectMapper;
 
+    @GetMapping
+    public ResponseEntity<TrainerDto[]> getTrainers() {
+        return ResponseEntity.ok(trainerService.getAllTrainers().stream().map(trainer -> objectMapper.convertValue(trainer, TrainerDto.class)).toArray(TrainerDto[]::new));
+    }
+
     @PostMapping
     public ResponseEntity<TrainerDto> postTrainer(@Valid @RequestBody TrainerDto trainerDto) throws InternalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(trainerService.insertTrainer(trainerDto), TrainerDto.class));
