@@ -23,12 +23,12 @@ public class DisciplineController {
     private final AthleteService athleteService;
 
     @GetMapping
-    public ResponseEntity<Collection<Discipline>> getDisciplines(@RequestParam(value = "selected_year", required = false) int selectedYear) throws AthleteNotFoundException {
-        if (selectedYear != 0) {
+    public ResponseEntity<Collection<Discipline>> getDisciplines(@RequestParam(value = "selected_year", required = false) Integer selectedYear) {
+        if (selectedYear != null) {
             return ResponseEntity.ok(disciplineService.getDisciplinesForSelectedYear(selectedYear));
         }
         return ResponseEntity.ok(disciplineService.getDisciplines());
-        
+
     }
 
     @PostMapping
@@ -38,7 +38,7 @@ public class DisciplineController {
     }
 
     @GetMapping("/metrics")
-    public ResponseEntity<Collection<DisciplineRatingMetric>> getDisciplineMetrics(@RequestParam("selected_year") int selectedYear) throws AthleteNotFoundException {
+    public ResponseEntity<Collection<DisciplineRatingMetric>> getDisciplineMetrics(@RequestParam("selected_year") int selectedYear) {
         return ResponseEntity.ok(disciplineService.getDisciplineRatingsForSelectedYear(selectedYear));
     }
 
@@ -49,7 +49,7 @@ public class DisciplineController {
     }
 
     @GetMapping("/metrics/{disciplineId}")
-    public ResponseEntity<Collection<DisciplineRatingMetric>> getMetricsForDiscipline(@PathVariable Long disciplineId) throws AthleteNotFoundException {
+    public ResponseEntity<Collection<DisciplineRatingMetric>> getMetricsForDiscipline(@PathVariable Long disciplineId) {
         return ResponseEntity.ok(disciplineService.getDisciplineRatings(disciplineId));
     }
 

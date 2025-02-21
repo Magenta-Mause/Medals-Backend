@@ -5,6 +5,7 @@ import com.medals.medalsbackend.entity.medals.MedalType;
 import com.medals.medalsbackend.entity.performancerecording.Discipline;
 import com.medals.medalsbackend.entity.performancerecording.DisciplineCategory;
 import com.medals.medalsbackend.entity.performancerecording.DisciplineRatingMetric;
+import com.medals.medalsbackend.entity.performancerecording.RatingMetric;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 
@@ -70,6 +71,18 @@ public class DummyData {
 
     public static Collection<DisciplineRatingMetric> getDisciplineRatingMetric() {
         Collection<DisciplineRatingMetric> ratings = new ArrayList<>();
+        RatingMetric maleRatingMetric = RatingMetric.builder()
+                .bronzeRating(convertTime(5, 40))
+                .silverRating(convertTime(5, 0))
+                .goldRating(convertTime(4, 15))
+                .build();
+
+        RatingMetric femaleRatingMetric = RatingMetric.builder()
+                .bronzeRating(convertTime(6, 40))
+                .silverRating(convertTime(6, 0))
+                .goldRating(convertTime(5, 15))
+                .build();
+
         Discipline run800 = Discipline.builder()
                 .name("800m Lauf")
                 .unit("seconds")
@@ -79,57 +92,51 @@ public class DummyData {
                 .build();
 
         ratings.add(DisciplineRatingMetric.builder()
-                .bronzeRating(convertTime(5, 40))
-                .silverRating(convertTime(5, 0))
-                .goldRating(convertTime(4, 15))
                 .discipline(run800)
                 .startAge(6)
                 .endAge(7)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
-                .bronzeRating(convertTime(5, 35))
-                .silverRating(convertTime(4, 50))
-                .goldRating(convertTime(4, 10))
                 .discipline(run800)
                 .startAge(8)
                 .endAge(9)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
-                .bronzeRating(convertTime(5, 20))
-                .silverRating(convertTime(4, 40))
-                .goldRating(convertTime(4, 0))
                 .discipline(run800)
                 .startAge(10)
                 .endAge(11)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
-                .bronzeRating(convertTime(5, 10))
-                .silverRating(convertTime(4, 25))
-                .goldRating(convertTime(3, 45))
                 .discipline(run800)
                 .startAge(12)
                 .endAge(13)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
-                .bronzeRating(convertTime(5, 0))
-                .silverRating(convertTime(4, 20))
-                .goldRating(convertTime(3, 35))
                 .discipline(run800)
                 .startAge(14)
                 .endAge(15)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
-                .bronzeRating(convertTime(4, 50))
-                .silverRating(convertTime(4, 5))
-                .goldRating(convertTime(3, 25))
                 .discipline(run800)
                 .startAge(16)
                 .endAge(17)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
                 .build());
 
         return ratings;
