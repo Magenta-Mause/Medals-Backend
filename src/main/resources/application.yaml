@@ -10,7 +10,7 @@ cors:
     - http://localhost:5173
     - http://192.168.178.21:5173
     - http://localhost:3000
-    - http://stratsync.com
+    - http://stratssync.com
 app:
   dummies:
     enabled: true
