@@ -45,7 +45,6 @@ public class OneTimeCodeService {
         throw new InternalException("Couldnt generate one time code");
     }
 
-
     public OneTimeCode createSetPasswordToken(String email, OneTimeCodeCreationReason reason) {
         try {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.SET_PASSWORD, email, oneTimeCodeConfiguration.setPasswordTokenValidityDuration());
@@ -64,6 +63,15 @@ public class OneTimeCodeService {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.RESET_PASSWORD, email, oneTimeCodeConfiguration.resetPasswordTokenValidityDuration());
             notificationService.sendResetPasswordNotification(email, oneTimeCode.oneTimeCode);
             return oneTimeCode;
+        } catch (InternalException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void createAthleteInviteToken(String email, String trainerName) {
+        try {
+            OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.VALIDATE_INVITE, email, oneTimeCodeConfiguration.validateInviteTokenDuration());
+            notificationService.sendInviteAthleteNotification(email, oneTimeCode.oneTimeCode, trainerName);
         } catch (InternalException e) {
             throw new RuntimeException(e);
         }
@@ -93,5 +101,4 @@ public class OneTimeCodeService {
         }
         oneTimeCodeRepository.deleteAllByOneTimeCode(oneTimeCode);
     }
-
 }

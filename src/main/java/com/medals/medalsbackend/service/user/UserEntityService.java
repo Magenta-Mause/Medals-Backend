@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,59 +23,67 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserEntityService {
-    private final UserEntityRepository userEntityRepository;
-    private final LoginEntryService loginEntryService;
+  private final UserEntityRepository userEntityRepository;
+  private final LoginEntryService loginEntryService;
 
-    @Transactional
-    public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) throws InternalException {
-        try {
-            loginEntryService.createLoginEntry(email, reason);
-        } catch (EmailAlreadyExistsException ignored) {
-        }
-
-        try {
-            return loginEntryService.addUserToLogin(email, userEntity);
-        } catch (EmailDoesntExistException e) {
-            throw new RuntimeException(e);
-        }
+  @Transactional
+  public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) throws InternalException {
+    try {
+      loginEntryService.createLoginEntry(email, reason);
+    } catch (EmailAlreadyExistsException ignored) {
     }
 
-    @Transactional
-    public UserEntity save(String email, UserEntity userEntity) throws InternalException {
-        return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED);
+    try {
+      return loginEntryService.addUserToLogin(email, userEntity);
+    } catch (EmailDoesntExistException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    public UserEntity update(UserEntity userEntity) {
-        return userEntityRepository.save(userEntity);
-    }
+  @Transactional
+  public UserEntity save(String email, UserEntity userEntity) throws InternalException {
+    return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED);
+  }
 
-    public Optional<UserEntity> findById(long id) {
-        return userEntityRepository.findById(id);
-    }
+  public UserEntity update(UserEntity userEntity) {
+    return userEntityRepository.save(userEntity);
+  }
 
-    public List<UserEntity> getAll() {
-        return userEntityRepository.findAll();
-    }
+  public Optional<UserEntity> findById(long id) {
+    return userEntityRepository.findById(id);
+  }
 
-    public List<Athlete> getAllAthletes() {
-        return userEntityRepository.findAllAthletes();
-    }
+  public List<UserEntity> getAll() {
+    return userEntityRepository.findAll();
+  }
 
-    public List<Trainer> getAllTrainers() {
-        return userEntityRepository.findAllTrainers();
-    }
+  public List<Athlete> getAllAthletes() {
+    return userEntityRepository.findAllAthletes();
+  }
 
-    public List<Admin> getAllAdmins() {
-        return userEntityRepository.findAllAdmins();
-    }
+  public List<Trainer> getAllTrainers() {
+    return userEntityRepository.findAllTrainers();
+  }
 
-    public UserEntity deleteById(Long id) {
-        UserEntity userEntity = userEntityRepository.findById(id).orElseThrow();
-        userEntityRepository.delete(userEntity);
-        return userEntity;
-    }
+  public List<Admin> getAllAdmins() {
+    return userEntityRepository.findAllAdmins();
+  }
 
-    public boolean existsById(Long id) {
-        return userEntityRepository.existsById(id);
-    }
+  public UserEntity deleteById(Long id) {
+    UserEntity userEntity = userEntityRepository.findById(id).orElseThrow();
+    userEntityRepository.delete(userEntity);
+    return userEntity;
+  }
+
+  public Athlete findAthleteByEmailAndBirthdate(String email, LocalDate birthdate) {
+    return userEntityRepository.findAthleteByEmailAndBirthdate(email, birthdate);
+  }
+
+  public boolean existsById(Long id) {
+    return userEntityRepository.existsById(id);
+  }
+
+  public void inviteAthlete(String email,  String trainerName) {
+    loginEntryService.inviteAthlete(email, trainerName);
+  }
 }

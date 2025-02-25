@@ -18,6 +18,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -90,5 +92,17 @@ public class AthleteService {
         log.info("Executing get athlete medal collection by id {}", athleteId);
         Athlete athlete = getAthlete(athleteId);
         return athlete.getMedalCollection();
+    }
+
+    public void inviteAthlete(String email, String birthdate, String trainerName) {
+        LocalDate localBirthdate = LocalDate.parse(birthdate);
+        Athlete inviteAthlete = userEntityService.findAthleteByEmailAndBirthdate(email, localBirthdate);
+        log.info("Executing invite athlete {}", inviteAthlete);
+        if (inviteAthlete != null) {
+            userEntityService.inviteAthlete(email, trainerName);
+            System.out.println("hello");
+        } else {
+            System.out.println("AthleteNotFound");
+        }
     }
 }

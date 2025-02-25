@@ -52,4 +52,7 @@ public class Athlete extends UserEntity {
         }
     }
 
+    @ManyToOne
+    @JoinColumn(name = "trainer_id")
+    private Trainer trainer;
 }
