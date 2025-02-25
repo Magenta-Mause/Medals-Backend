@@ -15,7 +15,6 @@ import com.medals.medalsbackend.service.user.login.LoginEntryService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(BASE_PATH + "/authorization")
@@ -78,12 +76,7 @@ public class AuthorizationController {
 
     @PostMapping("/setPassword")
     public ResponseEntity<String> setPassword(@Valid @RequestBody SetPasswordDto setPasswordDto) throws OneTimeCodeExpiredException, OneTimeCodeNotFoundException {
-        try {
-            loginEntryService.setPassword(setPasswordDto.getOneTimeCode(), setPasswordDto.getPassword());
-        } catch (OneTimeCodeExpiredException | OneTimeCodeNotFoundException e) {
-            log.error("Error setting password: {}", e.getMessage());
-            throw e;
-        }
+        loginEntryService.setPassword(setPasswordDto.getOneTimeCode(), setPasswordDto.getPassword());
         return ResponseEntity.ok("Success");
     }
 

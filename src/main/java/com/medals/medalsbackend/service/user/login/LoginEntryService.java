@@ -12,11 +12,9 @@ import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LoginEntryService {
@@ -26,7 +24,7 @@ public class LoginEntryService {
   private final OneTimeCodeService oneTimeCodeService;
   private final NotificationService notificationService;
 
-  public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException, InternalException {
+  public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException {
     if (loginEntryRepository.existsById(email)) {
       throw new EmailAlreadyExistsException(email);
     }
@@ -49,15 +47,10 @@ public class LoginEntryService {
 
   public void setPassword(String oneTimeCode, String password) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
     String email = oneTimeCodeService.getEmailFromOneTimeCode(oneTimeCode, OneTimeCodeType.SET_PASSWORD);
-    log.info("Got Email for oneTimeCode: {} {}", oneTimeCode, email);
     LoginEntry loginEntry = loginEntryRepository.findById(email).get();
-    log.info("Found loginEntry for oneTimeCode: {}", oneTimeCode);
     loginEntry.setPassword(passwordEncoder.encode(password));
-    log.info("Setting password for one time code: {}", oneTimeCode);
     loginEntryRepository.save(loginEntry);
-    log.info("Savin loginEntry in DB for oneTimeCode: {}", oneTimeCode);
     oneTimeCodeService.deleteOneTimeCode(oneTimeCode);
-    log.info("Removing oneTimeCode from DB for oneTimeCode: {}", oneTimeCode);
   }
 
   public void resetPassword(String newPassword, String oneTimeCode) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
