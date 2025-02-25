@@ -36,4 +36,10 @@ public class NotificationService {
         String text = templateService.generatePasswordResetNotification(email);
         mailService.sendEmail(email, "Medals - Password Changed", text);
     }
+
+    public void sendInviteAthleteNotification(String email, String oneTimeCode, String trainer) {
+        String link = "http://localhost:5173/validateInvite?oneTimeCode=" + oneTimeCode;
+        String text = templateService.generateInviteAthleteNotification(email, link, trainer);
+        mailService.sendEmail(email, "Medals - Invite Athlete", text);
+    }
 }

@@ -38,4 +38,11 @@ public class MailTemplateService {
         Context context = new Context();
         return templateEngine.process(configuration.getPasswordResetNotification(), context);
     }
+
+    public String generateInviteAthleteNotification(String email, String link, String trainer) {
+        Context context = new Context();
+        context.setVariable("otcLink", link);
+        context.setVariable("trainer", trainer);
+        return templateEngine.process(configuration.getInviteAthleteNotification(), context);
+    }
 }
