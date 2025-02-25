@@ -20,6 +20,7 @@ app:
       - email: "example@example.org"
         first-name: "Mighty"
         last-name: "God"
+    env-admins: ""
   security:
     identity-token-expiration-time: 3600000 # 1 hour
     refresh-token-expiration-time: 2678400000 # 1 month

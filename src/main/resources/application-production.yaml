@@ -27,9 +27,7 @@ app:
   admin:
     enabled: true
     admins:
-        - email: ${ADMIN_EMAIL}
-          first-name: ${ADMIN_FIRST_NAME}
-          last-name: ${ADMIN_LAST_NAME}
+    env-admins: ${ADMINS}
   security:
     identity-token-expiration-time: 3600000 # 1 hour
     refresh-token-expiration-time: 2678400000 # 1 month
