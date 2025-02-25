@@ -40,6 +40,9 @@ app:
       invite-trainer-notification: "template_trainer_invitation"
       reset-password-notification: "template_reset_password"
       password-reset-notification: "template_password_reset"
+  notification:
+    reset-password-url: "https://stratssync.com/resetPassword"
+    set-password-url: "https://stratssync.com/setPassword"
   otc:
     set-password-token-validity-duration: 604800000 # 1 week
     reset-password-token-validity-duration: 3600000 # 1 hour
