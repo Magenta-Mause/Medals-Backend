@@ -1,7 +1,9 @@
 package com.medals.medalsbackend.service.user;
 
 import com.medals.medalsbackend.entity.users.Admin;
+import com.medals.medalsbackend.exception.AdminNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.service.websockets.AdminWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ public class AdminService {
 
     private final UserEntityService userEntityService;
     private final AdminCreationConfiguration adminCreationConfiguration;
+    private final AdminWebsocketMessageService adminWebsocketMessageService;
 
     @SneakyThrows
     @Profile("!test")
@@ -43,5 +46,14 @@ public class AdminService {
 
     public Admin createAdmin(Admin admin) throws InternalException {
         return (Admin) userEntityService.save(admin.getEmail(), admin);
+    }
+
+    public void deleteAdmin(Long adminId) throws AdminNotFoundException{
+        log.info("Executing delete admin by id {}", adminId);
+        if (!userEntityService.existsById(adminId)) {
+            throw AdminNotFoundException.fromAdminId(adminId);
+        }
+        adminWebsocketMessageService.sendAdminDelete(adminId);
+        userEntityService.deleteById(adminId);
     }
 }
