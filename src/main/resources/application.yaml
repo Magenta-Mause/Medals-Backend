@@ -17,7 +17,7 @@ app:
   admin:
     enabled: true
     admins:
-      - email: "alexander.jablo@gmail.com"
+      - email: "example@example.org"
         first-name: "Mighty"
         last-name: "God"
   security:
