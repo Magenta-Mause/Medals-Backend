@@ -18,8 +18,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,6 +27,7 @@ public class AthleteService {
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
     private final Environment environment;
+    private final TrainerService trainerService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
 
@@ -94,12 +93,11 @@ public class AthleteService {
         return athlete.getMedalCollection();
     }
 
-    public void inviteAthlete(String email, String birthdate, String trainerName) {
-        LocalDate localBirthdate = LocalDate.parse(birthdate);
-        Athlete inviteAthlete = userEntityService.findAthleteByEmailAndBirthdate(email, localBirthdate);
+    public void inviteAthlete(AthleteDto athleteDto, String trainerName) {
+        Athlete inviteAthlete = userEntityService.findAthleteByEmailAndBirthdate(athleteDto.getEmail(), athleteDto.getBirthdate());
         log.info("Executing invite athlete {}", inviteAthlete);
         if (inviteAthlete != null) {
-            userEntityService.inviteAthlete(email, trainerName);
+            userEntityService.inviteAthlete(athleteDto.getEmail(), trainerName, athleteDto.getId());
             System.out.println("hello");
         } else {
             System.out.println("AthleteNotFound");

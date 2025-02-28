@@ -19,7 +19,7 @@ import java.util.List;
 public class Trainer extends UserEntity {
     @Column
     @OneToMany(mappedBy = "trainer", cascade =  CascadeType.ALL, orphanRemoval = true)
-    private List<Athlete> athleteList;
+    private List<Athlete> managedAthletes;
 
     protected final UserType type = UserType.TRAINER;
 }

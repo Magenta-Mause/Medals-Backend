@@ -3,6 +3,7 @@ package com.medals.medalsbackend.service.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
 import com.medals.medalsbackend.dto.TrainerDto;
+import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
@@ -89,5 +90,14 @@ public class TrainerService {
         trainerDto.setId(trainerId);
         Trainer savedTrainer = (Trainer) userEntityService.update(objectMapper.convertValue(trainerDto, Trainer.class));
         trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
+    }
+
+    public void addAthlete(Athlete athlete, TrainerDto trainerDto) {
+        log.info("Athlete added: {}", athlete);
+        List<Athlete> managedAthletes = trainerDto.getManagedAthletes();
+        managedAthletes.add(athlete);
+        trainerDto.setManagedAthletes(managedAthletes);
+        Trainer addAthlete = (Trainer) userEntityService.update(objectMapper.convertValue(trainerDto, Trainer.class));
+        trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(addAthlete, TrainerDto.class));
     }
 }

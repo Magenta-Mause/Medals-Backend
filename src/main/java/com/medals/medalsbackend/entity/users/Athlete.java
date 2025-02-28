@@ -19,6 +19,10 @@ import java.time.LocalDate;
 @DiscriminatorValue("ATHLETE")
 @SuperBuilder
 public class Athlete extends UserEntity {
+    @ManyToOne
+    @JoinColumn(name = "trainer_id")
+    private Trainer trainer;
+
     @Column(nullable = false)
     private LocalDate birthdate;
 
@@ -51,8 +55,4 @@ public class Athlete extends UserEntity {
             };
         }
     }
-
-    @ManyToOne
-    @JoinColumn(name = "trainer_id")
-    private Trainer trainer;
 }

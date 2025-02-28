@@ -45,6 +45,26 @@ public class OneTimeCodeService {
         throw new InternalException("Couldnt generate one time code");
     }
 
+    public OneTimeCode generateOneTimeInviteCode(OneTimeCodeType type, String email, Long trainerId, long validityDuration) throws InternalException {
+        int tries = 20;
+        while (tries > 0) {
+            try {
+                OneTimeCode oneTimeCode = OneTimeCode.builder()
+                        .oneTimeCode(UUID.randomUUID().toString()).authorizedEmail(email)
+                        .type(type)
+                        .id(trainerId)
+                        .expiresAt(System.currentTimeMillis() + validityDuration)
+                        .build();
+                oneTimeCodeRepository.save(oneTimeCode);
+                return oneTimeCode;
+            } catch (Exception e) {
+                log.warn("Generating one time code failed; {} Tries remaining", tries, e);
+            }
+            tries--;
+        }
+        throw new InternalException("Couldnt generate one time code");
+    }
+
     public OneTimeCode createSetPasswordToken(String email, OneTimeCodeCreationReason reason) {
         try {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.SET_PASSWORD, email, oneTimeCodeConfiguration.setPasswordTokenValidityDuration());
@@ -68,9 +88,9 @@ public class OneTimeCodeService {
         }
     }
 
-    public void createAthleteInviteToken(String email, String trainerName) {
+    public void createAthleteInviteToken(String email, String trainerName, Long trainerId) {
         try {
-            OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.VALIDATE_INVITE, email, oneTimeCodeConfiguration.validateInviteTokenDuration());
+            OneTimeCode oneTimeCode = generateOneTimeInviteCode(OneTimeCodeType.VALIDATE_INVITE, email, trainerId, oneTimeCodeConfiguration.validateInviteTokenDuration());
             notificationService.sendInviteAthleteNotification(email, oneTimeCode.oneTimeCode, trainerName);
         } catch (InternalException e) {
             throw new RuntimeException(e);

@@ -1,6 +1,5 @@
 package com.medals.medalsbackend.service.user.login;
 
-import com.medals.medalsbackend.entity.onetimecode.OneTimeCode;
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
@@ -15,8 +14,6 @@ import com.medals.medalsbackend.service.onetimecode.OneTimeCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -89,18 +86,7 @@ public class LoginEntryService {
     return loginEntryRepository.findById(userEmail).orElseThrow(() -> new EmailDoesntExistException(userEmail));
   }
 
-  public void checkInvite(String email, String password, String oneTimeCode) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException, LoginDoesntMatchException, EmailDoesntExistException {
-    String userEmail = oneTimeCodeService.getEmailFromOneTimeCode(oneTimeCode, OneTimeCodeType.VALIDATE_INVITE);
-    if (!Objects.equals(userEmail, email)) {
-      throw new LoginDoesntMatchException(null);
-    }
-    LoginEntry loginEntry = loginEntryRepository.findById(email).orElseThrow(() -> new EmailDoesntExistException(email));
-    if (!passwordEncoder.matches(password, loginEntry.getPassword())) {
-      throw new LoginDoesntMatchException(null);
-    }
-  }
-
-  public void inviteAthlete(String email, String trainerName) {
-    oneTimeCodeService.createAthleteInviteToken(email, trainerName);
+  public void inviteAthlete(String email, String trainerName, Long trainerId) {
+    oneTimeCodeService.createAthleteInviteToken(email, trainerName, trainerId);
   }
 }

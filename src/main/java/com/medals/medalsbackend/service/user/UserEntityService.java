@@ -83,7 +83,8 @@ public class UserEntityService {
     return userEntityRepository.existsById(id);
   }
 
-  public void inviteAthlete(String email,  String trainerName) {
-    loginEntryService.inviteAthlete(email, trainerName);
+  public void inviteAthlete(String email,  String trainerName, Long trainerId) {
+    loginEntryService.inviteAthlete(email, trainerName, trainerId);
   }
+
 }
