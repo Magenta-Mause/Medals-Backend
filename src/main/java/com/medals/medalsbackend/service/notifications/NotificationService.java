@@ -24,13 +24,13 @@ public class NotificationService {
     }
 
     public void sendCreateAccountNotification(String email, String oneTimeCode) {
-        String link = configuration.getNotificationServiceBaseUrl() + "/resetPasswor?oneTimeCode=" + oneTimeCode;
+        String link = configuration.getNotificationServiceBaseUrl() + "/resetPassword?oneTimeCode=" + oneTimeCode;
         String text = templateService.generateSetPasswordNotification(email, link);
         mailService.sendEmail(email, "Medals - Account Creation", text);
     }
 
     public void sendInviteTrainerNotification(String email, String oneTimeCode) {
-        String link = configuration.getNotificationServiceBaseUrl() + "/resetPasswor?oneTimeCode=" + oneTimeCode;
+        String link = configuration.getNotificationServiceBaseUrl() + "/resetPassword?oneTimeCode=" + oneTimeCode;
         String text = templateService.generateInviteTrainerNotification(email, link);
         mailService.sendEmail(email, "Medals - Trainer Creation", text);
     }
