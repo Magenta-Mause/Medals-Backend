@@ -32,7 +32,4 @@ public class Discipline {
     @JsonProperty("more_better")
     private boolean moreBetter;
 
-    @Column(name = "valid_in", nullable = false)
-    @JsonProperty("valid_in")
-    private int validIn;
 }

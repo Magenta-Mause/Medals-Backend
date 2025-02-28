@@ -41,4 +41,7 @@ public class DisciplineRatingMetric {
     })
     @JsonProperty("rating_female")
     private RatingMetric ratingFemale;
+    @JsonProperty("valid_in")
+    @Column(name = "valid_in")
+    private int validIn;
 }
