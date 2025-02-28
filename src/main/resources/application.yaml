@@ -17,7 +17,7 @@ app:
   admin:
     enabled: true
     admins:
-      - email: "example@example.org"
+      - email: "alexander.jablo@gmail.com"
         first-name: "Mighty"
         last-name: "God"
     env-admins: ""
@@ -34,8 +34,7 @@ app:
       reset-password-notification: "template_reset_password"
       password-reset-notification: "template_password_reset"
   notification:
-    reset-password-url: "http://localhost:5173/resetPassword"
-    set-password-url: "http://localhost:5173/setPassword"
+    notification-service-base-url: "http://localhost:5173"
   otc:
     set-password-token-validity-duration: 604800000 # 1 week
     reset-password-token-validity-duration: 3600000 # 1 hour

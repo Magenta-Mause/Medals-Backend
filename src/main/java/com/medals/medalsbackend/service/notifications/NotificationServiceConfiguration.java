@@ -7,6 +7,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "app.notification")
 public class NotificationServiceConfiguration {
-    private String resetPasswordUrl;
-    private String setPasswordUrl;
+    private String notificationServiceBaseUrl;
 }
