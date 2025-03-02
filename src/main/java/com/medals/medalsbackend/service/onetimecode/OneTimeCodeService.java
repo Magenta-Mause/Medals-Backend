@@ -45,26 +45,6 @@ public class OneTimeCodeService {
         throw new InternalException("Couldnt generate one time code");
     }
 
-    public OneTimeCode generateOneTimeInviteCode(OneTimeCodeType type, String email, Long trainerId, long validityDuration) throws InternalException {
-        int tries = 20;
-        while (tries > 0) {
-            try {
-                OneTimeCode oneTimeCode = OneTimeCode.builder()
-                        .oneTimeCode(UUID.randomUUID().toString()).authorizedEmail(email)
-                        .type(type)
-                        .id(trainerId)
-                        .expiresAt(System.currentTimeMillis() + validityDuration)
-                        .build();
-                oneTimeCodeRepository.save(oneTimeCode);
-                return oneTimeCode;
-            } catch (Exception e) {
-                log.warn("Generating one time code failed; {} Tries remaining", tries, e);
-            }
-            tries--;
-        }
-        throw new InternalException("Couldnt generate one time code");
-    }
-
     public OneTimeCode createSetPasswordToken(String email, OneTimeCodeCreationReason reason) {
         try {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.SET_PASSWORD, email, oneTimeCodeConfiguration.setPasswordTokenValidityDuration());
