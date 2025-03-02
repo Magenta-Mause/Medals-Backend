@@ -39,7 +39,7 @@ public class MailTemplateService {
         return templateEngine.process(configuration.getPasswordResetNotification(), context);
     }
 
-    public String generateInviteAthleteNotification(String email, String link, String trainer) {
+    public String generateInviteAthleteNotification(String link, String trainer) {
         Context context = new Context();
         context.setVariable("otcLink", link);
         context.setVariable("trainer", trainer);

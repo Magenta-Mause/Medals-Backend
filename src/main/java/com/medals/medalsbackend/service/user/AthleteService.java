@@ -5,9 +5,13 @@ import com.medals.medalsbackend.DummyData;
 import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +22,17 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AthleteService {
 
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
-    private final Environment environment;
     private final TrainerService trainerService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
@@ -93,14 +99,16 @@ public class AthleteService {
         return athlete.getMedalCollection();
     }
 
-    public void inviteAthlete(AthleteDto athleteDto, String trainerName) {
-        Athlete inviteAthlete = userEntityService.findAthleteByEmailAndBirthdate(athleteDto.getEmail(), athleteDto.getBirthdate());
-        log.info("Executing invite athlete {}", inviteAthlete);
-        if (inviteAthlete != null) {
-            userEntityService.inviteAthlete(athleteDto.getEmail(), trainerName, athleteDto.getId());
-            System.out.println("hello");
-        } else {
-            System.out.println("AthleteNotFound");
-        }
+    public void acceptInvite(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
+        long trainerId = Long.parseLong(jwtService.getSearchTerm(token, "trainerId"));
+        long athleteId = Long.parseLong(jwtService.getSearchTerm(token, "athleteId"));
+        Trainer trainer = trainerService.getTrainer(trainerId);
+        Athlete athlete = getAthlete(athleteId);
+        List<Athlete> managedAthletes = trainer.getManagedAthletes();
+        athlete.setTrainer(trainer);
+        managedAthletes.add(athlete);
+        trainer.setManagedAthletes(managedAthletes);
+        userEntityService.update(trainer);
+        userEntityService.update(athlete);
     }
 }

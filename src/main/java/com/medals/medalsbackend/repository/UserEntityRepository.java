@@ -16,6 +16,8 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
 
   Optional<UserEntity> findById(Long id);
 
+  Optional<UserEntity> findByEmail(String email);
+
   @Query("SELECT u FROM Admin u")
   List<Admin> findAllAdmins();
 

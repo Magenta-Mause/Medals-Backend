@@ -27,7 +27,7 @@ public class UserEntityService {
   private final LoginEntryService loginEntryService;
 
   @Transactional
-  public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) throws InternalException {
+  public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) {
     try {
       loginEntryService.createLoginEntry(email, reason);
     } catch (EmailAlreadyExistsException ignored) {
@@ -52,6 +52,8 @@ public class UserEntityService {
   public Optional<UserEntity> findById(long id) {
     return userEntityRepository.findById(id);
   }
+
+  public Optional<UserEntity> findByEmail(String email) { return userEntityRepository.findByEmail(email); }
 
   public List<UserEntity> getAll() {
     return userEntityRepository.findAll();
@@ -82,9 +84,4 @@ public class UserEntityService {
   public boolean existsById(Long id) {
     return userEntityRepository.existsById(id);
   }
-
-  public void inviteAthlete(String email,  String trainerName, Long trainerId) {
-    loginEntryService.inviteAthlete(email, trainerName, trainerId);
-  }
-
 }

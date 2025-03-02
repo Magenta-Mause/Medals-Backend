@@ -88,15 +88,6 @@ public class OneTimeCodeService {
         }
     }
 
-    public void createAthleteInviteToken(String email, String trainerName, Long trainerId) {
-        try {
-            OneTimeCode oneTimeCode = generateOneTimeInviteCode(OneTimeCodeType.VALIDATE_INVITE, email, trainerId, oneTimeCodeConfiguration.validateInviteTokenDuration());
-            notificationService.sendInviteAthleteNotification(email, oneTimeCode.oneTimeCode, trainerName);
-        } catch (InternalException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public String getEmailFromOneTimeCode(String incomingOneTimeCode, OneTimeCodeType oneTimeCodeType) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
         OneTimeCode oneTimeCode = oneTimeCodeRepository.findByOneTimeCode(incomingOneTimeCode);
         if (oneTimeCode == null) {

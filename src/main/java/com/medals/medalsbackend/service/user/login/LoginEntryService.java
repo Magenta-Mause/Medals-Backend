@@ -3,7 +3,6 @@ package com.medals.medalsbackend.service.user.login;
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
-import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
@@ -24,7 +23,7 @@ public class LoginEntryService {
   private final OneTimeCodeService oneTimeCodeService;
   private final NotificationService notificationService;
 
-  public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException, InternalException {
+  public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException{
     if (loginEntryRepository.existsById(email)) {
       throw new EmailAlreadyExistsException(email);
     }
@@ -84,9 +83,5 @@ public class LoginEntryService {
 
   public LoginEntry getLoginEntry(String userEmail) throws EmailDoesntExistException {
     return loginEntryRepository.findById(userEmail).orElseThrow(() -> new EmailDoesntExistException(userEmail));
-  }
-
-  public void inviteAthlete(String email, String trainerName, Long trainerId) {
-    oneTimeCodeService.createAthleteInviteToken(email, trainerName, trainerId);
   }
 }

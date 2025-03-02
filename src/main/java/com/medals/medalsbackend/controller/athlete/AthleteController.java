@@ -5,7 +5,6 @@ import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.user.AthleteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 public class AthleteController {
   private final AthleteService athleteService;
   private final ObjectMapper objectMapper;
-  private final JwtUtils jwtUtils;
+
 
   @GetMapping
   public ResponseEntity<AthleteDto[]> getAthletes() {
@@ -60,13 +59,5 @@ public class AthleteController {
   @GetMapping(value = "/{athleteId}/swimmingCertificate")
   public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException {
     return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
-  }
-
-  @PostMapping(value = "/inviteAthlete")
-  public ResponseEntity<Void> inviteAthlete(@RequestBody AthleteDto athleteDto, @CookieValue(value = "refreshToken") String token) {
-    // todo: add jwt token generate in onetimecode in the folder user/login/jwt
-    //String trainerEmail = jwtUtils.extractEmailFromJwt(token);
-    //athleteService.inviteAthlete(athleteDto, trainerEmail);
-    return ResponseEntity.ok().build();
   }
 }

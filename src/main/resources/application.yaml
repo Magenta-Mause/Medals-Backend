@@ -23,6 +23,7 @@ app:
   security:
     identity-token-expiration-time: 3600000 # 1 hour
     refresh-token-expiration-time: 2678400000 # 1 month
+    invite-token-expiration-time: 2678400000 # 1 hour
     secret-key: 2bdff806c775df3d3a9a720924294d3f6dfa4e4e8f65183294bc8b8f043987ac # jwt secret key (REPLACE IN PRODUCTION!!)
   email:
     url: "https://google.com" # supply with email api endpoint
@@ -30,6 +31,7 @@ app:
     templates:
       set-password-notification: "template_account_created"
       invite-trainer-notification: "template_trainer_invitation"
+      invite-athlete-notification: "template_athlete_invitation"
       reset-password-notification: "template_reset_password"
       password-reset-notification: "template_password_reset"
   otc:
