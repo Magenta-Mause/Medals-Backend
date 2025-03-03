@@ -7,5 +7,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "app.notification")
 public class NotificationServiceConfiguration {
-    private String notificationServiceBaseUrl;
+    private String frontEndBaseUrl;
 }
