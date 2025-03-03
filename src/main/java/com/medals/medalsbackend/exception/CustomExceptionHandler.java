@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -36,6 +37,11 @@ public class CustomExceptionHandler {
     @ExceptionHandler(MissingRequestCookieException.class)
     public ResponseEntity<String> handleMissingCookieException(MissingRequestCookieException e, WebRequest request) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing Cookie '" + e.getCookieName() + "'");
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException e, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing Parameter '" + e.getParameterName() + "'");
     }
 
     @ExceptionHandler(GenericAPIRequestException.class)
