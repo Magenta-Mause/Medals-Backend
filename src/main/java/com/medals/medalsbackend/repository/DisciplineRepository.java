@@ -7,6 +7,4 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Collection;
 
 public interface DisciplineRepository extends JpaRepository<Discipline, Long> {
-    @Query("SELECT d FROM discipline d WHERE d.validIn=?1")
-    Collection<Discipline> findByValidIn(int validIn);
 }

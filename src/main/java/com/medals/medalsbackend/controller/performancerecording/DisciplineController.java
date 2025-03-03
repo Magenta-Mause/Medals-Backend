@@ -23,10 +23,7 @@ public class DisciplineController {
     private final AthleteService athleteService;
 
     @GetMapping
-    public ResponseEntity<Collection<Discipline>> getDisciplines(@RequestParam(value = "selected_year", required = false) Integer selectedYear) {
-        if (selectedYear != null) {
-            return ResponseEntity.ok(disciplineService.getDisciplinesForSelectedYear(selectedYear));
-        }
+    public ResponseEntity<Collection<Discipline>> getDisciplines() {
         return ResponseEntity.ok(disciplineService.getDisciplines());
 
     }

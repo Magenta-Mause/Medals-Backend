@@ -115,8 +115,8 @@ public class DisciplineService {
         return disciplineRepository.findById(id).orElseThrow(() -> new DisciplineNotFoundException(id));
     }
 
-    public Collection<Discipline> getDisciplinesForSelectedYear(int selectedYear) {
-        return disciplineRepository.findByValidIn(selectedYear);
+    public Collection<Discipline> getDisciplinesForSelectedYear() {
+        return disciplineRepository.findAll();
     }
 
     public Collection<DisciplineRatingMetric> getDisciplineRatings(long disciplineById) {

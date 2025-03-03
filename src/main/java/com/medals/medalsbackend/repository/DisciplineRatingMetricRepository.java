@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public interface DisciplineRatingMetricRepository extends JpaRepository<DisciplineRatingMetric, Long> {
 
-    @Query("SELECT d FROM discipline_rating_metric d WHERE d.discipline.validIn=?1 AND d.startAge<=?2 AND d.endAge>=?2")
+    @Query("SELECT d FROM discipline_rating_metric d WHERE d.validIn=?1 AND d.startAge<=?2 AND d.endAge>=?2")
     Collection<DisciplineRatingMetric> getAllByAge(int selectedYear, int age);
 
     @Query("SELECT d FROM discipline_rating_metric d WHERE d.discipline.id=?1 AND d.startAge<=?2 AND d.endAge>=?2")
@@ -17,6 +17,6 @@ public interface DisciplineRatingMetricRepository extends JpaRepository<Discipli
     @Query("SELECT d FROM discipline_rating_metric d WHERE d.discipline.id=?1")
     Collection<DisciplineRatingMetric> getDisciplineRatingMetricByDisciplineId(long disciplineId);
 
-    @Query("SELECT d from discipline_rating_metric d WHERE d.discipline.validIn=?1")
+    @Query("SELECT d from discipline_rating_metric d WHERE d.validIn=?1")
     Collection<DisciplineRatingMetric> getDisciplineRatingMetricBySelectedYear(int selectedYear);
 }
