@@ -88,7 +88,6 @@ public class DummyData {
                 .unit("seconds")
                 .category(DisciplineCategory.ENDURANCE)
                 .moreBetter(false)
-                .validIn(2025)
                 .build();
 
         ratings.add(DisciplineRatingMetric.builder()
@@ -97,6 +96,7 @@ public class DummyData {
                 .endAge(7)
                 .ratingMale(maleRatingMetric)
                 .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
@@ -105,6 +105,7 @@ public class DummyData {
                 .endAge(9)
                 .ratingMale(maleRatingMetric)
                 .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
@@ -113,6 +114,7 @@ public class DummyData {
                 .endAge(11)
                 .ratingMale(maleRatingMetric)
                 .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
@@ -121,6 +123,7 @@ public class DummyData {
                 .endAge(13)
                 .ratingMale(maleRatingMetric)
                 .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
@@ -129,6 +132,7 @@ public class DummyData {
                 .endAge(15)
                 .ratingMale(maleRatingMetric)
                 .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
@@ -137,6 +141,7 @@ public class DummyData {
                 .endAge(17)
                 .ratingMale(maleRatingMetric)
                 .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
                 .build());
 
         return ratings;
