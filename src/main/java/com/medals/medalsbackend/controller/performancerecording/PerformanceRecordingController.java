@@ -28,7 +28,13 @@ public class PerformanceRecordingController {
 
     @PostMapping
     public ResponseEntity<PerformanceRecording> recordPerformance(@RequestBody PerformanceRecordingDto performanceRecordingDto) throws AthleteNotFoundException, DisciplineNotFoundException, NoMatchingDisciplineRatingFoundForAge {
-        PerformanceRecording performanceRecording = performanceRecordingService.recordPerformance(athleteService.getAthlete(performanceRecordingDto.getAthleteId()), disciplineService.getDisciplineById(performanceRecordingDto.getDisciplineId()), performanceRecordingDto.getSelectedYear(), performanceRecordingDto.getRatingValue());
+        PerformanceRecording performanceRecording = performanceRecordingService.recordPerformance(
+                athleteService.getAthlete(performanceRecordingDto.getAthleteId()),
+                disciplineService.getDisciplineById(performanceRecordingDto.getDisciplineId()),
+                performanceRecordingDto.getRatingValue(),
+                performanceRecordingDto.getDateOfPerformance()
+        );
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(performanceRecording);

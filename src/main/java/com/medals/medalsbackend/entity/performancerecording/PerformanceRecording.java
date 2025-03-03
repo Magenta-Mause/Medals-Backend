@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.medals.medalsbackend.entity.users.Athlete;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity(name = "performance_recording")
 @Getter
@@ -40,9 +40,9 @@ public class PerformanceRecording {
     @JsonProperty("rating_value")
     private double ratingValue;
 
-    @Column(name = "recorded_at", nullable = false)
-    @JsonProperty("date_recorded")
-    private LocalDateTime dateRecorded;
+    @Column(name = "date_of_performance", nullable = false)
+    @JsonProperty("date_of_performance")
+    private Date dateOfPerformance;
 
     @Column(name = "age_at_recording", nullable = false)
     @JsonProperty("age_at_recording")

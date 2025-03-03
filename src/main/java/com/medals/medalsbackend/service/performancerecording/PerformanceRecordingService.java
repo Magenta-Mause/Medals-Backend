@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 
 @Slf4j
 @Service
@@ -23,19 +24,22 @@ public class PerformanceRecordingService {
     private final DisciplineService disciplineService;
     private final PerformanceRecordingWebsocketMessagingService performanceRecordingWebsocketMessagingService;
 
-    public PerformanceRecording recordPerformance(Athlete athlete, Discipline discipline, int selectedYear, double value) throws NoMatchingDisciplineRatingFoundForAge {
-        int age = selectedYear - athlete.getBirthdate().getYear();
+    public PerformanceRecording recordPerformance(Athlete athlete, Discipline discipline, double value, Date dateOfPerformance) throws NoMatchingDisciplineRatingFoundForAge {
+        int age = dateOfPerformance.getYear() + 1900 - athlete.getBirthdate().getYear();
+        System.out.println("Age: " + age);
         DisciplineRatingMetric metric = disciplineService.getDisciplineMetricForAge(discipline, age);
         PerformanceRecording performanceRecording = PerformanceRecording.builder()
                 .ageAtRecording(age)
-                .dateRecorded(LocalDateTime.now())
+                .dateOfPerformance(dateOfPerformance)
                 .ratingValue(value)
                 .disciplineRatingMetric(metric)
                 .athlete(athlete)
                 .athleteId(athlete.getId())
                 .build();
+
         performanceRecording = performanceRecordingRepository.save(performanceRecording);
         performanceRecordingWebsocketMessagingService.sendPerformanceRecordingCreation(performanceRecording);
+        log.info("Recorded new Performance for athlete with id {}", athlete.getId());
         return performanceRecording;
     }
 

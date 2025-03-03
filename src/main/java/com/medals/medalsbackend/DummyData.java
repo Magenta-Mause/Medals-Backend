@@ -90,6 +90,14 @@ public class DummyData {
                 .moreBetter(false)
                 .build();
 
+        Discipline throwing = Discipline.builder()
+                .name("Werfen")
+                .unit("meters")
+                .category(DisciplineCategory.STRENGTH)
+                .moreBetter(false)
+                .build();
+
+
         ratings.add(DisciplineRatingMetric.builder()
                 .discipline(run800)
                 .startAge(6)
@@ -126,8 +134,45 @@ public class DummyData {
                 .validIn(2025)
                 .build());
 
+
         ratings.add(DisciplineRatingMetric.builder()
-                .discipline(run800)
+                .discipline(throwing)
+                .startAge(6)
+                .endAge(7)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .discipline(throwing)
+                .startAge(8)
+                .endAge(9)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .discipline(throwing)
+                .startAge(10)
+                .endAge(11)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .discipline(throwing)
+                .startAge(12)
+                .endAge(13)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .discipline(throwing)
                 .startAge(14)
                 .endAge(15)
                 .ratingMale(maleRatingMetric)
@@ -136,7 +181,26 @@ public class DummyData {
                 .build());
 
         ratings.add(DisciplineRatingMetric.builder()
-                .discipline(run800)
+                .discipline(throwing)
+                .startAge(16)
+                .endAge(17)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
+                .build());
+
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .discipline(throwing)
+                .startAge(14)
+                .endAge(15)
+                .ratingMale(maleRatingMetric)
+                .ratingFemale(femaleRatingMetric)
+                .validIn(2025)
+                .build());
+
+        ratings.add(DisciplineRatingMetric.builder()
+                .discipline(throwing)
                 .startAge(16)
                 .endAge(17)
                 .ratingMale(maleRatingMetric)
