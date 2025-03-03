@@ -24,7 +24,7 @@ public class LoginEntryService {
   private final OneTimeCodeService oneTimeCodeService;
   private final NotificationService notificationService;
 
-  public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException, InternalException {
+  public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException {
     if (loginEntryRepository.existsById(email)) {
       throw new EmailAlreadyExistsException(email);
     }

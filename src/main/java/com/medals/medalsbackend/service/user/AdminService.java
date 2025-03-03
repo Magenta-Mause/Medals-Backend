@@ -1,7 +1,10 @@
 package com.medals.medalsbackend.service.user;
 
+import com.medals.medalsbackend.entity.medals.InitializedEntity;
+import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ public class AdminService {
 
     private final UserEntityService userEntityService;
     private final AdminCreationConfiguration adminCreationConfiguration;
+    private final InitializedEntityRepository initializedEntityRepository;
 
     @SneakyThrows
     @Profile("!test")
@@ -29,6 +33,11 @@ public class AdminService {
         if (!adminCreationConfiguration.enabled()) {
             return;
         }
+        if (initializedEntityRepository.existsById(InitializedEntityType.Admin)) {
+            log.info("Admin already initiated");
+            return;
+        }
+
 
         log.info("Initializing admin");
         Arrays.stream(adminCreationConfiguration.admins()).toList().forEach(admin -> {
@@ -39,6 +48,10 @@ public class AdminService {
             }
         });
         log.info("Initiated {} admins", adminCreationConfiguration.admins().length);
+
+        if (adminCreationConfiguration.admins().length > 0) {
+            initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Admin));
+        }
     }
 
     public Admin createAdmin(Admin admin) throws InternalException {
