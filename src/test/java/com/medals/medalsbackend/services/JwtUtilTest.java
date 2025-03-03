@@ -59,7 +59,7 @@ class JwtUtilTest {
                 .registerModule(new Jdk8Module())
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
                 .setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        jwtConfigurationProperties = new JwtConfigurationProperties("secretKey", testExpirationTime, testExpirationTime);
+        jwtConfigurationProperties = new JwtConfigurationProperties("secretKey", testExpirationTime, testExpirationTime, testExpirationTime);
         jwtParser = Jwts.parserBuilder().setSigningKey(signingKey).build();
         jwtUtils = new JwtUtils(jwtParser, jwtConfigurationProperties, signingKey, objectMapper);
     }
