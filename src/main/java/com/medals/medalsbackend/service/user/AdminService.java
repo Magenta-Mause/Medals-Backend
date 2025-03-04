@@ -38,20 +38,18 @@ public class AdminService {
             return;
         }
 
-
         log.info("Initializing admin");
-        Arrays.stream(adminCreationConfiguration.admins()).toList().forEach(admin -> {
-            try {
-                createAdmin(admin);
-            } catch (InternalException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        log.info("Initiated {} admins", adminCreationConfiguration.admins().length);
-
         if (adminCreationConfiguration.admins().length > 0) {
+            Arrays.stream(adminCreationConfiguration.admins()).toList().forEach(admin -> {
+                try {
+                    createAdmin(admin);
+                } catch (InternalException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Admin));
         }
+        log.info("Initiated {} admins", adminCreationConfiguration.admins().length);
     }
 
     public Admin createAdmin(Admin admin) throws InternalException {
