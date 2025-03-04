@@ -27,7 +27,7 @@ public class AdminServiceTest {
         Admin admin = adminService.createAdmin(Admin.builder().lastName("lastName").firstName("firstName").email("testEmail@gmail.com").build());
         Admin createdAdmin = (Admin) userEntityService.findById(admin.getId()).get();
         assertEquals(UserType.ADMIN, createdAdmin.getType());
-        assertEquals("testEmail@gmail.com", createdAdmin.getEmail());
+        assertEquals("testemail@gmail.com", createdAdmin.getEmail());
         assertEquals("firstName", createdAdmin.getFirstName());
         assertEquals("lastName", createdAdmin.getLastName());
     }
