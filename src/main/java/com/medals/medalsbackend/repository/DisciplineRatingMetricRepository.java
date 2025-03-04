@@ -11,8 +11,8 @@ public interface DisciplineRatingMetricRepository extends JpaRepository<Discipli
     @Query("SELECT d FROM discipline_rating_metric d WHERE d.validIn=?1 AND d.startAge<=?2 AND d.endAge>=?2")
     Collection<DisciplineRatingMetric> getAllByAge(int selectedYear, int age);
 
-    @Query("SELECT d FROM discipline_rating_metric d WHERE d.discipline.id=?1 AND d.startAge<=?2 AND d.endAge>=?2")
-    Collection<DisciplineRatingMetric> getDisciplineRatingMetricForAge(long disciplineId, int age);
+    @Query("SELECT d FROM discipline_rating_metric d WHERE d.discipline.id=?1 AND d.startAge<=?2 AND d.endAge>=?2 AND d.validIn = ?3")
+    Collection<DisciplineRatingMetric> getDisciplineRatingMetricForAge(long disciplineId, int age, int selectedYear);
 
     @Query("SELECT d FROM discipline_rating_metric d WHERE d.discipline.id=?1")
     Collection<DisciplineRatingMetric> getDisciplineRatingMetricByDisciplineId(long disciplineId);

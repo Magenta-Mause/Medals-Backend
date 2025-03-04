@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -27,7 +26,7 @@ public class PerformanceRecordingService {
     public PerformanceRecording recordPerformance(Athlete athlete, Discipline discipline, double value, Date dateOfPerformance) throws NoMatchingDisciplineRatingFoundForAge {
         int age = dateOfPerformance.getYear() + 1900 - athlete.getBirthdate().getYear();
         System.out.println("Age: " + age);
-        DisciplineRatingMetric metric = disciplineService.getDisciplineMetricForAge(discipline, age);
+        DisciplineRatingMetric metric = disciplineService.getDisciplineMetricForAge(discipline, age, dateOfPerformance.getYear() + 1900);
         PerformanceRecording performanceRecording = PerformanceRecording.builder()
                 .ageAtRecording(age)
                 .dateOfPerformance(dateOfPerformance)

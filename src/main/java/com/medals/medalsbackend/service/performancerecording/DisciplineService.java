@@ -107,8 +107,8 @@ public class DisciplineService {
         return disciplineRatingMetricRepository.getAllByAge(selectedYear, age);
     }
 
-    public DisciplineRatingMetric getDisciplineMetricForAge(Discipline discipline, int age) throws NoMatchingDisciplineRatingFoundForAge {
-        return disciplineRatingMetricRepository.getDisciplineRatingMetricForAge(discipline.getId(), age).stream().findFirst().orElseThrow(() -> new NoMatchingDisciplineRatingFoundForAge(discipline.getId()));
+    public DisciplineRatingMetric getDisciplineMetricForAge(Discipline discipline, int age, int selectedYear) throws NoMatchingDisciplineRatingFoundForAge {
+        return disciplineRatingMetricRepository.getDisciplineRatingMetricForAge(discipline.getId(), age, selectedYear).stream().findFirst().orElseThrow(() -> new NoMatchingDisciplineRatingFoundForAge(discipline.getId()));
     }
 
     public Discipline getDisciplineById(long id) throws DisciplineNotFoundException {
