@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.controller.authorization;
 
+import com.medals.medalsbackend.dto.authorization.InviteAthleteDto;
 import com.medals.medalsbackend.dto.authorization.ResetPasswordDto;
 import com.medals.medalsbackend.dto.authorization.SetPasswordDto;
 import com.medals.medalsbackend.dto.authorization.LoginUserDto;
@@ -97,13 +98,13 @@ public class AuthorizationController {
     }
 
     @PostMapping("/validateInvite")
-    public ResponseEntity<String> validateInvite(@RequestParam String oneTimeCode, @RequestBody LoginUserDto loginUserDto) throws JwtTokenInvalidException, EmailDoesntExistException, LoginDoesntMatchException {
-        LoginEntry loginEntry = loginEntryService.checkLogin(loginUserDto.getEmail(), loginUserDto.getPassword());
+    public ResponseEntity<String> validateInvite(@RequestBody InviteAthleteDto inviteAthleteDto) throws JwtTokenInvalidException, EmailDoesntExistException, LoginDoesntMatchException {
+        LoginEntry loginEntry = loginEntryService.checkLogin(inviteAthleteDto.getEmail(), inviteAthleteDto.getPassword());
         if (loginEntry == null) {
            throw new LoginDoesntMatchException(null);
         }
         try {
-            athleteService.acceptInvite(oneTimeCode);
+            athleteService.acceptInvite(inviteAthleteDto.getToken());
         } catch (AthleteNotFoundException | TrainerNotFoundException e) {
             System.out.println("The athlete id or trainer id is incorrect");
         }
