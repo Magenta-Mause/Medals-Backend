@@ -2,12 +2,15 @@ package com.medals.medalsbackend.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
+import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
+import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import com.medals.medalsbackend.service.websockets.TrainerWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +27,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainerService {
 
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
     private final UserEntityService userEntityService;
-    private final Environment environment;
     private final TrainerWebsocketMessageService trainerWebsocketMessageService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
@@ -89,5 +91,16 @@ public class TrainerService {
         trainerDto.setId(trainerId);
         Trainer savedTrainer = (Trainer) userEntityService.update(objectMapper.convertValue(trainerDto, Trainer.class));
         trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
+    }
+
+    public void inviteAthlete(AthleteDto athleteDto, String trainerEmail) {
+        Athlete inviteAthlete = userEntityService.findAthleteByEmailAndBirthdate(athleteDto.getEmail(), athleteDto.getBirthdate());
+        log.info("Executing invite athlete {}", inviteAthlete);
+        if (inviteAthlete != null) {
+            athleteDto.setId(inviteAthlete.getId());
+            Trainer trainer = (Trainer) userEntityService.findByEmail(trainerEmail).get();
+            String trainerName = trainer.getFirstName() + " " + trainer.getLastName();
+            jwtService.buildInviteToken(athleteDto, trainer.getId(), trainerName);
+        }
     }
 }

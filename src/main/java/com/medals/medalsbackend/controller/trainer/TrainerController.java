@@ -1,10 +1,13 @@
 package com.medals.medalsbackend.controller.trainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.service.user.TrainerService;
+import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 public class TrainerController {
     private final TrainerService trainerService;
     private final ObjectMapper objectMapper;
+    private final JwtService jwtService;
 
     @GetMapping
     public ResponseEntity<TrainerDto[]> getTrainers() {
@@ -46,5 +50,12 @@ public class TrainerController {
     @GetMapping(value = "/{trainerId}")
     public ResponseEntity<TrainerDto> getTrainer(@PathVariable Long trainerId) throws TrainerNotFoundException {
         return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
+    }
+
+    @PostMapping(value = "/inviteAthlete")
+    public ResponseEntity<Void> inviteAthlete(@RequestBody AthleteDto athleteDto, @CookieValue(value = "refreshToken") String token) throws JwtTokenInvalidException {
+        String trainerEmail = jwtService.getUserEmailFromRefreshToken(token);
+        trainerService.inviteAthlete(athleteDto, trainerEmail);
+        return ResponseEntity.ok().build();
     }
 }

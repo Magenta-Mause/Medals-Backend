@@ -17,47 +17,47 @@ import java.util.List;
 
 import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 
-
 @RestController
 @RequestMapping(BASE_PATH + "/athletes")
 @RequiredArgsConstructor
 public class AthleteController {
-    private final AthleteService athleteService;
-    private final ObjectMapper objectMapper;
+  private final AthleteService athleteService;
+  private final ObjectMapper objectMapper;
 
-    @GetMapping
-    public ResponseEntity<AthleteDto[]> getAthletes() {
-        return ResponseEntity.ok(Arrays.stream(athleteService.getAthletes()).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
-    }
 
-    @PostMapping
-    public ResponseEntity<AthleteDto> postAthlete(@Valid @RequestBody AthleteDto athleteDto) throws InternalException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(athleteService.insertAthlete(athleteDto), AthleteDto.class));
-    }
+  @GetMapping
+  public ResponseEntity<AthleteDto[]> getAthletes() {
+    return ResponseEntity.ok(Arrays.stream(athleteService.getAthletes()).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
+  }
 
-    @PostMapping(value = "/validate")
-    public ResponseEntity<List<AthleteDto>> validateAthletes(@RequestBody @Valid List<AthleteDto> athleteDtoList) {
-        return ResponseEntity.ok(athleteDtoList);
-    }
+  @PostMapping
+  public ResponseEntity<AthleteDto> postAthlete(@Valid @RequestBody AthleteDto athleteDto) throws InternalException {
+    return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(athleteService.insertAthlete(athleteDto), AthleteDto.class));
+  }
 
-    @DeleteMapping("/{athleteId}")
-    public ResponseEntity<Void> deleteAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException {
-        athleteService.deleteAthlete(athleteId);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
-    }
+  @PostMapping(value = "/validate")
+  public ResponseEntity<List<AthleteDto>> validateAthletes(@RequestBody @Valid List<AthleteDto> athleteDtoList) {
+    return ResponseEntity.ok(athleteDtoList);
+  }
 
-    @GetMapping(value = "/{athleteId}")
-    public ResponseEntity<AthleteDto> getAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException {
-        return ResponseEntity.ok(objectMapper.convertValue(athleteService.getAthlete(athleteId), AthleteDto.class));
-    }
+  @DeleteMapping("/{athleteId}")
+  public ResponseEntity<Void> deleteAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException {
+    athleteService.deleteAthlete(athleteId);
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+  }
 
-    @GetMapping(value = "/{athleteId}/medals")
-    public ResponseEntity<MedalCollection> getMedals(@PathVariable Long athleteId) throws AthleteNotFoundException {
-        return ResponseEntity.ok(athleteService.getAthleteMedalCollection(athleteId));
-    }
+  @GetMapping(value = "/{athleteId}")
+  public ResponseEntity<AthleteDto> getAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException {
+    return ResponseEntity.ok(objectMapper.convertValue(athleteService.getAthlete(athleteId), AthleteDto.class));
+  }
 
-    @GetMapping(value = "/{athleteId}/swimmingCertificate")
-    public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException {
-        return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
-    }
+  @GetMapping(value = "/{athleteId}/medals")
+  public ResponseEntity<MedalCollection> getMedals(@PathVariable Long athleteId) throws AthleteNotFoundException {
+    return ResponseEntity.ok(athleteService.getAthleteMedalCollection(athleteId));
+  }
+
+  @GetMapping(value = "/{athleteId}/swimmingCertificate")
+  public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException {
+    return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
+  }
 }
