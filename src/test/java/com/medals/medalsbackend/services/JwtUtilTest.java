@@ -159,7 +159,7 @@ class JwtUtilTest {
                 .signWith(signingKey)
                 .compact();
 
-        String user = jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN).get("user").toString();
+        String user = (String) jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN).get("sub");
         assertEquals(user, testEmail);
     }
 
