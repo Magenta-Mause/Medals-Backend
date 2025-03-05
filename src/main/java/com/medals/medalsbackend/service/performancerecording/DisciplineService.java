@@ -1,6 +1,8 @@
 package com.medals.medalsbackend.service.performancerecording;
 
 import com.medals.medalsbackend.DummyData;
+import com.medals.medalsbackend.entity.medals.InitializedEntity;
+import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.performancerecording.Discipline;
 import com.medals.medalsbackend.entity.performancerecording.DisciplineRatingMetric;
 import com.medals.medalsbackend.entity.users.Athlete;
@@ -8,6 +10,7 @@ import com.medals.medalsbackend.exception.performancerecording.DisciplineNotFoun
 import com.medals.medalsbackend.exception.performancerecording.NoMatchingDisciplineRatingFoundForAge;
 import com.medals.medalsbackend.repository.DisciplineRatingMetricRepository;
 import com.medals.medalsbackend.repository.DisciplineRepository;
+import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.websockets.DisciplineWebsocketMessagingService;
 import com.medals.medalsbackend.service.websockets.RatingMetricWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +33,17 @@ public class DisciplineService {
     private final DisciplineRepository disciplineRepository;
     private final DisciplineWebsocketMessagingService disciplineWebsocketMessagingService;
     private final RatingMetricWebsocketMessageService ratingMetricWebsocketMessageService;
+    private final InitializedEntityRepository initializedEntityRepository;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
 
     @EventListener(ApplicationReadyEvent.class)
     @Profile("!test")
-    public void instantiateDummys() {
+    public void instantiateDummies() {
         if (!insertDummies) {
+            return;
+        }
+        if (initializedEntityRepository.existsById(InitializedEntityType.Discipline)) {
             return;
         }
 
@@ -51,6 +58,7 @@ public class DisciplineService {
                 throw new RuntimeException(e);
             }
         });
+        initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Discipline));
 
         log.info("Inserted dummy data...");
     }
