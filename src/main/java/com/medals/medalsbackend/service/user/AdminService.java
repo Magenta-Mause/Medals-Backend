@@ -1,8 +1,11 @@
 package com.medals.medalsbackend.service.user;
 
+import com.medals.medalsbackend.entity.medals.InitializedEntity;
+import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.exception.AdminNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.websockets.AdminWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -23,6 +26,7 @@ public class AdminService {
 
     private final UserEntityService userEntityService;
     private final AdminCreationConfiguration adminCreationConfiguration;
+    private final InitializedEntityRepository initializedEntityRepository;
     private final AdminWebsocketMessageService adminWebsocketMessageService;
 
     @SneakyThrows
@@ -32,15 +36,22 @@ public class AdminService {
         if (!adminCreationConfiguration.enabled()) {
             return;
         }
+        if (initializedEntityRepository.existsById(InitializedEntityType.Admin)) {
+            log.info("Admin already initiated");
+            return;
+        }
 
         log.info("Initializing admin");
-        Arrays.stream(adminCreationConfiguration.admins()).toList().forEach(admin -> {
-            try {
-                createAdmin(admin);
-            } catch (InternalException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        if (adminCreationConfiguration.admins().length > 0) {
+            Arrays.stream(adminCreationConfiguration.admins()).toList().forEach(admin -> {
+                try {
+                    createAdmin(admin);
+                } catch (InternalException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Admin));
+        }
         log.info("Initiated {} admins", adminCreationConfiguration.admins().length);
     }
 
