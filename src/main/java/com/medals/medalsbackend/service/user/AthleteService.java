@@ -3,6 +3,8 @@ package com.medals.medalsbackend.service.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
 import com.medals.medalsbackend.dto.AthleteDto;
+import com.medals.medalsbackend.entity.medals.InitializedEntity;
+import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
@@ -13,6 +15,7 @@ import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
+import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +40,16 @@ public class AthleteService {
     private final TrainerService trainerService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
+    private final InitializedEntityRepository initializedEntityRepository;
 
     @EventListener(ApplicationReadyEvent.class)
     @Profile("!test")
     public void instantiateDummies() {
         if (!insertDummies) {
+            return;
+        }
+        if (initializedEntityRepository.existsById(InitializedEntityType.Athlete)) {
+            log.info("Athletes already initiated");
             return;
         }
 
@@ -53,6 +61,7 @@ public class AthleteService {
                 throw new RuntimeException(e);
             }
         });
+        initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Athlete));
     }
 
     public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {

@@ -6,9 +6,12 @@ import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.dto.authorization.AthleteSearchDto;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.medals.InitializedEntity;
+import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
@@ -34,11 +37,16 @@ public class TrainerService {
     private final TrainerWebsocketMessageService trainerWebsocketMessageService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
+    private final InitializedEntityRepository initializedEntityRepository;
 
     @EventListener(ApplicationReadyEvent.class)
     @Profile("!test")
     public void instantiateDummies() {
         if (!insertDummies) {
+            return;
+        }
+        if (initializedEntityRepository.existsById(InitializedEntityType.Trainer)) {
+            log.info("Trainer already initiated");
             return;
         }
 
@@ -50,6 +58,7 @@ public class TrainerService {
                 log.error(internalException.getMessage(), internalException);
             }
         });
+        initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Trainer));
     }
 
     public Trainer createTrainer(Trainer trainer) throws InternalException {
