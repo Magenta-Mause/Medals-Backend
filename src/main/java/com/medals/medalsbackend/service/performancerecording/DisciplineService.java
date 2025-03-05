@@ -85,9 +85,7 @@ public class DisciplineService {
     public DisciplineRatingMetric insertDisciplineRatingMetric(long disciplineId, DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
         disciplineRatingMetric.setId(null);
         disciplineRatingMetric.setDiscipline(getDisciplineById(disciplineId));
-        DisciplineRatingMetric inserted = disciplineRatingMetricRepository.save(disciplineRatingMetric);
-        ratingMetricWebsocketMessageService.sendRatingMetricCreation(inserted);
-        return inserted;
+        return insertDisciplineRatingMetric(disciplineRatingMetric);
     }
 
     public DisciplineRatingMetric insertDisciplineRatingMetric(DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
