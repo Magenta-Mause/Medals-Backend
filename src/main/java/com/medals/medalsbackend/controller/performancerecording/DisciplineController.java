@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
 import java.util.Collection;
 
 @RestController
@@ -25,7 +26,6 @@ public class DisciplineController {
     @GetMapping
     public ResponseEntity<Collection<Discipline>> getDisciplines() {
         return ResponseEntity.ok(disciplineService.getDisciplines());
-
     }
 
     @PostMapping
@@ -35,7 +35,10 @@ public class DisciplineController {
     }
 
     @GetMapping("/metrics")
-    public ResponseEntity<Collection<DisciplineRatingMetric>> getDisciplineMetrics(@RequestParam("selected_year") int selectedYear) {
+    public ResponseEntity<Collection<DisciplineRatingMetric>> getDisciplineMetrics(@RequestParam(value = "selected_year", defaultValue = "0") int selectedYear) {
+        if (selectedYear == 0) {
+            selectedYear = Calendar.getInstance().get(Calendar.YEAR);
+        }
         return ResponseEntity.ok(disciplineService.getDisciplineRatingsForSelectedYear(selectedYear));
     }
 
