@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @ToString
@@ -19,10 +20,6 @@ import java.time.LocalDate;
 @DiscriminatorValue("ATHLETE")
 @SuperBuilder
 public class Athlete extends UserEntity {
-    @ManyToOne
-    @JoinColumn(name = "trainer_id")
-    private Trainer trainer;
-
     @Column(nullable = false)
     private LocalDate birthdate;
 
@@ -55,4 +52,12 @@ public class Athlete extends UserEntity {
             };
         }
     }
+
+    @ManyToMany
+    @JoinTable(
+            name = "athlete_trainer",
+            joinColumns = @JoinColumn(name = "athlete_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainer_id")
+    )
+    private List<Trainer> trainers;
 }

@@ -14,9 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -44,34 +46,46 @@ public class JwtServiceTest {
                         .password("password")
                         .build()
         );
+
+        Map<String, Object> claims = Map.of(
+                "tokenType", JwtTokenBody.TokenType.REFRESH_TOKEN
+        );
         ArgumentCaptor<JwtTokenBody> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(JwtTokenBody.class);
-        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture());
-        assertEquals("test@gmail.com", jwtTokenBodyArgumentCaptor.getValue().getEmail());
-        assertNull(jwtTokenBodyArgumentCaptor.getValue().getAuthorizedUsers());
-        assertEquals(JwtTokenBody.TokenType.REFRESH_TOKEN, jwtTokenBodyArgumentCaptor.getValue().getTokenType());
+        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture(), eq(claims));
+        JwtTokenBody capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();
+
+        assertEquals("test@gmail.com", capturedTokenBody.getEmail());
+        assertNull(capturedTokenBody.getAuthorizedUsers());
+        assertEquals(JwtTokenBody.TokenType.REFRESH_TOKEN, capturedTokenBody.getTokenType());
     }
 
     @Test
-    public void testGenerateIdentityToken() {
-        jwtService.buildIdentityToken(
-                LoginEntry.builder()
-                        .email("test@gmail.com")
-                        .users(List.of(
-                                Admin.builder()
-                                        .email("test@gmail.com")
-                                        .lastName("adminLastName")
-                                        .firstName("adminFirstName")
-                                        .build()
-                        ))
-                        .password("password")
-                        .build()
+    public void testBuildIdentityToken() {
+        LoginEntry loginEntry = LoginEntry.builder()
+                .email("test@gmail.com")
+                .users(List.of(
+                        Admin.builder()
+                                .email("test@gmail.com")
+                                .lastName("adminLastName")
+                                .firstName("adminFirstName")
+                                .build()
+                ))
+                .build();
+
+        jwtService.buildIdentityToken(loginEntry);
+
+        Map<String, Object> claims = Map.of(
+                "tokenType", JwtTokenBody.TokenType.IDENTITY_TOKEN,
+                "users", loginEntry.getUsers()
         );
+
         ArgumentCaptor<JwtTokenBody> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(JwtTokenBody.class);
-        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture());
-        assertEquals("test@gmail.com", jwtTokenBodyArgumentCaptor.getValue().getEmail());
-        assertEquals(JwtTokenBody.TokenType.IDENTITY_TOKEN, jwtTokenBodyArgumentCaptor.getValue().getTokenType());
-        assertEquals("adminFirstName", jwtTokenBodyArgumentCaptor.getValue().getAuthorizedUsers().stream().findFirst().get().getFirstName());
-        assertEquals("adminLastName", jwtTokenBodyArgumentCaptor.getValue().getAuthorizedUsers().stream().findFirst().get().getLastName());
-        assertEquals("test@gmail.com", jwtTokenBodyArgumentCaptor.getValue().getAuthorizedUsers().stream().findFirst().get().getEmail());
+        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture(), eq(claims));
+
+        JwtTokenBody capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();
+
+        assertEquals("test@gmail.com", capturedTokenBody.getEmail());
+        assertEquals(loginEntry.getUsers(), capturedTokenBody.getAuthorizedUsers());
+        assertEquals(JwtTokenBody.TokenType.IDENTITY_TOKEN, capturedTokenBody.getTokenType());
     }
 }

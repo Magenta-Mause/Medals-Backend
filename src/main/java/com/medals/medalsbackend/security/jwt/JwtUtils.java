@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -25,17 +26,12 @@ public class JwtUtils {
     private final Key signingKey;
     private final ObjectMapper objectMapper;
 
-    public String generateToken(JwtTokenBody tokenBody) {
-        Map<String, Object> claims = tokenBody.getTokenType() == JwtTokenBody.TokenType.IDENTITY_TOKEN ? Map.of(
-                "tokenType", tokenBody.getTokenType(),
-                "users", tokenBody.getAuthorizedUsers()
-        ) : Map.of(
-                "tokenType", tokenBody.getTokenType()
-        );
-
-        long tokenValidityDuration = tokenBody.getTokenType() == JwtTokenBody.TokenType.IDENTITY_TOKEN ?
-                jwtConfigurationProperties.identityTokenExpirationTime() :
-                jwtConfigurationProperties.refreshTokenExpirationTime();
+    public String generateToken(JwtTokenBody tokenBody, Map<String, Object> claims) {
+        long tokenValidityDuration = switch (tokenBody.getTokenType()) {
+            case JwtTokenBody.TokenType.IDENTITY_TOKEN -> jwtConfigurationProperties.identityTokenExpirationTime();
+            case JwtTokenBody.TokenType.REFRESH_TOKEN -> jwtConfigurationProperties.refreshTokenExpirationTime();
+            case JwtTokenBody.TokenType.INVITE_TOKEN -> jwtConfigurationProperties.athleteInviteTokenExpirationTime();
+        };
 
         return Jwts.builder()
                 .serializeToJsonWith(new JacksonSerializer<>(objectMapper))
@@ -48,10 +44,9 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String validateToken(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
+    public Map<String, Object> validateToken(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
         try {
             Claims claims = jwtParser.parseClaimsJws(token).getBody();
-            String subject = claims.getSubject();
             claims.getExpiration();
             if (!"medals-backend".equals(claims.getAudience())) {
                 throw new SecurityException("Missing/Bad audience claim");
@@ -62,36 +57,13 @@ public class JwtUtils {
             if (claims.getSubject() == null) {
                 throw new SecurityException("Missing/Bad subject claim");
             }
-            return subject;
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SecurityException | AssertionError e) {
-            log.error("Error validating token", e);
-            throw new JwtTokenInvalidException();
-        } catch (Exception e) {
-            log.error("Error while parsing JWT refresh token", e);
-            throw new JwtTokenInvalidException();
-        }
-    }
 
-    public String getInfoInToken(String token, JwtTokenBody.TokenType tokenType, String searchTerm) throws JwtTokenInvalidException {
-        try {
-            Claims claims = jwtParser.parseClaimsJws(token).getBody();
-            String term = claims.get(searchTerm).toString();
-            claims.getExpiration();
-            if (!"medals-backend".equals(claims.getAudience())) {
-                throw new SecurityException("Missing/Bad audience claim");
-            }
-            if (!tokenType.toString().equals(claims.get("tokenType"))) {
-                throw new SecurityException("Token type is not matching");
-            }
-            if (claims.getSubject() == null) {
-                throw new SecurityException("Missing/Bad subject claim");
-            }
-            return term;
+            return new HashMap<>(claims);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SecurityException | AssertionError e) {
             log.error("Error validating token", e);
             throw new JwtTokenInvalidException();
         } catch (Exception e) {
-            log.error("Error while parsing JWT refresh token", e);
+            log.error("Error while parsing JWT token", e);
             throw new JwtTokenInvalidException();
         }
     }
@@ -102,23 +74,5 @@ public class JwtUtils {
 
     public long getIdentityTokenValidityDuration() {
         return jwtConfigurationProperties.identityTokenExpirationTime();
-    }
-
-    public String buildInviteToken(JwtTokenBody jwtTokenBody, Map<String, Object> claims) {
-        long tokenValidityDuration = switch (jwtTokenBody.getTokenType()) {
-            case JwtTokenBody.TokenType.IDENTITY_TOKEN -> jwtConfigurationProperties.identityTokenExpirationTime();
-            case JwtTokenBody.TokenType.REFRESH_TOKEN -> jwtConfigurationProperties.refreshTokenExpirationTime();
-            case JwtTokenBody.TokenType.INVITE_TOKEN -> jwtConfigurationProperties.inviteTokenExpirationTime();
-        };
-
-        return Jwts.builder()
-                .serializeToJsonWith(new JacksonSerializer<>(objectMapper))
-                .setIssuedAt(new Date())
-                .setAudience("medals-backend")
-                .setSubject(jwtTokenBody.getEmail())
-                .setExpiration(new Date(new Date().getTime() + tokenValidityDuration))
-                .addClaims(claims)
-                .signWith(signingKey)
-                .compact();
     }
 }

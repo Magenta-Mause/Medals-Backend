@@ -1,18 +1,15 @@
 package com.medals.medalsbackend.controller.authorization;
 
-import com.medals.medalsbackend.dto.authorization.InviteAthleteDto;
 import com.medals.medalsbackend.dto.authorization.ResetPasswordDto;
 import com.medals.medalsbackend.dto.authorization.SetPasswordDto;
 import com.medals.medalsbackend.dto.authorization.LoginUserDto;
 import com.medals.medalsbackend.entity.users.LoginEntry;
-import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.GenericAPIRequestException;
 import com.medals.medalsbackend.exception.JwtTokenInvalidException;
-import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
-import com.medals.medalsbackend.service.user.AthleteService;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginDoesntMatchException;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
@@ -35,7 +32,6 @@ public class AuthorizationController {
     private final LoginEntryService loginEntryService;
     private final JwtService jwtService;
     private final JwtUtils jwtUtils;
-    private final AthleteService athleteService;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginUserDto loginUserDto) throws GenericAPIRequestException {
@@ -73,7 +69,7 @@ public class AuthorizationController {
 
     @GetMapping("/token")
     public ResponseEntity<String> getToken(@CookieValue(name = "refreshToken") String refreshToken) throws JwtTokenInvalidException, EmailDoesntExistException {
-        String userEmail = jwtService.getUserEmailFromRefreshToken(refreshToken);
+        String userEmail = (String) jwtService.getTokenContentBody(refreshToken, JwtTokenBody.TokenType.REFRESH_TOKEN).get("sub");
         LoginEntry loginEntry = loginEntryService.getLoginEntry(userEmail);
         String identityToken = jwtService.buildIdentityToken(loginEntry);
         return ResponseEntity.ok(identityToken);
@@ -95,19 +91,5 @@ public class AuthorizationController {
     public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) throws OneTimeCodeExpiredException, OneTimeCodeNotFoundException {
         loginEntryService.resetPassword(resetPasswordDto.getPassword(), resetPasswordDto.getToken());
         return ResponseEntity.ok("Success");
-    }
-
-    @PostMapping("/validateInvite")
-    public ResponseEntity<String> validateInvite(@RequestBody InviteAthleteDto inviteAthleteDto) throws JwtTokenInvalidException, EmailDoesntExistException, LoginDoesntMatchException {
-        LoginEntry loginEntry = loginEntryService.checkLogin(inviteAthleteDto.getEmail(), inviteAthleteDto.getPassword());
-        if (loginEntry == null) {
-           throw new LoginDoesntMatchException(null);
-        }
-        try {
-            athleteService.acceptInvite(inviteAthleteDto.getToken());
-        } catch (AthleteNotFoundException | TrainerNotFoundException e) {
-            System.out.println("The athlete id or trainer id is incorrect");
-        }
-        return ResponseEntity.ok("Accepted the Invite");
     }
 }

@@ -5,6 +5,8 @@ import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.service.user.AthleteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,6 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 public class AthleteController {
   private final AthleteService athleteService;
   private final ObjectMapper objectMapper;
-
 
   @GetMapping
   public ResponseEntity<AthleteDto[]> getAthletes() {
@@ -59,5 +60,15 @@ public class AthleteController {
   @GetMapping(value = "/{athleteId}/swimmingCertificate")
   public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException {
     return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
+  }
+
+  @PostMapping("/validateInvite")
+  public ResponseEntity<String> validateInvite(@RequestParam String oneTimeCode) throws JwtTokenInvalidException {
+    try {
+      athleteService.acceptInvite(oneTimeCode);
+    } catch (AthleteNotFoundException | TrainerNotFoundException e) {
+      System.out.println("The athlete id or trainer id is incorrect");
+    }
+    return ResponseEntity.ok("Accepted the Invite");
   }
 }

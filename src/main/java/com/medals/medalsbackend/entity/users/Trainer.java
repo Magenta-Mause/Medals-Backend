@@ -18,7 +18,7 @@ import java.util.List;
 @SuperBuilder
 public class Trainer extends UserEntity {
     @Column
-    @OneToMany(mappedBy = "trainer", cascade =  CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "trainers", cascade =  CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Athlete> managedAthletes;
 
     protected final UserType type = UserType.TRAINER;

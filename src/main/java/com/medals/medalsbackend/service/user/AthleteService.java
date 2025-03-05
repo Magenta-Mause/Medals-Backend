@@ -11,6 +11,7 @@ import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
@@ -100,15 +101,16 @@ public class AthleteService {
     }
 
     public void acceptInvite(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
-        long trainerId = Long.parseLong(jwtService.getSearchTerm(token, "trainerId"));
-        long athleteId = Long.parseLong(jwtService.getSearchTerm(token, "athleteId"));
+        long trainerId = ((Integer) jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.INVITE_TOKEN).get("trainerId")).longValue();
+        long athleteId = ((Integer) jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.INVITE_TOKEN).get("athleteId")).longValue();
+
         Trainer trainer = trainerService.getTrainer(trainerId);
-        Athlete athlete = getAthlete(athleteId);
         List<Athlete> managedAthletes = trainer.getManagedAthletes();
-        athlete.setTrainer(trainer);
+
+        Athlete athlete = getAthlete(athleteId);
         managedAthletes.add(athlete);
+
         trainer.setManagedAthletes(managedAthletes);
         userEntityService.update(trainer);
-        userEntityService.update(athlete);
     }
 }
