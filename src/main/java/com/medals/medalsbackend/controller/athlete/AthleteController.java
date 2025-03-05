@@ -8,10 +8,12 @@ import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.service.user.AthleteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,5 +61,14 @@ public class AthleteController {
     @GetMapping(value = "/{athleteId}/swimmingCertificate")
     public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException {
         return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
+    }
+
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> checkAthleteExists(
+            @RequestParam String email,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) {
+
+        boolean exists = athleteService.checkAthleteExistence(email, birthdate);
+        return ResponseEntity.ok(exists);
     }
 }

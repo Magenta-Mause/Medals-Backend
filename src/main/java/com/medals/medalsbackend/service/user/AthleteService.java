@@ -21,6 +21,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -77,6 +79,17 @@ public class AthleteService {
         } catch (Exception e) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
         }
+    }
+
+    public boolean checkAthleteExistence(String email, LocalDate birthdate) {
+        Athlete[] athletes = userEntityService.getAllAthletes().toArray(new Athlete[0]);
+        log.info("Executing get all athletes: {}", athletes.length);
+        for (Athlete athlete : athletes) {
+            if (athlete.getEmail().equals(email) && athlete.getBirthdate().equals(birthdate)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void deleteAthlete(Long athleteId) throws AthleteNotFoundException {
