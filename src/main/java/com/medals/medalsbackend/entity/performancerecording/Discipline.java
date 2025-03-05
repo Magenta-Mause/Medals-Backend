@@ -26,10 +26,15 @@ public class Discipline {
     private String description;
 
     @Column(nullable = false)
-    private String unit;
+    private Unit unit;
 
     @Column(name = "more_better", nullable = false)
     @JsonProperty("more_better")
     private boolean moreBetter;
+
+    public enum Unit {
+        meters,
+        seconds
+    }
 
 }
