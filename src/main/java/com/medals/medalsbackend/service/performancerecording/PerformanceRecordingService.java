@@ -25,6 +25,7 @@ public class PerformanceRecordingService {
 
     public PerformanceRecording recordPerformance(Athlete athlete, Discipline discipline, double value, Date dateOfPerformance) throws NoMatchingDisciplineRatingFoundForAge {
         int age = dateOfPerformance.getYear() + 1900 - athlete.getBirthdate().getYear();
+        System.out.println(age + " " + discipline.getName() + " " + value + " " + dateOfPerformance);
         DisciplineRatingMetric metric = disciplineService.getDisciplineMetricForAge(discipline, age, dateOfPerformance.getYear() + 1900);
         PerformanceRecording performanceRecording = PerformanceRecording.builder()
                 .ageAtRecording(age)

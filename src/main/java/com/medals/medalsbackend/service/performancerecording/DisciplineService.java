@@ -29,111 +29,112 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class DisciplineService {
-    private final DisciplineRatingMetricRepository disciplineRatingMetricRepository;
-    private final DisciplineRepository disciplineRepository;
-    private final DisciplineWebsocketMessagingService disciplineWebsocketMessagingService;
-    private final RatingMetricWebsocketMessageService ratingMetricWebsocketMessageService;
-    private final InitializedEntityRepository initializedEntityRepository;
-    @Value("${app.dummies.enabled}")
-    private boolean insertDummies;
+  private final DisciplineRatingMetricRepository disciplineRatingMetricRepository;
+  private final DisciplineRepository disciplineRepository;
+  private final DisciplineWebsocketMessagingService disciplineWebsocketMessagingService;
+  private final RatingMetricWebsocketMessageService ratingMetricWebsocketMessageService;
+  private final InitializedEntityRepository initializedEntityRepository;
+  @Value("${app.dummies.enabled}")
+  private boolean insertDummies;
 
-    @EventListener(ApplicationReadyEvent.class)
-    @Profile("!test")
-    public void instantiateDummies() {
-        if (!insertDummies) {
-            return;
-        }
-        if (initializedEntityRepository.existsById(InitializedEntityType.Discipline)) {
-            return;
-        }
-
-        log.info("Inserting dummy data...");
-        Collection<DisciplineRatingMetric> disciplineRatingMetrics = DummyData.getDisciplineRatingMetric();
-        Set<Discipline> disciplines = new LinkedHashSet<>(disciplineRatingMetrics.stream().map(DisciplineRatingMetric::getDiscipline).toList());
-        disciplines.forEach(this::insertDiscipline);
-        disciplineRatingMetrics.forEach(metric -> {
-            try {
-                insertDisciplineRatingMetric(metric);
-            } catch (DisciplineNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Discipline));
-
-        log.info("Inserted dummy data...");
+  @EventListener(ApplicationReadyEvent.class)
+  @Profile("!test")
+  public void instantiateDummies() {
+    if (!insertDummies) {
+      return;
+    }
+    if (initializedEntityRepository.existsById(InitializedEntityType.Discipline)) {
+      return;
     }
 
-    public Discipline insertDiscipline(Discipline discipline) {
-        discipline.setId(null);
-        log.info("Inserting discipline {}", discipline);
-        Discipline inserted = disciplineRepository.save(discipline);
-        disciplineWebsocketMessagingService.sendDisciplineCreation(discipline);
-        return inserted;
-    }
+    log.info("Inserting dummy data...");
+    Collection<DisciplineRatingMetric> disciplineRatingMetrics = DummyData.getDisciplineRatingMetric();
+    Set<Discipline> disciplines = new LinkedHashSet<>(disciplineRatingMetrics.stream().map(DisciplineRatingMetric::getDiscipline).toList());
+    disciplines.forEach(this::insertDiscipline);
+    disciplineRatingMetrics.forEach(metric -> {
+      try {
+        insertDisciplineRatingMetric(metric);
+      } catch (DisciplineNotFoundException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Discipline));
 
-    public void deleteDiscipline(long disciplineId) {
-        disciplineRepository.deleteById(disciplineId);
-        disciplineWebsocketMessagingService.sendDisciplineDeletion(disciplineId);
-    }
+    log.info("Inserted dummy data...");
+  }
 
-    public void updateDiscipline(long id, Discipline discipline) {
-        discipline.setId(id);
-        Discipline updated = disciplineRepository.save(discipline);
-        disciplineWebsocketMessagingService.sendDisciplineUpdate(updated);
-    }
+  public Discipline insertDiscipline(Discipline discipline) {
+    discipline.setId(null);
+    log.info("Inserting discipline {}", discipline);
+    Discipline inserted = disciplineRepository.save(discipline);
+    disciplineWebsocketMessagingService.sendDisciplineCreation(discipline);
+    return inserted;
+  }
 
-    public DisciplineRatingMetric insertDisciplineRatingMetric(long disciplineId, DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
-        disciplineRatingMetric.setId(null);
-        disciplineRatingMetric.setDiscipline(getDisciplineById(disciplineId));
-        return insertDisciplineRatingMetric(disciplineRatingMetric);
-    }
+  public void deleteDiscipline(long disciplineId) {
+    disciplineRepository.deleteById(disciplineId);
+    disciplineWebsocketMessagingService.sendDisciplineDeletion(disciplineId);
+  }
 
-    public DisciplineRatingMetric insertDisciplineRatingMetric(DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
-        disciplineRatingMetric.setId(null);
-        DisciplineRatingMetric inserted = disciplineRatingMetricRepository.save(disciplineRatingMetric);
-        ratingMetricWebsocketMessageService.sendRatingMetricCreation(inserted);
-        return inserted;
-    }
+  public void updateDiscipline(long id, Discipline discipline) {
+    discipline.setId(id);
+    Discipline updated = disciplineRepository.save(discipline);
+    disciplineWebsocketMessagingService.sendDisciplineUpdate(updated);
+  }
 
-    public void deleteDisciplineRatingMetric(Long id) {
-        disciplineRatingMetricRepository.deleteById(id);
-        disciplineWebsocketMessagingService.sendDisciplineDeletion(id);
-    }
+  public DisciplineRatingMetric insertDisciplineRatingMetric(long disciplineId, DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
+    disciplineRatingMetric.setId(null);
+    disciplineRatingMetric.setDiscipline(getDisciplineById(disciplineId));
+    return insertDisciplineRatingMetric(disciplineRatingMetric);
+  }
 
-    public DisciplineRatingMetric updateDisciplineRatingMetric(Long id, Long disciplineId, DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
-        disciplineRatingMetric.setId(id);
-        disciplineRatingMetric.setDiscipline(getDisciplineById(disciplineId));
-        DisciplineRatingMetric updated = disciplineRatingMetricRepository.save(disciplineRatingMetric);
-        ratingMetricWebsocketMessageService.sendRatingMetricUpdate(updated);
-        return updated;
-    }
+  public DisciplineRatingMetric insertDisciplineRatingMetric(DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
+    disciplineRatingMetric.setId(null);
+    DisciplineRatingMetric inserted = disciplineRatingMetricRepository.save(disciplineRatingMetric);
+    ratingMetricWebsocketMessageService.sendRatingMetricCreation(inserted);
+    return inserted;
+  }
 
-    public Collection<DisciplineRatingMetric> getDisciplineRatingMetricsForAthlete(Athlete athlete, int selectedYear) {
-        int age = selectedYear - athlete.getBirthdate().getYear();
-        return disciplineRatingMetricRepository.getAllByAge(selectedYear, age);
-    }
+  public void deleteDisciplineRatingMetric(Long id) {
+    disciplineRatingMetricRepository.deleteById(id);
+    disciplineWebsocketMessagingService.sendDisciplineDeletion(id);
+  }
 
-    public DisciplineRatingMetric getDisciplineMetricForAge(Discipline discipline, int age, int selectedYear) throws NoMatchingDisciplineRatingFoundForAge {
-        return disciplineRatingMetricRepository.getDisciplineRatingMetricForAge(discipline.getId(), age, selectedYear).stream().findFirst().orElseThrow(() -> new NoMatchingDisciplineRatingFoundForAge(discipline.getId()));
-    }
+  public DisciplineRatingMetric updateDisciplineRatingMetric(Long id, Long disciplineId, DisciplineRatingMetric disciplineRatingMetric) throws DisciplineNotFoundException {
+    disciplineRatingMetric.setId(id);
+    disciplineRatingMetric.setDiscipline(getDisciplineById(disciplineId));
+    DisciplineRatingMetric updated = disciplineRatingMetricRepository.save(disciplineRatingMetric);
+    ratingMetricWebsocketMessageService.sendRatingMetricUpdate(updated);
+    return updated;
+  }
 
-    public Discipline getDisciplineById(long id) throws DisciplineNotFoundException {
-        return disciplineRepository.findById(id).orElseThrow(() -> new DisciplineNotFoundException(id));
-    }
+  public Collection<DisciplineRatingMetric> getDisciplineRatingMetricsForAthlete(Athlete athlete, int selectedYear) {
+    int age = selectedYear - athlete.getBirthdate().getYear();
+    return disciplineRatingMetricRepository.getAllByAge(selectedYear, age);
+  }
 
-    public Collection<Discipline> getDisciplinesForSelectedYear() {
-        return disciplineRepository.findAll();
-    }
+  public DisciplineRatingMetric getDisciplineMetricForAge(Discipline discipline, int age, int selectedYear) throws NoMatchingDisciplineRatingFoundForAge {
+    log.info("discipline: {} age: {} selectedYear: {}", discipline, age, selectedYear);
+    return disciplineRatingMetricRepository.getDisciplineRatingMetricForAge(discipline.getId(), age, selectedYear).stream().findFirst().orElseThrow(() -> new NoMatchingDisciplineRatingFoundForAge(discipline.getId()));
+  }
 
-    public Collection<DisciplineRatingMetric> getDisciplineRatings(long disciplineById) {
-        return disciplineRatingMetricRepository.getDisciplineRatingMetricByDisciplineId(disciplineById);
-    }
+  public Discipline getDisciplineById(long id) throws DisciplineNotFoundException {
+    return disciplineRepository.findById(id).orElseThrow(() -> new DisciplineNotFoundException(id));
+  }
 
-    public Collection<DisciplineRatingMetric> getDisciplineRatingsForSelectedYear(int selectedYear) {
-        return disciplineRatingMetricRepository.getDisciplineRatingMetricBySelectedYear(selectedYear);
-    }
+  public Collection<Discipline> getDisciplinesForSelectedYear() {
+    return disciplineRepository.findAll();
+  }
 
-    public Collection<Discipline> getDisciplines() {
-        return disciplineRepository.findAll();
-    }
+  public Collection<DisciplineRatingMetric> getDisciplineRatings(long disciplineById) {
+    return disciplineRatingMetricRepository.getDisciplineRatingMetricByDisciplineId(disciplineById);
+  }
+
+  public Collection<DisciplineRatingMetric> getDisciplineRatingsForSelectedYear(int selectedYear) {
+    return disciplineRatingMetricRepository.getDisciplineRatingMetricBySelectedYear(selectedYear);
+  }
+
+  public Collection<Discipline> getDisciplines() {
+    return disciplineRepository.findAll();
+  }
 }

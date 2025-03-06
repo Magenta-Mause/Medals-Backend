@@ -17,7 +17,7 @@ import java.util.List;
 public class DummyData {
 
     public static final List<Trainer> TRAINERS = List.of(
-            Trainer.builder().firstName("Paul").lastName("Reiter").email("paulreiter@example.org").build(),
+            Trainer.builder().firstName("Paul").lastName("Reiter").email("jabbekeipert@gmail.com").build(),
             Trainer.builder().firstName("Lisa").lastName("Schmidt").email("lise@example.org").build(),
             Trainer.builder().firstName("Michael").lastName("Fischer").email("michael@example.org").build()
             /* Trainer.builder().firstName("Anna").lastName("Meyer").email("anna@web.de").build(),
@@ -135,6 +135,23 @@ public class DummyData {
                     .validIn(validIn)
                     .build());
 
+            ratings.add(DisciplineRatingMetric.builder()
+              .discipline(run800)
+              .startAge(14)
+              .endAge(15)
+              .ratingMale(maleRatingMetric)
+              .ratingFemale(femaleRatingMetric)
+              .validIn(validIn)
+              .build());
+
+            ratings.add(DisciplineRatingMetric.builder()
+              .discipline(run800)
+              .startAge(16)
+              .endAge(17)
+              .ratingMale(maleRatingMetric)
+              .ratingFemale(femaleRatingMetric)
+              .validIn(validIn)
+              .build());
 
             ratings.add(DisciplineRatingMetric.builder()
                     .discipline(throwing)
@@ -191,23 +208,7 @@ public class DummyData {
                     .build());
 
 
-            ratings.add(DisciplineRatingMetric.builder()
-                    .discipline(throwing)
-                    .startAge(14)
-                    .endAge(15)
-                    .ratingMale(maleRatingMetric)
-                    .ratingFemale(femaleRatingMetric)
-                    .validIn(validIn)
-                    .build());
 
-            ratings.add(DisciplineRatingMetric.builder()
-                    .discipline(throwing)
-                    .startAge(16)
-                    .endAge(17)
-                    .ratingMale(maleRatingMetric)
-                    .ratingFemale(femaleRatingMetric)
-                    .validIn(validIn)
-                    .build());
         }
         return ratings;
     }

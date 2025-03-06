@@ -87,6 +87,9 @@ public class DisciplineServiceTest {
   }
 
   @Test
-  public void testInsertDisciplineRatingMetric() {
+  public void testDeleteDisciplineById() {
+    disciplineService.deleteDiscipline(1L);
+    verify(disciplineRepository, times(1)).deleteById(1L);
   }
+
 }
