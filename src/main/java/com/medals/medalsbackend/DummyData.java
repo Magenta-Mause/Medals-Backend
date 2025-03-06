@@ -17,7 +17,7 @@ import java.util.List;
 public class DummyData {
 
     public static final List<Trainer> TRAINERS = List.of(
-            Trainer.builder().firstName("Paul").lastName("Reiter").email("jabbekeipert@gmail.com").build(),
+            Trainer.builder().firstName("Paul").lastName("Reiter").email("test@example.org").build(),
             Trainer.builder().firstName("Lisa").lastName("Schmidt").email("lise@example.org").build(),
             Trainer.builder().firstName("Michael").lastName("Fischer").email("michael@example.org").build()
             /* Trainer.builder().firstName("Anna").lastName("Meyer").email("anna@web.de").build(),
