@@ -206,8 +206,6 @@ public class DummyData {
         .ratingFemale(femaleRatingMetric)
         .validIn(validIn)
         .build());
-
-
     }
     return ratings;
   }
