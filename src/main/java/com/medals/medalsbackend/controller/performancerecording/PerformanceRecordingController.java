@@ -12,6 +12,7 @@ import com.medals.medalsbackend.service.user.AthleteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class PerformanceRecordingController {
     private final DisciplineService disciplineService;
 
     @PostMapping
+    @PreAuthorize("hasRole('TRAINER')")
     public ResponseEntity<PerformanceRecording> recordPerformance(@RequestBody PerformanceRecordingDto performanceRecordingDto) throws AthleteNotFoundException, DisciplineNotFoundException, NoMatchingDisciplineRatingFoundForAge {
         PerformanceRecording performanceRecording = performanceRecordingService.recordPerformance(
                 athleteService.getAthlete(performanceRecordingDto.getAthleteId()),
@@ -41,6 +43,7 @@ public class PerformanceRecordingController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('TRAINER') OR hasRole('ATHLETE')")
     public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings() {
         return ResponseEntity.ok(performanceRecordingService.getAllPerformanceRecordings());
     }
