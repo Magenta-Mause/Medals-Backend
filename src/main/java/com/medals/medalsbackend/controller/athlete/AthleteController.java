@@ -43,10 +43,6 @@ public class AthleteController {
 			case UserType.TRAINER ->
 					Arrays.stream(athleteService.getAthletes()).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new); // TODO: Athlete assignment logic here
 		});
-		if (selectedUser.getType() == UserType.TRAINER) {
-			// TODO: Add logic for filtering only valid athletes here
-			return ResponseEntity.ok(Arrays.stream(athleteService.getAthletes()).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
-		}
 	}
 
 	@PostMapping
