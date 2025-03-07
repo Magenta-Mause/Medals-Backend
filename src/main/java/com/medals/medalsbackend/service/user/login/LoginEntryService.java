@@ -37,9 +37,9 @@ public class LoginEntryService {
         loginEntryRepository.save(loginEntry);
     }
 
-    public void initiateResetPasswordRequest(String email) throws EmailDoesntExistException {
+    public void initiateResetPasswordRequest(String email) {
         if (!loginEntryRepository.existsById(email.toLowerCase())) {
-            throw new EmailDoesntExistException(email);
+            return;
         }
         oneTimeCodeService.createResetPasswordToken(email);
     }
