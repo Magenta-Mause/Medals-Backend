@@ -48,6 +48,13 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Validates a JWT and extracts the subject claim of that token
+     * @param token the JWT
+     * @param tokenType the expected Token type
+     * @return the subject claim of the token (in our case the email of the authorized user)
+     * @throws JwtTokenInvalidException if JWT cant be validated or is a bad token
+     */
     public String validateToken(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
         try {
             Claims claims = jwtParser.parseClaimsJws(token).getBody();
@@ -63,11 +70,7 @@ public class JwtUtils {
                 throw new SecurityException("Missing/Bad subject claim");
             }
             return subject;
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SecurityException | AssertionError e) {
-            log.error("Error validating token", e);
-            throw new JwtTokenInvalidException();
-        } catch (Exception e) {
-            log.error("Error while parsing JWT refresh token", e);
+        } catch (AssertionError | Exception e) {
             throw new JwtTokenInvalidException();
         }
     }

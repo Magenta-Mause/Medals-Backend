@@ -23,4 +23,6 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT u FROM Trainer u")
     List<Trainer> findAllTrainers();
+
+    List<UserEntity> getAllByEmail(String email);
 }

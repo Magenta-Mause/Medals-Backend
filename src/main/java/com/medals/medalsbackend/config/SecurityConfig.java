@@ -22,29 +22,20 @@ import java.util.Arrays;
 @EnableConfigurationProperties(CorsConfigurationProperties.class)
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/**").permitAll()
-                )
-                .cors(Customizer.withDefaults())
-                .build();
-    }
 
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource(CorsConfigurationProperties corsConfigurationProperties) {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
-        Arrays.stream(corsConfigurationProperties.allowedOrigins()).toList().forEach(configuration::addAllowedOrigin);
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+  @Bean
+  CorsConfigurationSource corsConfigurationSource(CorsConfigurationProperties corsConfigurationProperties) {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowCredentials(true);
+    Arrays.stream(corsConfigurationProperties.allowedOrigins()).toList().forEach(configuration::addAllowedOrigin);
+    configuration.addAllowedHeader("*");
+    configuration.addAllowedMethod("*");
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
 }
