@@ -1,10 +1,10 @@
 package com.medals.medalsbackend.services;
 
+import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.UserEntity;
-import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
