@@ -26,6 +26,7 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
       if (websocketVerifier.verify(subscribedEndpoint, accessor)) {
         return message;
       } else {
+        log.info("Unsubscribing from {}", subscribedEndpoint);
         return null;
       }
     }

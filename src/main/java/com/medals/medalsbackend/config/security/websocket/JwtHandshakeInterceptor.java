@@ -45,6 +45,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
       }
       attributes.put("userId", userId);
       attributes.put("userEmail", userEntity.get().getEmail());
+      attributes.put("user", userEntity.get());
       return true;
     }
     return false;

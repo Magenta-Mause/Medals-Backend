@@ -19,11 +19,12 @@ public class WebsocketVerifier {
   }
 
   public boolean verify(String channel, StompHeaderAccessor accessor) {
-    log.info("verify: " + channel);
     for (final Map.Entry<String, WebsocketEndpointVerifier> entry : websocketVerifier.entrySet()) {
       Pattern pattern = Pattern.compile(entry.getKey());
       if (pattern.matcher(channel).matches()) {
-        return entry.getValue().verify(channel, accessor);
+        if (entry.getValue().verify(channel, accessor)) {
+          return true;
+        }
       }
     }
     return false;
