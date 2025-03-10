@@ -4,6 +4,7 @@ import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
+import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -27,6 +28,14 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
   @Query("SELECT u FROM Trainer u")
   List<Trainer> findAllTrainers();
 
-  @Query("SELECT a FROM Athlete a WHERE a.email = :email AND a.birthdate = :birthdate")
-  Athlete findAthleteByEmailAndBirthdate(String email, LocalDate birthdate);
+  @Query("SELECT a FROM Athlete a WHERE " +
+          "(LOWER(a.firstName) LIKE LOWER(CONCAT('%', :athleteSearch, '%')) " +
+          "OR LOWER(a.lastName) LIKE LOWER(CONCAT('%', :athleteSearch, '%')))" +
+          "OR LOWER(a.email) LIKE LOWER(CONCAT('%', :athleteSearch, '%'))")
+  List<Athlete> findAllSimilarAthletes(@Param("athleteSearch") String athleteSearch);
+
+  @Query("SELECT a FROM Athlete a WHERE " +
+          "(LOWER(a.firstName) LIKE LOWER(CONCAT('%', :athleteFirstName, '%')) " +
+          "OR LOWER(a.lastName) LIKE LOWER(CONCAT('%', :athleteLastName, '%')))")
+  List<Athlete> findAllSimilarAthletesFullName(@Param("athleteFirstName") String athleteFirstName, @Param("athleteLastName") String athleteLastName);
 }

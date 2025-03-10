@@ -77,8 +77,13 @@ public class UserEntityService {
     return userEntity;
   }
 
-  public Athlete findAthleteByEmailAndBirthdate(String email, LocalDate birthdate) {
-    return userEntityRepository.findAthleteByEmailAndBirthdate(email, birthdate);
+  public List<Athlete> getSimilarAthletes(String athleteSearch) {
+    String[] nameParts = athleteSearch.trim().split(" ");
+    if (nameParts.length == 2){
+      return userEntityRepository.findAllSimilarAthletesFullName(nameParts[0], nameParts[1]);
+    } else {
+      return userEntityRepository.findAllSimilarAthletes(nameParts[0]);
+    }
   }
 
   public boolean existsById(Long id) {

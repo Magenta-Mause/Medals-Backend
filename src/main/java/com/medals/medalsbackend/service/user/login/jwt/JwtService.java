@@ -1,6 +1,5 @@
 package com.medals.medalsbackend.service.user.login.jwt;
 
-import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.authorization.AthleteSearchDto;
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
@@ -50,19 +49,19 @@ public class JwtService {
         return jwtUtils.generateToken(jwtTokenBody, claims);
     }
 
-    public void buildInviteToken(AthleteSearchDto athleteSearchDto, Long athleteId,  String trainerName) {
+    public void buildInviteToken(String athleteEmail, AthleteSearchDto athleteSearchDto, String trainerName) {
         JwtTokenBody jwtTokenBody = JwtTokenBody.builder()
                 .tokenType(JwtTokenBody.TokenType.INVITE_TOKEN)
-                .email(athleteSearchDto.getEmail())
+                .email(athleteEmail)
                 .build();
 
         Map<String, Object> claims = Map.of(
                 "trainerId", athleteSearchDto.getTrainerId(),
-                "athleteId", athleteId,
+                "athleteId", athleteSearchDto.getAthleteId(),
                 "tokenType", JwtTokenBody.TokenType.INVITE_TOKEN
         );
         String token = jwtUtils.generateToken(jwtTokenBody, claims);
-        notificationService.sendInviteAthleteNotification(athleteSearchDto.getEmail(), token, trainerName);
+        notificationService.sendInviteAthleteNotification(athleteEmail, token, trainerName);
     }
 
     public Map<String, Object> getTokenContentBody(String refreshToken, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {

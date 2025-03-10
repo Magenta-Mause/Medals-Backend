@@ -8,8 +8,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class AthleteSearchDto {
-    private String email;
-    private LocalDate birthdate;
+    private Long athleteId;
     private Long trainerId;
 
 }

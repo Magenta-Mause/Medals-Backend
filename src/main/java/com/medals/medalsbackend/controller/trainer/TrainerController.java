@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.dto.authorization.AthleteSearchDto;
+import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.LoginEntry;
+import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
@@ -29,8 +31,6 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 public class TrainerController {
     private final TrainerService trainerService;
     private final ObjectMapper objectMapper;
-    private final JwtService jwtService;
-    private final LoginEntryService loginEntryService;
 
     @GetMapping
     public ResponseEntity<TrainerDto[]> getTrainers() {
@@ -59,8 +59,13 @@ public class TrainerController {
     }
 
     @PostMapping(value = "/inviteAthlete")
-    public ResponseEntity<Void> inviteAthlete(@RequestBody AthleteSearchDto athleteSearchDto) {
+    public ResponseEntity<Void> inviteAthlete(@RequestBody AthleteSearchDto athleteSearchDto) throws AthleteNotFoundException {
         trainerService.inviteAthlete(athleteSearchDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/searchAthletes")
+    public ResponseEntity<List<Athlete>> searchAthletes(@RequestParam String athleteSearch) {
+        return ResponseEntity.ok(trainerService.searchAthlete(athleteSearch));
     }
 }

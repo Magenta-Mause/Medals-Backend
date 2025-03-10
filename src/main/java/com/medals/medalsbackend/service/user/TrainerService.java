@@ -10,6 +10,7 @@ import com.medals.medalsbackend.entity.medals.InitializedEntity;
 import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
+import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
@@ -103,15 +104,19 @@ public class TrainerService {
         trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
     }
 
-    public void inviteAthlete(AthleteSearchDto athleteSearchDto) {
-        Athlete inviteAthlete = userEntityService.findAthleteByEmailAndBirthdate(athleteSearchDto.getEmail(), athleteSearchDto.getBirthdate());
+    public void inviteAthlete(AthleteSearchDto athleteSearchDto) throws AthleteNotFoundException {
+        Long athleteId = athleteSearchDto.getAthleteId();
+        Athlete inviteAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         log.info("Executing invite athlete {}", inviteAthlete);
-        if (inviteAthlete != null) {
-            String trainerName = userEntityService.findById(athleteSearchDto.getTrainerId())
-                    .map(user -> user.getFirstName() + " " + user.getLastName())
-                    .orElse("Unknown Trainer");
 
-            jwtService.buildInviteToken(athleteSearchDto, inviteAthlete.getId(), trainerName);
-        }
+        String trainerName = userEntityService.findById(athleteSearchDto.getTrainerId())
+                .map(user -> user.getFirstName() + " " + user.getLastName())
+                .orElse("Unknown Trainer");
+
+        jwtService.buildInviteToken(inviteAthlete.getEmail(), athleteSearchDto, trainerName);
+    }
+
+    public List<Athlete> searchAthlete(String athleteSearch) {
+        return userEntityService.getSimilarAthletes(athleteSearch);
     }
 }
