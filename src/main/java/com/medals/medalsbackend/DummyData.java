@@ -19,8 +19,7 @@ public class DummyData {
     public static final List<Trainer> TRAINERS = List.of(
             Trainer.builder().firstName("Paul").lastName("Reiter").email("test@example.org").build(),
             Trainer.builder().firstName("Lisa").lastName("Schmidt").email("lise@example.org").build(),
-            Trainer.builder().firstName("Michael").lastName("Fischer").email("michael@example.org").build(),
-            Trainer.builder().firstName("Joon").lastName("Joon").email("hyunjoonchoi04@gmail.com").build()
+            Trainer.builder().firstName("Michael").lastName("Fischer").email("michael@example.org").build()
             /* Trainer.builder().firstName("Anna").lastName("Meyer").email("anna@web.de").build(),
             Trainer.builder().firstName("Thomas").lastName("Wagner").email("thomas@hotmail.com").build(),
             Trainer.builder().firstName("Sophie").lastName("Becker").email("sophie@outlook.com").build(),
