@@ -1,5 +1,9 @@
 package com.medals.medalsbackend.config.security;
 
+import com.medals.medalsbackend.config.security.websocket.verifier.AllwaysAuthenticator;
+import com.medals.medalsbackend.config.security.websocket.verifier.IdBasedWebsocketVerifier;
+import com.medals.medalsbackend.config.security.websocket.verifier.WebsocketEndpointVerifier;
+import com.medals.medalsbackend.config.security.websocket.verifier.WebsocketVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -49,5 +53,22 @@ public class SecurityConfiguration {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
+	}
+
+	@Bean
+	public WebsocketVerifier websocketVerifier() {
+		return new WebsocketVerifier()
+			.addVerifier("/topics/athlete/creation/{userId}", new IdBasedWebsocketVerifier("/topics/athlete/creation/{userId}"))
+			.addVerifier("/topics/athlete/update/{userId}", new IdBasedWebsocketVerifier("/topics/athlete/update/{userId}"))
+			.addVerifier("/topics/athlete/deletion/{userId}", new IdBasedWebsocketVerifier("/topics/athlete/deletion/{userId}"))
+			.addVerifier("/topics/discipline/creation", new AllwaysAuthenticator())
+			.addVerifier("/topics/discipline/update", new AllwaysAuthenticator())
+			.addVerifier("/topics/discipline/deletion", new AllwaysAuthenticator())
+			.addVerifier("/topics/trainer/creation/{userId}", new IdBasedWebsocketVerifier("/topics/trainer/creation/{userId}"))
+			.addVerifier("/topics/trainer/update/{userId}", new IdBasedWebsocketVerifier("/topics/trainer/update/{userId}"))
+			.addVerifier("/topics/trainer/deletion/{userId}", new IdBasedWebsocketVerifier("/topics/trainer/deletion/{userId}"))
+			.addVerifier("/topics/performance-recording/creation/{userId}", new IdBasedWebsocketVerifier("/topics/performance-recording/creation/{userId}"))
+			.addVerifier("/topics/performance-recording/update/{userId}", new IdBasedWebsocketVerifier("/topics/performance-recording/update/{userId}"))
+			.addVerifier("/topics/performance-recording/deletion/{userId}", new IdBasedWebsocketVerifier("/topics/performance-recording/deletion/{userId}"));
 	}
 }
