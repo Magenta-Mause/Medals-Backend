@@ -7,9 +7,14 @@ import com.medals.medalsbackend.entity.medals.InitializedEntity;
 import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
+import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +26,18 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AthleteService {
 
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
-    private final Environment environment;
+    private final TrainerService trainerService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -95,5 +103,19 @@ public class AthleteService {
     public MedalCollection getAthleteMedalCollection(Long athleteId) throws AthleteNotFoundException {
         Athlete athlete = getAthlete(athleteId);
         return athlete.getMedalCollection();
+    }
+
+    public void acceptInvite(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
+        long trainerId = ((Integer) jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.INVITE_TOKEN).get("trainerId")).longValue();
+        long athleteId = ((Integer) jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.INVITE_TOKEN).get("athleteId")).longValue();
+
+        Trainer trainer = trainerService.getTrainer(trainerId);
+        List<Athlete> managedAthletes = trainer.getManagedAthletes();
+
+        Athlete athlete = getAthlete(athleteId);
+        managedAthletes.add(athlete);
+
+        trainer.setManagedAthletes(managedAthletes);
+        userEntityService.update(trainer);
     }
 }

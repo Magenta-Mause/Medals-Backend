@@ -59,7 +59,7 @@ class JwtUtilTest {
                 .registerModule(new Jdk8Module())
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
                 .setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        jwtConfigurationProperties = new JwtConfigurationProperties("secretKey", testExpirationTime, testExpirationTime);
+        jwtConfigurationProperties = new JwtConfigurationProperties("secretKey", testExpirationTime, testExpirationTime, testExpirationTime);
         jwtParser = Jwts.parserBuilder().setSigningKey(signingKey).build();
         jwtUtils = new JwtUtils(jwtParser, jwtConfigurationProperties, signingKey, objectMapper);
     }
@@ -74,7 +74,12 @@ class JwtUtilTest {
                         Admin.builder().firstName("adminFirstName").lastName("adminLastName").email("admin@email.com").id(1L).build()
                 ))
                 .build();
-        String token = jwtUtils.generateToken(tokenBody);
+
+        Map<String, Object> claims = Map.of(
+                "tokenType", tokenBody.getTokenType(),
+                "users", tokenBody.getAuthorizedUsers()
+        );
+        String token = jwtUtils.generateToken(tokenBody, claims);
         jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
     }
 
@@ -84,7 +89,16 @@ class JwtUtilTest {
                 .email(testEmail)
                 .tokenType(JwtTokenBody.TokenType.REFRESH_TOKEN)
                 .build();
-        String token = jwtUtils.generateToken(tokenBody);
+
+        Map<String, Object> claims = Map.of(
+                "tokenType", JwtTokenBody.TokenType.REFRESH_TOKEN,
+                "users", Admin.builder()
+                        .email("test@gmail.com")
+                        .lastName("adminLastName")
+                        .firstName("adminFirstName")
+                        .build()
+        );
+        String token = jwtUtils.generateToken(tokenBody, claims);
         jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
     }
 
@@ -145,7 +159,7 @@ class JwtUtilTest {
                 .signWith(signingKey)
                 .compact();
 
-        String user = jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
+        String user = (String) jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN).get("sub");
         assertEquals(user, testEmail);
     }
 

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,59 +23,70 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserEntityService {
-    private final UserEntityRepository userEntityRepository;
-    private final LoginEntryService loginEntryService;
+  private final UserEntityRepository userEntityRepository;
+  private final LoginEntryService loginEntryService;
 
-    @Transactional
-    public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) throws InternalException {
-        try {
-            loginEntryService.createLoginEntry(email, reason);
-        } catch (EmailAlreadyExistsException ignored) {
-        }
-
-        try {
-            return loginEntryService.addUserToLogin(email, userEntity);
-        } catch (EmailDoesntExistException e) {
-            throw new RuntimeException(e);
-        }
+  @Transactional
+  public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) {
+    try {
+      loginEntryService.createLoginEntry(email, reason);
+    } catch (EmailAlreadyExistsException ignored) {
     }
 
-    @Transactional
-    public UserEntity save(String email, UserEntity userEntity) throws InternalException {
-        return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED);
+    try {
+      return loginEntryService.addUserToLogin(email, userEntity);
+    } catch (EmailDoesntExistException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    public UserEntity update(UserEntity userEntity) {
-        return userEntityRepository.save(userEntity);
-    }
+  @Transactional
+  public UserEntity save(String email, UserEntity userEntity) throws InternalException {
+    return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED);
+  }
 
-    public Optional<UserEntity> findById(long id) {
-        return userEntityRepository.findById(id);
-    }
+  public UserEntity update(UserEntity userEntity) {
+    return userEntityRepository.save(userEntity);
+  }
 
-    public List<UserEntity> getAll() {
-        return userEntityRepository.findAll();
-    }
+  public Optional<UserEntity> findById(long id) {
+    return userEntityRepository.findById(id);
+  }
 
-    public List<Athlete> getAllAthletes() {
-        return userEntityRepository.findAllAthletes();
-    }
+  public Optional<UserEntity> findByEmail(String email) { return userEntityRepository.findByEmail(email); }
 
-    public List<Trainer> getAllTrainers() {
-        return userEntityRepository.findAllTrainers();
-    }
+  public List<UserEntity> getAll() {
+    return userEntityRepository.findAll();
+  }
 
-    public List<Admin> getAllAdmins() {
-        return userEntityRepository.findAllAdmins();
-    }
+  public List<Athlete> getAllAthletes() {
+    return userEntityRepository.findAllAthletes();
+  }
 
-    public UserEntity deleteById(Long id) {
-        UserEntity userEntity = userEntityRepository.findById(id).orElseThrow();
-        userEntityRepository.delete(userEntity);
-        return userEntity;
-    }
+  public List<Trainer> getAllTrainers() {
+    return userEntityRepository.findAllTrainers();
+  }
 
-    public boolean existsById(Long id) {
-        return userEntityRepository.existsById(id);
+  public List<Admin> getAllAdmins() {
+    return userEntityRepository.findAllAdmins();
+  }
+
+  public UserEntity deleteById(Long id) {
+    UserEntity userEntity = userEntityRepository.findById(id).orElseThrow();
+    userEntityRepository.delete(userEntity);
+    return userEntity;
+  }
+
+  public List<Athlete> getSimilarAthletes(String athleteSearch) {
+    String[] nameParts = athleteSearch.trim().split(" ");
+    if (nameParts.length == 2){
+      return userEntityRepository.findAllSimilarAthletesFullName(nameParts[0], nameParts[1]);
+    } else {
+      return userEntityRepository.findAllSimilarAthletes(nameParts[0]);
     }
+  }
+
+  public boolean existsById(Long id) {
+    return userEntityRepository.existsById(id);
+  }
 }

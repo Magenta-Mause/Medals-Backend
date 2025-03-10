@@ -5,6 +5,7 @@ app:
   security:
     identity-token-expiration-time: 3600000 # 1 hour
     refresh-token-expiration-time: 2678400000 # 1 month
+    athlete-invite-token-expiration-time: 2678400000 # 1 hour
     secret-key: 2bdff806c775df3d3a9a720924294d3f6dfa4e4e8f65183294bc8b8f043987ac # jwt secret key (REPLACE IN PRODUCTION!!)
   dummies:
     enabled: false
