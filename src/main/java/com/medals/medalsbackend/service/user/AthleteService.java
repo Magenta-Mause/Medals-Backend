@@ -73,13 +73,10 @@ public class AthleteService {
     }
 
     public Athlete[] getAthletes() {
-        Athlete[] athletes = userEntityService.getAllAthletes().toArray(new Athlete[0]);
-        log.info("Executing get all athletes: {}", athletes.length);
-        return athletes;
+        return userEntityService.getAllAthletes().toArray(new Athlete[0]);
     }
 
     public Athlete getAthlete(Long athleteId) throws AthleteNotFoundException {
-        log.info("Executing get athlete by id {}", athleteId);
         try {
             return (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         } catch (Exception e) {
@@ -104,7 +101,6 @@ public class AthleteService {
     }
 
     public MedalCollection getAthleteMedalCollection(Long athleteId) throws AthleteNotFoundException {
-        log.info("Executing get athlete medal collection by id {}", athleteId);
         Athlete athlete = getAthlete(athleteId);
         return athlete.getMedalCollection();
     }
