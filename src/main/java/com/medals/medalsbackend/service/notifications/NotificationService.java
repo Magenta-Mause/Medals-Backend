@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.service.notifications;
 
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.service.notifications.mail.MailService;
 import com.medals.medalsbackend.service.notifications.mail.MailTemplateService;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +41,9 @@ public class NotificationService {
         mailService.sendEmail(email, "Medals - Password Changed", text);
     }
 
-    public void sendInviteAthleteNotification(String email, String token, String trainer) {
-        String link = "http://localhost:5173/validateInvite?oneTimeCode=" + token;
+    public void sendInviteAthleteNotification(String email, String token, Trainer trainer) {
+        String link = configuration.getFrontEndBaseUrl() + "/validateInvite?oneTimeCode=" + token;
         String text = templateService.generateInviteAthleteNotification(link, trainer);
-        mailService.sendEmail(email, "Medals - Invite Athlete", text);
+        mailService.sendEmail(email, "Medals - Trainer Invitation", text);
     }
 }
