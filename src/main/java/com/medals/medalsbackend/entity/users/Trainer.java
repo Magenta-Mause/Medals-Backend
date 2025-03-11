@@ -18,8 +18,8 @@ import java.util.List;
 @SuperBuilder
 public class Trainer extends UserEntity {
     @Column
-    @ManyToMany(mappedBy = "trainers", cascade =  CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Athlete> managedAthletes;
+    @ManyToMany(mappedBy = "trainersAssignedTo", cascade =  CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Athlete> assignedAthletes;
 
     protected final UserType type = UserType.TRAINER;
 }

@@ -59,5 +59,5 @@ public class Athlete extends UserEntity {
             joinColumns = @JoinColumn(name = "athlete_id"),
             inverseJoinColumns = @JoinColumn(name = "trainer_id")
     )
-    private List<Trainer> trainers;
+    private List<Trainer> trainersAssignedTo;
 }

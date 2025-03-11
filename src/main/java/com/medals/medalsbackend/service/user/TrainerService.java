@@ -2,9 +2,8 @@ package com.medals.medalsbackend.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
-import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
-import com.medals.medalsbackend.dto.authorization.AthleteSearchDto;
+import com.medals.medalsbackend.dto.authorization.TrainerInviteAthleteDto;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.medals.InitializedEntity;
 import com.medals.medalsbackend.entity.medals.InitializedEntityType;
@@ -104,16 +103,13 @@ public class TrainerService {
         trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
     }
 
-    public void inviteAthlete(AthleteSearchDto athleteSearchDto) throws AthleteNotFoundException {
-        Long athleteId = athleteSearchDto.getAthleteId();
+    public void inviteAthlete(TrainerInviteAthleteDto trainerInviteAthleteDto) throws AthleteNotFoundException, TrainerNotFoundException{
+        Long athleteId = trainerInviteAthleteDto.getAthleteId();
         Athlete inviteAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         log.info("Executing invite athlete {}", inviteAthlete);
-
-        String trainerName = userEntityService.findById(athleteSearchDto.getTrainerId())
-                .map(user -> user.getFirstName() + " " + user.getLastName())
-                .orElse("Unknown Trainer");
-
-        jwtService.buildInviteToken(inviteAthlete.getEmail(), athleteSearchDto, trainerName);
+        Long trainerId = trainerInviteAthleteDto.getTrainerId();
+        Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
+        jwtService.buildInviteToken(inviteAthlete.getEmail(), trainerInviteAthleteDto, trainer);
     }
 
     public List<Athlete> searchAthlete(String athleteSearch) {

@@ -1,20 +1,13 @@
 package com.medals.medalsbackend.controller.trainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
-import com.medals.medalsbackend.dto.authorization.AthleteSearchDto;
+import com.medals.medalsbackend.dto.authorization.TrainerInviteAthleteDto;
 import com.medals.medalsbackend.entity.users.Athlete;
-import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
-import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.service.user.TrainerService;
-import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
-import com.medals.medalsbackend.service.user.login.LoginEntryService;
-import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,13 +51,13 @@ public class TrainerController {
         return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
     }
 
-    @PostMapping(value = "/inviteAthlete")
-    public ResponseEntity<Void> inviteAthlete(@RequestBody AthleteSearchDto athleteSearchDto) throws AthleteNotFoundException {
-        trainerService.inviteAthlete(athleteSearchDto);
+    @PostMapping(value = "/invite-athlete")
+    public ResponseEntity<Void> inviteAthlete(@RequestBody TrainerInviteAthleteDto trainerInviteAthleteDto) throws AthleteNotFoundException, TrainerNotFoundException {
+        trainerService.inviteAthlete(trainerInviteAthleteDto);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/searchAthletes")
+    @GetMapping(value = "/search-athletes")
     public ResponseEntity<List<Athlete>> searchAthletes(@RequestParam String athleteSearch) {
         return ResponseEntity.ok(trainerService.searchAthlete(athleteSearch));
     }
