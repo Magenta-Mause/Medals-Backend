@@ -37,10 +37,10 @@ public class PerformanceRecordingController {
 				performanceRecordingDto.getDateOfPerformance()
 		);
 
-		return ResponseEntity
-				.status(HttpStatus.CREATED)
-				.body(performanceRecording);
-	}
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(performanceRecording);
+    }
 
 	@GetMapping
 	@PreAuthorize("hasRole('TRAINER') OR hasRole('ATHLETE')")
@@ -48,10 +48,10 @@ public class PerformanceRecordingController {
 		return ResponseEntity.ok(performanceRecordingService.getAllPerformanceRecordings());
 	}
 
-	@GetMapping("/{userId}")
-	public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException {
-		return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(athleteService.getAthlete(userId)));
-	}
+    @GetMapping("/{userId}")
+    public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException {
+        return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(athleteService.getAthlete(userId)));
+    }
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletePerformanceRecording(@PathVariable Long id) {
