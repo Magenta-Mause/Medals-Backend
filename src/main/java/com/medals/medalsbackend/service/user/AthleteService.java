@@ -23,10 +23,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -106,16 +106,26 @@ public class AthleteService {
     }
 
     public void acceptInvite(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
-        long trainerId = ((Integer) jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.INVITE_TOKEN).get("trainerId")).longValue();
-        long athleteId = ((Integer) jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.INVITE_TOKEN).get("athleteId")).longValue();
-
+        Map<String, Object> tokenBody = jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.INVITE_TOKEN);
+        long trainerId = ((Integer) tokenBody.get("trainerId")).longValue();
+        long athleteId = ((Integer) tokenBody.get("athleteId")).longValue();
         Trainer trainer = trainerService.getTrainer(trainerId);
-        List<Athlete> managedAthletes = trainer.getManagedAthletes();
-
         Athlete athlete = getAthlete(athleteId);
-        managedAthletes.add(athlete);
+        addAthleteToTrainer(trainer, athlete);
+        addTrainerToAthlete(athlete, trainer);
+    }
 
-        trainer.setManagedAthletes(managedAthletes);
+    private void addAthleteToTrainer(Trainer trainer, Athlete athlete) {
+        List<Athlete> assignedAthletes = trainer.getAssignedAthletes();
+        assignedAthletes.add(athlete);
+        trainer.setAssignedAthletes(assignedAthletes);
         userEntityService.update(trainer);
+    }
+
+    private void addTrainerToAthlete(Athlete athlete, Trainer trainer) {
+        List<Trainer> trainersAssignedToAthlete = athlete.getTrainersAssignedTo();
+        trainersAssignedToAthlete.add(trainer);
+        athlete.setTrainersAssignedTo(trainersAssignedToAthlete);
+        userEntityService.update(athlete);
     }
 }

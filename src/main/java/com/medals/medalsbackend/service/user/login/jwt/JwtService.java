@@ -1,67 +1,51 @@
 package com.medals.medalsbackend.service.user.login.jwt;
 
-import com.medals.medalsbackend.dto.authorization.AthleteSearchDto;
+import com.medals.medalsbackend.dto.authorization.TrainerInviteAthleteDto;
 import com.medals.medalsbackend.entity.users.LoginEntry;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.notifications.NotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     private final JwtUtils jwtUtils;
     private final NotificationService notificationService;
 
-    public JwtService(JwtUtils jwtUtils, NotificationService notificationService) {
-        this.jwtUtils = jwtUtils;
-        this.notificationService = notificationService;
-    }
-
     public String buildRefreshToken(LoginEntry loginEntry) {
-        JwtTokenBody jwtTokenBody = JwtTokenBody.builder()
-                .tokenType(JwtTokenBody.TokenType.REFRESH_TOKEN)
-                .email(loginEntry.getEmail())
-                .build();
-
         Map<String, Object> claims = Map.of(
+                "email", loginEntry.getEmail(),
                 "tokenType", JwtTokenBody.TokenType.REFRESH_TOKEN
         );
 
-        return jwtUtils.generateToken(jwtTokenBody, claims);
+        return jwtUtils.generateToken(claims);
     }
 
     public String buildIdentityToken(LoginEntry loginEntry) {
-        JwtTokenBody jwtTokenBody = JwtTokenBody.builder()
-                .tokenType(JwtTokenBody.TokenType.IDENTITY_TOKEN)
-                .authorizedUsers(loginEntry.getUsers())
-                .email(loginEntry.getEmail())
-                .build();
-
         Map<String, Object> claims = Map.of(
-                "tokenType", JwtTokenBody.TokenType.IDENTITY_TOKEN,
-                "users", loginEntry.getUsers()
+                "email", loginEntry.getEmail(),
+                "users", loginEntry.getUsers(),
+                "tokenType", JwtTokenBody.TokenType.IDENTITY_TOKEN
         );
 
-        return jwtUtils.generateToken(jwtTokenBody, claims);
+        return jwtUtils.generateToken(claims);
     }
 
-    public void buildInviteToken(String athleteEmail, AthleteSearchDto athleteSearchDto, String trainerName) {
-        JwtTokenBody jwtTokenBody = JwtTokenBody.builder()
-                .tokenType(JwtTokenBody.TokenType.INVITE_TOKEN)
-                .email(athleteEmail)
-                .build();
-
+    public void buildInviteToken(String athleteEmail, TrainerInviteAthleteDto trainerInviteAthleteDto, Trainer trainer) {
         Map<String, Object> claims = Map.of(
-                "trainerId", athleteSearchDto.getTrainerId(),
-                "athleteId", athleteSearchDto.getAthleteId(),
+                "email", athleteEmail,
+                "trainerId", trainerInviteAthleteDto.getTrainerId(),
+                "athleteId", trainerInviteAthleteDto.getAthleteId(),
                 "tokenType", JwtTokenBody.TokenType.INVITE_TOKEN
         );
-        String token = jwtUtils.generateToken(jwtTokenBody, claims);
-        notificationService.sendInviteAthleteNotification(athleteEmail, token, trainerName);
+        String token = jwtUtils.generateToken(claims);
+        notificationService.sendInviteAthleteNotification(athleteEmail, token, trainer);
     }
 
     public Map<String, Object> getTokenContentBody(String refreshToken, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {

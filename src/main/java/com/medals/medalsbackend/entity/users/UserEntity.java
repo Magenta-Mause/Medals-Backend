@@ -18,28 +18,27 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @ToString
 public abstract class UserEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-  @Column(name = "email", insertable = false, updatable = false)
-  protected String email;
+    @Column(name = "email", insertable = false, updatable = false)
+    protected String email;
 
-  @Column(name = "type")
-  protected UserType type;
+    @Column(name = "type")
+    protected UserType type;
 
-  @Column(name = "first_name", nullable = false)
-  @JsonProperty("first_name")
-  private String firstName;
+    @Column(name = "first_name", nullable = false)
+    @JsonProperty("first_name")
+    private String firstName;
 
-  @Column(name = "last_name", nullable = false)
-  @JsonProperty("last_name")
-  private String lastName;
+    @Column(name = "last_name", nullable = false)
+    @JsonProperty("last_name")
+    private String lastName;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "email", nullable = false, referencedColumnName = "email")
-  @JsonIgnore
-  @ToString.Exclude
-  private LoginEntry loginEntry;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email", nullable = false, referencedColumnName = "email")
+    @JsonIgnore
+    @ToString.Exclude
+    private LoginEntry loginEntry;
 }
