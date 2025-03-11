@@ -42,7 +42,7 @@ public class NotificationService {
     }
 
     public void sendInviteAthleteNotification(String email, String token, Trainer trainer) {
-        String link = configuration.getFrontEndBaseUrl() + "/validateInvite?oneTimeCode=" + token;
+        String link = configuration.getFrontEndBaseUrl() + "/validate-invite?oneTimeCode=" + token;
         String text = templateService.generateInviteAthleteNotification(link, trainer);
         mailService.sendEmail(email, "Medals - Trainer Invitation", text);
     }
