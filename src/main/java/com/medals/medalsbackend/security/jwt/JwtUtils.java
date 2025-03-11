@@ -26,8 +26,8 @@ public class JwtUtils {
     private final Key signingKey;
     private final ObjectMapper objectMapper;
 
-    public String generateToken(JwtTokenBody tokenBody, Map<String, Object> claims) {
-        long tokenValidityDuration = switch (tokenBody.getTokenType()) {
+    public String generateToken(Map<String, Object> claims) {
+        long tokenValidityDuration = switch ((JwtTokenBody.TokenType) claims.get("tokenType")) {
             case JwtTokenBody.TokenType.IDENTITY_TOKEN -> jwtConfigurationProperties.identityTokenExpirationTime();
             case JwtTokenBody.TokenType.REFRESH_TOKEN -> jwtConfigurationProperties.refreshTokenExpirationTime();
             case JwtTokenBody.TokenType.INVITE_TOKEN -> jwtConfigurationProperties.athleteInviteTokenExpirationTime();
@@ -37,7 +37,7 @@ public class JwtUtils {
                 .serializeToJsonWith(new JacksonSerializer<>(objectMapper))
                 .setIssuedAt(new Date())
                 .setAudience("medals-backend")
-                .setSubject(tokenBody.getEmail())
+                .setSubject((String) claims.get("email"))
                 .setExpiration(new Date(new Date().getTime() + tokenValidityDuration))
                 .addClaims(claims)
                 .signWith(signingKey)
@@ -48,13 +48,13 @@ public class JwtUtils {
         try {
             Claims claims = jwtParser.parseClaimsJws(token).getBody();
             claims.getExpiration();
-            if (!"medals-backend".equals(claims.getAudience())) {
+            if (!"medals-backend".equals(claims.get("aud"))) {
                 throw new SecurityException("Missing/Bad audience claim");
             }
             if (!tokenType.toString().equals(claims.get("tokenType"))) {
                 throw new SecurityException("Token type is not matching");
             }
-            if (claims.getSubject() == null) {
+            if (claims.get("sub") == null) {
                 throw new SecurityException("Missing/Bad subject claim");
             }
 

@@ -1,9 +1,12 @@
 package com.medals.medalsbackend.services;
 
+import com.medals.medalsbackend.dto.authorization.TrainerInviteAthleteDto;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.LoginEntry;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
+import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +21,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -31,32 +34,30 @@ public class JwtServiceTest {
     @InjectMocks
     private JwtService jwtService;
 
+    @Mock
+    private NotificationService notificationService;
+
     @Test
     public void testGenerateRefreshToken() {
-        jwtService.buildRefreshToken(
-                LoginEntry.builder()
-                        .email("test@gmail.com")
-                        .users(List.of(
-                                Admin.builder()
-                                        .email("test@gmail.com")
-                                        .lastName("adminLastName")
-                                        .firstName("adminFirstName")
-                                        .build()
-                        ))
-                        .password("password")
-                        .build()
-        );
+        LoginEntry loginEntry = LoginEntry.builder()
+                .email("test@gmail.com")
+                .users(List.of(
+                        Admin.builder()
+                                .email("test@gmail.com")
+                                .lastName("adminLastName")
+                                .firstName("adminFirstName")
+                                .build()
+                ))
+                .build();
 
-        Map<String, Object> claims = Map.of(
-                "tokenType", JwtTokenBody.TokenType.REFRESH_TOKEN
-        );
-        ArgumentCaptor<JwtTokenBody> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(JwtTokenBody.class);
-        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture(), eq(claims));
-        JwtTokenBody capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();
+        jwtService.buildRefreshToken(loginEntry);
+        ArgumentCaptor<Map<String, Object>> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture());
+        Map<String, Object> capturedClaims = jwtTokenBodyArgumentCaptor.getValue();
 
-        assertEquals("test@gmail.com", capturedTokenBody.getEmail());
-        assertNull(capturedTokenBody.getAuthorizedUsers());
-        assertEquals(JwtTokenBody.TokenType.REFRESH_TOKEN, capturedTokenBody.getTokenType());
+        assertEquals("test@gmail.com", capturedClaims.get("email"));
+        assertNull(capturedClaims.get("aud"));
+        assertEquals(JwtTokenBody.TokenType.REFRESH_TOKEN, capturedClaims.get("tokenType"));
     }
 
     @Test
@@ -73,19 +74,40 @@ public class JwtServiceTest {
                 .build();
 
         jwtService.buildIdentityToken(loginEntry);
+        ArgumentCaptor<Map<String, Object>> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture());
+        Map<String, Object> capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();
 
-        Map<String, Object> claims = Map.of(
-                "tokenType", JwtTokenBody.TokenType.IDENTITY_TOKEN,
-                "users", loginEntry.getUsers()
-        );
+        assertEquals("test@gmail.com", capturedTokenBody.get("email"));
+        assertEquals(loginEntry.getUsers(), capturedTokenBody.get("users"));
+        assertEquals(JwtTokenBody.TokenType.IDENTITY_TOKEN, capturedTokenBody.get("tokenType"));
+    }
 
-        ArgumentCaptor<JwtTokenBody> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(JwtTokenBody.class);
-        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture(), eq(claims));
+    @Test
+    public void testBuildInviteToken() {
+        TrainerInviteAthleteDto trainerInviteAthleteDto = TrainerInviteAthleteDto.builder()
+                .athleteId((long) 2)
+                .trainerId((long) 1)
+                .build();
 
-        JwtTokenBody capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();
+        Trainer trainer = Trainer.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .build();
 
-        assertEquals("test@gmail.com", capturedTokenBody.getEmail());
-        assertEquals(loginEntry.getUsers(), capturedTokenBody.getAuthorizedUsers());
-        assertEquals(JwtTokenBody.TokenType.IDENTITY_TOKEN, capturedTokenBody.getTokenType());
+        String dummyToken = "dummyToken";
+        when(jwtUtils.generateToken(anyMap())).thenReturn(dummyToken);
+
+        jwtService.buildInviteToken("test@gmail.com", trainerInviteAthleteDto, trainer);
+        ArgumentCaptor<Map<String, Object>> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture());
+        Map<String, Object> capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();
+
+        assertEquals("test@gmail.com", capturedTokenBody.get("email"));
+        assertEquals(trainerInviteAthleteDto.getTrainerId(), capturedTokenBody.get("trainerId"));
+        assertEquals(trainerInviteAthleteDto.getAthleteId(), capturedTokenBody.get("athleteId"));
+        assertEquals(JwtTokenBody.TokenType.INVITE_TOKEN, capturedTokenBody.get("tokenType"));
+        
+        verify(notificationService, times(1)).sendInviteAthleteNotification("test@gmail.com", dummyToken, trainer);
     }
 }

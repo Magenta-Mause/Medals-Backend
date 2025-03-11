@@ -67,30 +67,23 @@ class JwtUtilTest {
     @SneakyThrows
     @Test
     void testGenerateIdentityJwtToken() {
-        JwtTokenBody tokenBody = JwtTokenBody.builder()
-                .email(testEmail)
-                .tokenType(JwtTokenBody.TokenType.IDENTITY_TOKEN)
-                .authorizedUsers(List.of(
-                        Admin.builder().firstName("adminFirstName").lastName("adminLastName").email("admin@email.com").id(1L).build()
-                ))
-                .build();
-
         Map<String, Object> claims = Map.of(
-                "tokenType", tokenBody.getTokenType(),
-                "users", tokenBody.getAuthorizedUsers()
+                "email", "test@gmail.com",
+                "tokenType", JwtTokenBody.TokenType.IDENTITY_TOKEN,
+                "users", Admin.builder()
+                        .email("test@gmail.com")
+                        .lastName("adminLastName")
+                        .firstName("adminFirstName")
+                        .build()
         );
-        String token = jwtUtils.generateToken(tokenBody, claims);
+        String token = jwtUtils.generateToken(claims);
         jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
     }
 
     @Test
     void testGenerateRefreshToken() throws JwtTokenInvalidException {
-        JwtTokenBody tokenBody = JwtTokenBody.builder()
-                .email(testEmail)
-                .tokenType(JwtTokenBody.TokenType.REFRESH_TOKEN)
-                .build();
-
         Map<String, Object> claims = Map.of(
+                "email", "test@gmail.com",
                 "tokenType", JwtTokenBody.TokenType.REFRESH_TOKEN,
                 "users", Admin.builder()
                         .email("test@gmail.com")
@@ -98,8 +91,20 @@ class JwtUtilTest {
                         .firstName("adminFirstName")
                         .build()
         );
-        String token = jwtUtils.generateToken(tokenBody, claims);
+        String token = jwtUtils.generateToken(claims);
         jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
+    }
+
+    @Test
+    void testGenerateInviteToken() throws JwtTokenInvalidException {
+        Map<String, Object> claims = Map.of(
+                "email", "test@gmail.com",
+                "trainerId", 1,
+                "athleteId", 2,
+                "tokenType", JwtTokenBody.TokenType.INVITE_TOKEN
+        );
+        String token = jwtUtils.generateToken(claims);
+        jwtUtils.validateToken(token, JwtTokenBody.TokenType.INVITE_TOKEN);
     }
 
     @Test
