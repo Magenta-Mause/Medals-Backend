@@ -23,34 +23,40 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class PerformanceRecordingController {
 
-    private final PerformanceRecordingService performanceRecordingService;
-    private final AthleteService athleteService;
-    private final DisciplineService disciplineService;
+	private final PerformanceRecordingService performanceRecordingService;
+	private final AthleteService athleteService;
+	private final DisciplineService disciplineService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('TRAINER')")
-    public ResponseEntity<PerformanceRecording> recordPerformance(@RequestBody PerformanceRecordingDto performanceRecordingDto) throws AthleteNotFoundException, DisciplineNotFoundException, NoMatchingDisciplineRatingFoundForAge {
-        PerformanceRecording performanceRecording = performanceRecordingService.recordPerformance(
-                athleteService.getAthlete(performanceRecordingDto.getAthleteId()),
-                disciplineService.getDisciplineById(performanceRecordingDto.getDisciplineId()),
-                performanceRecordingDto.getRatingValue(),
-                performanceRecordingDto.getDateOfPerformance()
-        );
+	@PostMapping
+	@PreAuthorize("hasRole('TRAINER')")
+	public ResponseEntity<PerformanceRecording> recordPerformance(@RequestBody PerformanceRecordingDto performanceRecordingDto) throws AthleteNotFoundException, DisciplineNotFoundException, NoMatchingDisciplineRatingFoundForAge {
+		PerformanceRecording performanceRecording = performanceRecordingService.recordPerformance(
+				athleteService.getAthlete(performanceRecordingDto.getAthleteId()),
+				disciplineService.getDisciplineById(performanceRecordingDto.getDisciplineId()),
+				performanceRecordingDto.getRatingValue(),
+				performanceRecordingDto.getDateOfPerformance()
+		);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(performanceRecording);
-    }
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body(performanceRecording);
+	}
 
-    @GetMapping
-    @PreAuthorize("hasRole('TRAINER') OR hasRole('ATHLETE')")
-    public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings() {
-        return ResponseEntity.ok(performanceRecordingService.getAllPerformanceRecordings());
-    }
+	@GetMapping
+	@PreAuthorize("hasRole('TRAINER') OR hasRole('ATHLETE')")
+	public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings() {
+		return ResponseEntity.ok(performanceRecordingService.getAllPerformanceRecordings());
+	}
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException {
-        return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(athleteService.getAthlete(userId)));
-    }
+	@GetMapping("/{userId}")
+	public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException {
+		return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(athleteService.getAthlete(userId)));
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deletePerformanceRecording(@PathVariable Long id) {
+		performanceRecordingService.deletePerformanceRecording(id);
+		return ResponseEntity.noContent().build();
+	}
 
 }
