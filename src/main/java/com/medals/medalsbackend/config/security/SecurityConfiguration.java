@@ -41,6 +41,7 @@ public class SecurityConfiguration {
                 ? authorizeRequests -> authorizeRequests.requestMatchers("/**").permitAll()
                 : authorizeRequests -> authorizeRequests
                 .requestMatchers("/api/v1/authorization/**").permitAll()
+                .requestMatchers("/api/v1/ws/**").permitAll()
                 .requestMatchers("/**").authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
