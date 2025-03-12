@@ -31,7 +31,7 @@ public class SecurityConfiguration {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		boolean isTestRunning = Arrays.stream(environment.getActiveProfiles()).toList().contains("test");
+		boolean isTestRunning = Arrays.stream(environment.getActiveProfiles()).toList().contains("disableAuth");
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(isTestRunning
