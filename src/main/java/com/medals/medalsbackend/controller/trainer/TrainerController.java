@@ -54,19 +54,23 @@ public class TrainerController {
 
     @DeleteMapping("/{trainerId}")
     public ResponseEntity<Void> deleteTrainer(@PathVariable Long trainerId) throws TrainerNotFoundException, NoAuthenticationFoundException, ForbiddenException {
-        if (!authorizationService.getSelectedUser().getId().equals(trainerId)) {
-            authorizationService.assertRoleIn(List.of(UserType.ADMIN));
+        if (!authorizationService.isSecurityDisabled()) {
+            if (!authorizationService.getSelectedUser().getId().equals(trainerId)) {
+                authorizationService.assertRoleIn(List.of(UserType.ADMIN));
+            }
         }
         trainerService.deleteTrainer(trainerId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     }
 
-    @GetMapping(value = "/{trainerId}")
+    @GetMapping("/{trainerId}")
     public ResponseEntity<TrainerDto> getTrainer(@PathVariable Long trainerId) throws TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        if (!authorizationService.getSelectedUser().getId().equals(trainerId)) {
-            authorizationService.assertRoleIn(List.of(UserType.ADMIN));
-        } else {
-            authorizationService.assertRoleIn(List.of(UserType.TRAINER));
+        if (!authorizationService.isSecurityDisabled()) {
+            if (!authorizationService.getSelectedUser().getId().equals(trainerId)) {
+                authorizationService.assertRoleIn(List.of(UserType.ADMIN));
+            } else {
+                authorizationService.assertRoleIn(List.of(UserType.TRAINER));
+            }
         }
         return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
     }
