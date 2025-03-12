@@ -26,6 +26,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
   @Override
   public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+    log.info("Trying to  handle handshake request");
     if (request instanceof org.springframework.http.server.ServletServerHttpRequest) {
       HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
       String token = servletRequest.getParameter("authToken");
