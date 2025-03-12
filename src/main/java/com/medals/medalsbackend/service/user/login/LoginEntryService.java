@@ -44,11 +44,15 @@ public class LoginEntryService {
         oneTimeCodeService.createResetPasswordToken(email);
     }
 
+    public void setEntryPassword(String email, String newPassword) {
+        LoginEntry loginEntry = loginEntryRepository.findById(email).get();
+        loginEntry.setPassword(passwordEncoder.encode(newPassword));
+        loginEntryRepository.save(loginEntry);
+    }
+
     public void setPassword(String oneTimeCode, String password) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
         String email = oneTimeCodeService.getEmailFromOneTimeCode(oneTimeCode, OneTimeCodeType.SET_PASSWORD);
-        LoginEntry loginEntry = loginEntryRepository.findById(email).get();
-        loginEntry.setPassword(passwordEncoder.encode(password));
-        loginEntryRepository.save(loginEntry);
+        setEntryPassword(email, password);
         oneTimeCodeService.deleteOneTimeCode(oneTimeCode);
     }
 

@@ -4,7 +4,6 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.user.UserEntityService;
-import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
       }
       long userId = Long.parseLong(selectedUser);
       Optional<UserEntity> userEntity = userEntityService.findById(userId);
-      String jwtExtractedEmail = jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+      String jwtExtractedEmail = jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
       if (userEntity.isEmpty()) {
         return false;
       }

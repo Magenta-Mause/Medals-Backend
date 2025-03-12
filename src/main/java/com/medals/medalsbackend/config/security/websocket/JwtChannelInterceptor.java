@@ -22,11 +22,10 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
     StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
     if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
       String subscribedEndpoint = accessor.getDestination();
-      log.info("Subscribing to {}", subscribedEndpoint);
       if (websocketVerifier.verify(subscribedEndpoint, accessor)) {
         return message;
       } else {
-        log.info("Unsubscribing from {}", subscribedEndpoint);
+        log.debug("Missing Authentication for {}", subscribedEndpoint);
         return null;
       }
     }

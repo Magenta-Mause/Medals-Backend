@@ -62,7 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     try {
       UserEntity user = selectedUser.get();
-      String subject = jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+      String subject = jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
 
       if (!user.getEmail().equals(subject)) {
         filterChain.doFilter(request, response);
