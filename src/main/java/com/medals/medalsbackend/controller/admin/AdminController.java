@@ -25,7 +25,6 @@ public class AdminController {
 	@DeleteMapping("/{adminId}")
 	@PreAuthorize("hasRole('admin')")
 	public ResponseEntity<Void> deleteAdmin(@PathVariable Long adminId) throws AdminNotFoundException {
-		SecurityContextHolder.getContext().getAuthentication();
 		adminService.deleteAdmin(adminId);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
 	}
