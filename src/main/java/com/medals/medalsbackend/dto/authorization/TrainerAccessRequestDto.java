@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TrainerInviteAthleteDto {
+public class TrainerAccessRequestDto {
     private Long athleteId;
     private Long trainerId;
 }

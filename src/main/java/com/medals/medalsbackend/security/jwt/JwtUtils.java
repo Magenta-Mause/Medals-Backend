@@ -30,7 +30,7 @@ public class JwtUtils {
         long tokenValidityDuration = switch ((JwtTokenBody.TokenType) claims.get("tokenType")) {
             case JwtTokenBody.TokenType.IDENTITY_TOKEN -> jwtConfigurationProperties.identityTokenExpirationTime();
             case JwtTokenBody.TokenType.REFRESH_TOKEN -> jwtConfigurationProperties.refreshTokenExpirationTime();
-            case JwtTokenBody.TokenType.INVITE_TOKEN -> jwtConfigurationProperties.athleteInviteTokenExpirationTime();
+            case JwtTokenBody.TokenType.REQUEST_TOKEN -> jwtConfigurationProperties.athleteRequestTokenExpirationTime();
         };
 
         return Jwts.builder()
@@ -58,7 +58,7 @@ public class JwtUtils {
                 throw new SecurityException("Missing/Bad subject claim");
             }
 
-            return new HashMap<>(claims);
+            return claims;
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SecurityException | AssertionError e) {
             log.error("Error validating token", e);
             throw new JwtTokenInvalidException();

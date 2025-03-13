@@ -80,9 +80,9 @@ public class UserEntityService {
   public List<Athlete> getSimilarAthletes(String athleteSearch) {
     String[] nameParts = athleteSearch.trim().split(" ");
     if (nameParts.length == 2){
-      return userEntityRepository.findAllSimilarAthletesFullName(nameParts[0], nameParts[1]);
+      return userEntityRepository.searchByName(nameParts[0], nameParts[1]);
     } else {
-      return userEntityRepository.findAllSimilarAthletes(nameParts[0]);
+      return userEntityRepository.searchByGeneric(nameParts[0]);
     }
   }
 

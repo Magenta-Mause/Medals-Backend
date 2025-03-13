@@ -19,19 +19,19 @@ public class NotificationService {
     private final MailTemplateService templateService;
 
     public void sendResetPasswordNotification(String email, String oneTimeCode) {
-        String link = configuration.getFrontEndBaseUrl() + "/resetPassword?oneTimeCode=" + oneTimeCode;
+        String link = configuration.getFrontendBaseUrl() + "/resetPassword?oneTimeCode=" + oneTimeCode;
         String text = templateService.generatePasswordResetNotification(email, link);
         mailService.sendEmail(email, "Medals - Reset Password", text);
     }
 
     public void sendCreateAccountNotification(String email, String oneTimeCode) {
-        String link = configuration.getFrontEndBaseUrl() + "/setPassword?oneTimeCode=" + oneTimeCode;
+        String link = configuration.getFrontendBaseUrl() + "/setPassword?oneTimeCode=" + oneTimeCode;
         String text = templateService.generateSetPasswordNotification(email, link);
         mailService.sendEmail(email, "Medals - Account Creation", text);
     }
 
     public void sendInviteTrainerNotification(String email, String oneTimeCode) {
-        String link = configuration.getFrontEndBaseUrl() + "/setPassword?oneTimeCode=" + oneTimeCode;
+        String link = configuration.getFrontendBaseUrl() + "/setPassword?oneTimeCode=" + oneTimeCode;
         String text = templateService.generateInviteTrainerNotification(email, link);
         mailService.sendEmail(email, "Medals - Trainer Creation", text);
     }
@@ -42,8 +42,8 @@ public class NotificationService {
     }
 
     public void sendInviteAthleteNotification(String email, String token, Trainer trainer) {
-        String link = configuration.getFrontEndBaseUrl() + "/validate-invite?oneTimeCode=" + token;
-        String text = templateService.generateInviteAthleteNotification(link, trainer);
-        mailService.sendEmail(email, "Medals - Trainer Invitation", text);
+        String link = configuration.getFrontendBaseUrl() + "/accept-request?oneTimeCode=" + token;
+        String text = templateService.generateRequestAthleteAccessNotification(link, trainer);
+        mailService.sendEmail(email, "Medals - Trainer Request", text);
     }
 }

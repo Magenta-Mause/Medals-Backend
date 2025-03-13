@@ -1,6 +1,6 @@
 package com.medals.medalsbackend.service.user.login.jwt;
 
-import com.medals.medalsbackend.dto.authorization.TrainerInviteAthleteDto;
+import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.LoginEntry;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
@@ -37,12 +37,12 @@ public class JwtService {
         return jwtUtils.generateToken(claims);
     }
 
-    public void buildInviteToken(String athleteEmail, TrainerInviteAthleteDto trainerInviteAthleteDto, Trainer trainer) {
+    public void buildInviteToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto, Trainer trainer) {
         Map<String, Object> claims = Map.of(
                 "email", athleteEmail,
-                "trainerId", trainerInviteAthleteDto.getTrainerId(),
-                "athleteId", trainerInviteAthleteDto.getAthleteId(),
-                "tokenType", JwtTokenBody.TokenType.INVITE_TOKEN
+                "trainerId", trainerAccessRequestDto.getTrainerId(),
+                "athleteId", trainerAccessRequestDto.getAthleteId(),
+                "tokenType", JwtTokenBody.TokenType.REQUEST_TOKEN
         );
         String token = jwtUtils.generateToken(claims);
         notificationService.sendInviteAthleteNotification(athleteEmail, token, trainer);

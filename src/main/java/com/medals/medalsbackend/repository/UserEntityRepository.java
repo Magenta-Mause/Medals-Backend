@@ -31,10 +31,10 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
           "(LOWER(a.firstName) LIKE LOWER(CONCAT('%', :athleteSearch, '%')) " +
           "OR LOWER(a.lastName) LIKE LOWER(CONCAT('%', :athleteSearch, '%')))" +
           "OR LOWER(a.email) LIKE LOWER(CONCAT('%', :athleteSearch, '%'))")
-  List<Athlete> findAllSimilarAthletes(@Param("athleteSearch") String athleteSearch);
+  List<Athlete> searchByGeneric(@Param("athleteSearch") String athleteSearch);
 
   @Query("SELECT a FROM Athlete a WHERE " +
           "(LOWER(a.firstName) LIKE LOWER(CONCAT('%', :athleteFirstName, '%')) " +
           "OR LOWER(a.lastName) LIKE LOWER(CONCAT('%', :athleteLastName, '%')))")
-  List<Athlete> findAllSimilarAthletesFullName(@Param("athleteFirstName") String athleteFirstName, @Param("athleteLastName") String athleteLastName);
+  List<Athlete> searchByName(@Param("athleteFirstName") String athleteFirstName, @Param("athleteLastName") String athleteLastName);
 }

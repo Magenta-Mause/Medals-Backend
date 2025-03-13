@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class MailTemplateConfiguration {
     private String setPasswordNotification;
     private String inviteTrainerNotification;
-    private String inviteAthleteNotification;
+    private String trainerRequestAthleteAccessNotification;
     private String resetPasswordNotification;
     private String passwordResetNotification;
 }

@@ -101,10 +101,10 @@ class JwtUtilTest {
                 "email", "test@gmail.com",
                 "trainerId", 1,
                 "athleteId", 2,
-                "tokenType", JwtTokenBody.TokenType.INVITE_TOKEN
+                "tokenType", JwtTokenBody.TokenType.REQUEST_TOKEN
         );
         String token = jwtUtils.generateToken(claims);
-        jwtUtils.validateToken(token, JwtTokenBody.TokenType.INVITE_TOKEN);
+        jwtUtils.validateToken(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
     }
 
     @Test

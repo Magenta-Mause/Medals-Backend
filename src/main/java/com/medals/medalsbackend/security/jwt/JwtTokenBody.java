@@ -16,6 +16,6 @@ public class JwtTokenBody {
     public enum TokenType {
         REFRESH_TOKEN,
         IDENTITY_TOKEN,
-        INVITE_TOKEN
+        REQUEST_TOKEN
     }
 }

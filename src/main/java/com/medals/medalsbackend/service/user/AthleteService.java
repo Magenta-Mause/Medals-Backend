@@ -105,8 +105,8 @@ public class AthleteService {
         return athlete.getMedalCollection();
     }
 
-    public void acceptInvite(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
-        Map<String, Object> tokenBody = jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.INVITE_TOKEN);
+    public void acceptRequest(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
+        Map<String, Object> tokenBody = jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
         long trainerId = ((Integer) tokenBody.get("trainerId")).longValue();
         long athleteId = ((Integer) tokenBody.get("athleteId")).longValue();
         Trainer trainer = trainerService.getTrainer(trainerId);
