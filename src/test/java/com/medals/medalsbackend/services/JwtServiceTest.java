@@ -100,7 +100,6 @@ public class JwtServiceTest {
         ArgumentCaptor<Map<String, Object>> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture());
         Map<String, Object> capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();
-        System.out.println(capturedTokenBody.get("tokenType"));
 
         assertEquals("test@gmail.com", capturedTokenBody.get("email"));
         assertEquals(trainerAccessRequestDto.getTrainerId(), capturedTokenBody.get("trainerId"));
