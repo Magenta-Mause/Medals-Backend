@@ -45,7 +45,7 @@ public class JwtService {
                 "tokenType", JwtTokenBody.TokenType.REQUEST_TOKEN
         );
         String token = jwtUtils.generateToken(claims);
-        notificationService.sendInviteAthleteNotification(athleteEmail, token, trainer);
+        notificationService.sendRequestAthleteNotification(athleteEmail, token, trainer);
     }
 
     public Map<String, Object> getTokenContentBody(String refreshToken, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
