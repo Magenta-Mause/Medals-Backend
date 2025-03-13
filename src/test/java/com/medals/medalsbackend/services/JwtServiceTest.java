@@ -106,6 +106,6 @@ public class JwtServiceTest {
         assertEquals(trainerAccessRequestDto.getAthleteId(), capturedTokenBody.get("athleteId"));
         assertEquals(JwtTokenBody.TokenType.REQUEST_TOKEN, capturedTokenBody.get("tokenType"));
         
-        verify(notificationService, times(1)).sendInviteAthleteNotification("test@gmail.com", dummyToken, trainer);
+        verify(notificationService, times(1)).sendRequestAthleteNotification("test@gmail.com", dummyToken, trainer);
     }
 }
