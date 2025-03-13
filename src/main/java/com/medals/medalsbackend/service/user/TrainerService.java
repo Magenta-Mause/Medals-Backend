@@ -109,7 +109,7 @@ public class TrainerService {
         log.info("Executing invite athlete {}", inviteAthlete);
         Long trainerId = trainerAccessRequestDto.getTrainerId();
         Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
-        jwtService.buildInviteToken(inviteAthlete.getEmail(), trainerAccessRequestDto, trainer);
+        jwtService.buildRequestToken(inviteAthlete.getEmail(), trainerAccessRequestDto, trainer);
     }
 
     public List<Athlete> searchAthlete(String athleteSearch) {

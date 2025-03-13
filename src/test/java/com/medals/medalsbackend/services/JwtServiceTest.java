@@ -96,7 +96,7 @@ public class JwtServiceTest {
         String dummyToken = "dummyToken";
         when(jwtUtils.generateToken(anyMap())).thenReturn(dummyToken);
 
-        jwtService.buildInviteToken("test@gmail.com", trainerAccessRequestDto, trainer);
+        jwtService.buildRequestToken("test@gmail.com", trainerAccessRequestDto, trainer);
         ArgumentCaptor<Map<String, Object>> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture());
         Map<String, Object> capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();

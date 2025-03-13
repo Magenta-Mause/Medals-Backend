@@ -37,7 +37,7 @@ public class JwtService {
         return jwtUtils.generateToken(claims);
     }
 
-    public void buildInviteToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto, Trainer trainer) {
+    public void buildRequestToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto, Trainer trainer) {
         Map<String, Object> claims = Map.of(
                 "email", athleteEmail,
                 "trainerId", trainerAccessRequestDto.getTrainerId(),
