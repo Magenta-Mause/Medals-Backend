@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -44,7 +43,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    public Map<String, Object> validateToken(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
+    public Map<String, Object> getTokenContentBody(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
         try {
             Claims claims = jwtParser.parseClaimsJws(token).getBody();
             claims.getExpiration();

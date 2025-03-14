@@ -12,6 +12,7 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
+import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
@@ -35,6 +36,7 @@ public class TrainerService {
     private final ObjectMapper objectMapper;
     private final UserEntityService userEntityService;
     private final TrainerWebsocketMessageService trainerWebsocketMessageService;
+    private final NotificationService notificationService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -103,16 +105,17 @@ public class TrainerService {
         trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
     }
 
-    public void requestAthlete(TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException{
+    public void requestAthleteToJoinTrainer(TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException{
         Long athleteId = trainerAccessRequestDto.getAthleteId();
         Athlete inviteAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         log.info("Executing request athlete {}", inviteAthlete);
         Long trainerId = trainerAccessRequestDto.getTrainerId();
         Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
-        jwtService.buildRequestToken(inviteAthlete.getEmail(), trainerAccessRequestDto, trainer);
+        String token = jwtService.buildTrainerAccessRequestToken(inviteAthlete.getEmail(), trainerAccessRequestDto);
+        notificationService.sendRequestAthleteNotification(inviteAthlete.getEmail(), token, trainer);
     }
 
-    public List<Athlete> searchAthlete(String athleteSearch) {
+    public List<Athlete> searchAthletes(String athleteSearch) {
         return userEntityService.getSimilarAthletes(athleteSearch);
     }
 }

@@ -61,10 +61,10 @@ public class AthleteController {
         return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
     }
 
-    @PostMapping("/approve-request")
+    @PostMapping("/approve-access-request")
     public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
         // TODO: Add security check
-        athleteService.approveRequest(oneTimeCode);
+        athleteService.approveAccessRequest(oneTimeCode);
         return ResponseEntity.ok("Accepted the Invite");
     }
 }

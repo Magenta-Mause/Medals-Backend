@@ -51,14 +51,14 @@ public class TrainerController {
         return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
     }
 
-    @PostMapping(value = "/request-athlete")
-    public ResponseEntity<Void> inviteAthlete(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException {
-        trainerService.requestAthlete(trainerAccessRequestDto);
+    @PostMapping(value = "/request-athlete-access")
+    public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException {
+        trainerService.requestAthleteToJoinTrainer(trainerAccessRequestDto);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/search-athletes")
     public ResponseEntity<List<Athlete>> searchAthletes(@RequestParam String athleteSearch) {
-        return ResponseEntity.ok(trainerService.searchAthlete(athleteSearch));
+        return ResponseEntity.ok(trainerService.searchAthletes(athleteSearch));
     }
 }

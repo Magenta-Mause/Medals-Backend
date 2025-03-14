@@ -3,10 +3,8 @@ package com.medals.medalsbackend.services;
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.LoginEntry;
-import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
-import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.user.login.jwt.JwtService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,9 +29,6 @@ public class JwtServiceTest {
     private JwtUtils jwtUtils;
     @InjectMocks
     private JwtService jwtService;
-
-    @Mock
-    private NotificationService notificationService;
 
     @Test
     public void testGenerateRefreshToken() {
@@ -88,15 +83,10 @@ public class JwtServiceTest {
                 .trainerId((long) 1)
                 .build();
 
-        Trainer trainer = Trainer.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .build();
-
         String dummyToken = "dummyToken";
         when(jwtUtils.generateToken(anyMap())).thenReturn(dummyToken);
 
-        jwtService.buildRequestToken("test@gmail.com", trainerAccessRequestDto, trainer);
+        jwtService.buildTrainerAccessRequestToken("test@gmail.com", trainerAccessRequestDto);
         ArgumentCaptor<Map<String, Object>> jwtTokenBodyArgumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(jwtUtils, times(1)).generateToken(jwtTokenBodyArgumentCaptor.capture());
         Map<String, Object> capturedTokenBody = jwtTokenBodyArgumentCaptor.getValue();
@@ -105,7 +95,5 @@ public class JwtServiceTest {
         assertEquals(trainerAccessRequestDto.getTrainerId(), capturedTokenBody.get("trainerId"));
         assertEquals(trainerAccessRequestDto.getAthleteId(), capturedTokenBody.get("athleteId"));
         assertEquals(JwtTokenBody.TokenType.REQUEST_TOKEN, capturedTokenBody.get("tokenType"));
-        
-        verify(notificationService, times(1)).sendRequestAthleteNotification("test@gmail.com", dummyToken, trainer);
     }
 }

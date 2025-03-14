@@ -55,7 +55,7 @@ public class Athlete extends UserEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "athlete_trainer",
+            name = "trainers_assinged_to_athlete",
             joinColumns = @JoinColumn(name = "athlete_id"),
             inverseJoinColumns = @JoinColumn(name = "trainer_id")
     )

@@ -14,7 +14,7 @@ import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
-import com.medals.medalsbackend.service.user.login.jwt.JwtService;
+import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AthleteService {
 
-    private final JwtService jwtService;
+    private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
@@ -105,24 +105,21 @@ public class AthleteService {
         return athlete.getMedalCollection();
     }
 
-    public void approveRequest(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
-        Map<String, Object> tokenBody = jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
+    public void approveAccessRequest(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
+        Map<String, Object> tokenBody = jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
         long athleteId = ((Integer) tokenBody.get("athleteId")).longValue();
         long trainerId = ((Integer) tokenBody.get("trainerId")).longValue();
         Athlete athlete = getAthlete(athleteId);
         Trainer trainer = trainerService.getTrainer(trainerId);
-        addTrainerToAthlete(athlete, trainer);
-        addAthleteToTrainer(trainer, athlete);
+        allowTrainerAthleteAccess(athlete, trainer);
     }
 
-    private void addTrainerToAthlete(Athlete athlete, Trainer trainer) {
+    private void allowTrainerAthleteAccess(Athlete athlete, Trainer trainer) {
         List<Trainer> trainersAssignedToAthlete = athlete.getTrainersAssignedTo();
         trainersAssignedToAthlete.add(trainer);
         athlete.setTrainersAssignedTo(trainersAssignedToAthlete);
         userEntityService.update(athlete);
-    }
 
-    private void addAthleteToTrainer(Trainer trainer, Athlete athlete) {
         List<Athlete> assignedAthletes = trainer.getAssignedAthletes();
         assignedAthletes.add(athlete);
         trainer.setAssignedAthletes(assignedAthletes);

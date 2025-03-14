@@ -2,9 +2,7 @@ package com.medals.medalsbackend.service.user.login.jwt;
 
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.LoginEntry;
-import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
-import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,6 @@ import java.util.Map;
 public class JwtService {
 
     private final JwtUtils jwtUtils;
-    private final NotificationService notificationService;
 
     public String buildRefreshToken(LoginEntry loginEntry) {
         Map<String, Object> claims = Map.of(
@@ -37,18 +34,13 @@ public class JwtService {
         return jwtUtils.generateToken(claims);
     }
 
-    public void buildRequestToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto, Trainer trainer) {
+    public String buildTrainerAccessRequestToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto) {
         Map<String, Object> claims = Map.of(
                 "email", athleteEmail,
                 "trainerId", trainerAccessRequestDto.getTrainerId(),
                 "athleteId", trainerAccessRequestDto.getAthleteId(),
                 "tokenType", JwtTokenBody.TokenType.REQUEST_TOKEN
         );
-        String token = jwtUtils.generateToken(claims);
-        notificationService.sendRequestAthleteNotification(athleteEmail, token, trainer);
-    }
-
-    public Map<String, Object> getTokenContentBody(String refreshToken, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
-        return jwtUtils.validateToken(refreshToken, tokenType);
+        return jwtUtils.generateToken(claims);
     }
 }

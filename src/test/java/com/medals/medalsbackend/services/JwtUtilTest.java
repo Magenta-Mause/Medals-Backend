@@ -26,7 +26,6 @@ import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,7 +76,7 @@ class JwtUtilTest {
                         .build()
         );
         String token = jwtUtils.generateToken(claims);
-        jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+        jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
     }
 
     @Test
@@ -92,7 +91,7 @@ class JwtUtilTest {
                         .build()
         );
         String token = jwtUtils.generateToken(claims);
-        jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
+        jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
     }
 
     @Test
@@ -104,13 +103,13 @@ class JwtUtilTest {
                 "tokenType", JwtTokenBody.TokenType.REQUEST_TOKEN
         );
         String token = jwtUtils.generateToken(claims);
-        jwtUtils.validateToken(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
+        jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
     }
 
     @Test
     void testInvalidTokenException() {
         assertThrows(JwtTokenInvalidException.class, () -> {
-            jwtUtils.validateToken("testtoken.token.secret", JwtTokenBody.TokenType.IDENTITY_TOKEN);
+            jwtUtils.getTokenContentBody("testtoken.token.secret", JwtTokenBody.TokenType.IDENTITY_TOKEN);
         });
     }
 
@@ -127,7 +126,7 @@ class JwtUtilTest {
                 .compact();
 
         assertThrows(JwtTokenInvalidException.class, () -> {
-            jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+            jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
         });
     }
 
@@ -144,7 +143,7 @@ class JwtUtilTest {
                 .compact();
 
         assertThrows(JwtTokenInvalidException.class, () -> {
-            jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+            jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
         });
     }
 
@@ -164,7 +163,7 @@ class JwtUtilTest {
                 .signWith(signingKey)
                 .compact();
 
-        String user = (String) jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN).get("sub");
+        String user = (String) jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.REFRESH_TOKEN).get("sub");
         assertEquals(user, testEmail);
     }
 
@@ -183,7 +182,7 @@ class JwtUtilTest {
                 .signWith(signingKey)
                 .compact();
 
-        assertThrows(JwtTokenInvalidException.class, () -> jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN));
+        assertThrows(JwtTokenInvalidException.class, () -> jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.REFRESH_TOKEN));
     }
 
     @SneakyThrows
@@ -201,6 +200,6 @@ class JwtUtilTest {
                 .signWith(signingKey)
                 .compact();
 
-        assertThrows(JwtTokenInvalidException.class, () -> jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN));
+        assertThrows(JwtTokenInvalidException.class, () -> jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.IDENTITY_TOKEN));
     }
 }
