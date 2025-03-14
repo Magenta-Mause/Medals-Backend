@@ -67,8 +67,6 @@ public class AthleteController {
     public ResponseEntity<Boolean> checkAthleteExists(
             @RequestParam String email,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) {
-
-        boolean exists = athleteService.existsByBirthdateAndEmail(email,  birthdate);
-        return ResponseEntity.ok(exists);
+        return ResponseEntity.ok(athleteService.existsByBirthdateAndEmail(email, birthdate));
     }
 }
