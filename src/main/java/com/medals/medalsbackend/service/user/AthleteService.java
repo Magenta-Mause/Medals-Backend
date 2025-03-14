@@ -83,9 +83,9 @@ public class AthleteService {
 
     public boolean checkAthleteExistence(String email, LocalDate birthdate) {
         Athlete[] athletes = userEntityService.getAllAthletes().toArray(new Athlete[0]);
-        log.info("Executing get all athletes: {}", athletes.length);
         for (Athlete athlete : athletes) {
-            if (athlete.getEmail().equals(email) && athlete.getBirthdate().equals(birthdate)) {
+            if (athlete.getEmail().trim().equalsIgnoreCase(email.trim()) &&
+                    athlete.getBirthdate().isEqual(birthdate)) {
                 return true;
             }
         }
