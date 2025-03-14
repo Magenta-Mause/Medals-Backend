@@ -65,7 +65,6 @@ public class TrainerService {
 
     public UserEntity insertTrainer(TrainerDto trainerDto) throws InternalException {
         trainerDto.setId(null);
-        System.out.println("Type: " +  trainerDto.getType());
         Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED);
         log.info("Inserting Trainer: {}", trainer);
         trainerWebsocketMessageService.sendTrainerCreation(objectMapper.convertValue(trainer, TrainerDto.class));
