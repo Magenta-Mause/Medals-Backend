@@ -23,55 +23,44 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 @RequestMapping(BASE_PATH + "/trainers")
 @RequiredArgsConstructor
 public class TrainerController {
-    private final TrainerService trainerService;
-    private final ObjectMapper objectMapper;
-    private final AuthorizationService authorizationService;
+	private final TrainerService trainerService;
+	private final ObjectMapper objectMapper;
+	private final AuthorizationService authorizationService;
 
-    @GetMapping
-    public ResponseEntity<TrainerDto[]> getTrainers() throws ForbiddenException, NoAuthenticationFoundException, TrainerNotFoundException {
-        authorizationService.assertRoleIn(List.of(UserType.ADMIN, UserType.TRAINER));
-        return ResponseEntity.ok((
-            switch (authorizationService.getSelectedUser().getType()) {
-                case UserType.ADMIN -> trainerService.getAllTrainers();
-                case UserType.TRAINER ->
-                    List.of(trainerService.getTrainer(authorizationService.getSelectedUser().getId()));
-                default ->
-                    throw new IllegalStateException("Unexpected value: " + authorizationService.getSelectedUser().getType());
-            }).stream().map(trainer -> objectMapper.convertValue(trainer, TrainerDto.class)).toArray(TrainerDto[]::new)
-        );
-    }
+	@GetMapping
+	public ResponseEntity<TrainerDto[]> getTrainers() throws ForbiddenException, NoAuthenticationFoundException, TrainerNotFoundException {
+		authorizationService.assertRoleIn(List.of(UserType.ADMIN, UserType.TRAINER));
+		return ResponseEntity.ok((
+				switch (authorizationService.getSelectedUser().getType()) {
+					case UserType.ADMIN -> trainerService.getAllTrainers();
+					case UserType.TRAINER -> List.of(trainerService.getTrainer(authorizationService.getSelectedUser().getId()));
+					default ->
+							throw new IllegalStateException("Unexpected value: " + authorizationService.getSelectedUser().getType());
+				}).stream().map(trainer -> objectMapper.convertValue(trainer, TrainerDto.class)).toArray(TrainerDto[]::new)
+		);
+	}
 
-    @PostMapping
-    public ResponseEntity<TrainerDto> postTrainer(@Valid @RequestBody TrainerDto trainerDto) throws InternalException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.assertRoleIn(List.of(UserType.ADMIN));
-        return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(trainerService.insertTrainer(trainerDto), TrainerDto.class));
-    }
+	@PostMapping
+	public ResponseEntity<TrainerDto> postTrainer(@Valid @RequestBody TrainerDto trainerDto) throws InternalException, ForbiddenException, NoAuthenticationFoundException {
+		authorizationService.assertRoleIn(List.of(UserType.ADMIN));
+		return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(trainerService.insertTrainer(trainerDto), TrainerDto.class));
+	}
 
-    @PostMapping(value = "/validate")
-    public ResponseEntity<List<TrainerDto>> validateTrainers(@RequestBody @Valid List<TrainerDto> trainerDtoList) {
-        return ResponseEntity.ok(trainerDtoList);
-    }
+	@PostMapping(value = "/validate")
+	public ResponseEntity<List<TrainerDto>> validateTrainers(@RequestBody @Valid List<TrainerDto> trainerDtoList) {
+		return ResponseEntity.ok(trainerDtoList);
+	}
 
-    @DeleteMapping("/{trainerId}")
-    public ResponseEntity<Void> deleteTrainer(@PathVariable Long trainerId) throws TrainerNotFoundException, NoAuthenticationFoundException, ForbiddenException {
-        if (!authorizationService.isSecurityDisabled()) {
-            if (!authorizationService.getSelectedUser().getId().equals(trainerId)) {
-                authorizationService.assertRoleIn(List.of(UserType.ADMIN));
-            }
-        }
-        trainerService.deleteTrainer(trainerId);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
-    }
+	@DeleteMapping("/{trainerId}")
+	public ResponseEntity<Void> deleteTrainer(@PathVariable Long trainerId) throws TrainerNotFoundException, NoAuthenticationFoundException, ForbiddenException {
+		authorizationService.assertUserHasOwnerAccess(trainerId);
+		trainerService.deleteTrainer(trainerId);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+	}
 
-    @GetMapping("/{trainerId}")
-    public ResponseEntity<TrainerDto> getTrainer(@PathVariable Long trainerId) throws TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        if (!authorizationService.isSecurityDisabled()) {
-            if (!authorizationService.getSelectedUser().getId().equals(trainerId)) {
-                authorizationService.assertRoleIn(List.of(UserType.ADMIN));
-            } else {
-                authorizationService.assertRoleIn(List.of(UserType.TRAINER));
-            }
-        }
-        return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
-    }
+	@GetMapping("/{trainerId}")
+	public ResponseEntity<TrainerDto> getTrainer(@PathVariable Long trainerId) throws TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
+		authorizationService.assertUserHasOwnerAccess(trainerId);
+		return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
+	}
 }

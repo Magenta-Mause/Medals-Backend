@@ -61,32 +61,32 @@ public class AthleteController {
 
     @DeleteMapping("/{athleteId}")
     public ResponseEntity<Void> deleteAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException, NoAuthenticationFoundException, ForbiddenException {
-        authorizationService.checkUserHasAccess(athleteId);
+        authorizationService.assertUserHasAccess(athleteId);
         athleteService.deleteAthlete(athleteId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     }
 
     @GetMapping(value = "/{athleteId}")
     public ResponseEntity<AthleteDto> getAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.checkUserHasAccess(athleteId);
+        authorizationService.assertUserHasAccess(athleteId);
         return ResponseEntity.ok(objectMapper.convertValue(athleteService.getAthlete(athleteId), AthleteDto.class));
     }
 
     @GetMapping(value = "/{athleteId}/medals")
     public ResponseEntity<MedalCollection> getMedals(@PathVariable Long athleteId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.checkUserHasAccess(athleteId);
+        authorizationService.assertUserHasAccess(athleteId);
         return ResponseEntity.ok(athleteService.getAthleteMedalCollection(athleteId));
     }
 
     @GetMapping(value = "/{athleteId}/swimmingCertificate")
     public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.checkUserHasAccess(athleteId);
+        authorizationService.assertUserHasAccess(athleteId);
         return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
     }
 
     @GetMapping("/performance-recordings/{userId}")
     public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.checkUserHasAccess(userId);
+        authorizationService.assertUserHasAccess(userId);
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(userId));
     }
 }

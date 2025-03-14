@@ -63,7 +63,7 @@ public class DisciplineController {
 
     @GetMapping("/athletes/{athleteId}")
     public ResponseEntity<Collection<DisciplineRatingMetric>> getViableMetricsForAthlete(@PathVariable Long athleteId, @PathParam("selected_year") int selectedYear) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.checkUserHasAccess(athleteId);
+        authorizationService.assertUserHasAccess(athleteId);
         return ResponseEntity.ok(disciplineService.getDisciplineRatingMetricsForAthlete(athleteService.getAthlete(athleteId), selectedYear));
     }
 }

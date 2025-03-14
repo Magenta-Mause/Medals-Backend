@@ -18,7 +18,6 @@ import com.medals.medalsbackend.service.user.AthleteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +35,7 @@ public class PerformanceRecordingController {
 
     @PostMapping
     public ResponseEntity<PerformanceRecording> recordPerformance(@RequestBody PerformanceRecordingDto performanceRecordingDto) throws AthleteNotFoundException, DisciplineNotFoundException, NoMatchingDisciplineRatingFoundForAge, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.checkUserHasAccess(performanceRecordingDto.getAthleteId());
+        authorizationService.assertUserHasAccess(performanceRecordingDto.getAthleteId());
         PerformanceRecording performanceRecording = performanceRecordingService.recordPerformance(
             athleteService.getAthlete(performanceRecordingDto.getAthleteId()),
             disciplineService.getDisciplineById(performanceRecordingDto.getDisciplineId()),
@@ -65,7 +64,7 @@ public class PerformanceRecordingController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePerformanceRecording(@PathVariable Long id) throws PerformanceRecordingNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.checkUserHasAccess(performanceRecordingService.getPerformanceRecording(id).getAthleteId());
+        authorizationService.assertUserHasAccess(performanceRecordingService.getPerformanceRecording(id).getAthleteId());
         performanceRecordingService.deletePerformanceRecording(id);
         return ResponseEntity.noContent().build();
     }
