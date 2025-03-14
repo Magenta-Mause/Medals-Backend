@@ -1,0 +1,53 @@
+NAME,GENDER,DESCRIPTION,CATEGORY,UNIT,IS_MORE_BETTER,START_AGE,END_AGE,VALID_IN,BRONZE,SILVER,GOLD
+800 m Lauf,female,null,Ausdauer,sekunden,false,6,7,2020,340,300,255
+800 m Lauf,male,null,Ausdauer,sekunden,false,6,7,2020,340,300,255
+800 m Lauf,female,null,Ausdauer,sekunden,false,8,9,2020,335,290,250
+800 m Lauf,male,null,Ausdauer,sekunden,false,8,9,2020,325,280,235
+800 m Lauf,female,null,Ausdauer,sekunden,false,10,11,2020,320,280,240
+800 m Lauf,male,null,Ausdauer,sekunden,false,10,11,2020,305,260,215
+800 m Lauf,female,null,Ausdauer,sekunden,false,12,13,2020,310,265,225
+800 m Lauf,male,null,Ausdauer,sekunden,false,12,13,2020,285,240,195
+800 m Lauf,female,null,Ausdauer,sekunden,false,14,15,2020,300,260,215
+800 m Lauf,male,null,Ausdauer,sekunden,false,14,15,2020,260,220,180
+800 m Lauf,female,null,Ausdauer,sekunden,false,16,17,2020,290,245,205
+800 m Lauf,male,null,Ausdauer,sekunden,false,16,17,2020,245,205,165
+Dauer-/Geländelauf,female,null,Ausdauer,sekunden,true,6,7,2020,480,720,1020
+Dauer-/Geländelauf,male,null,Ausdauer,sekunden,true,6,7,2020,600,900,1200
+Dauer-/Geländelauf,female,null,Ausdauer,sekunden,true,8,9,2020,600,900,1200
+Dauer-/Geländelauf,male,null,Ausdauer,sekunden,true,8,9,2020,720,1020,1440
+Dauer-/Geländelauf,female,null,Ausdauer,sekunden,true,10,11,2020,900,1200,1800
+Dauer-/Geländelauf,male,null,Ausdauer,sekunden,true,10,11,2020,1020,1500,2100
+Dauer-/Geländelauf,female,null,Ausdauer,sekunden,true,12,13,2020,1200,1800,2400
+Dauer-/Geländelauf,male,null,Ausdauer,sekunden,true,12,13,2020,1500,2100,2700
+Dauer-/Geländelauf,female,null,Ausdauer,sekunden,true,14,15,2020,1800,2400,3000
+Dauer-/Geländelauf,male,null,Ausdauer,sekunden,true,14,15,2020,2100,2700,3600
+Dauer-/Geländelauf,female,null,Ausdauer,sekunden,true,16,17,2020,2700,3600,4500
+Dauer-/Geländelauf,male,null,Ausdauer,sekunden,true,16,17,2020,3300,4200,5400
+Schwimmen,200 m,Ausdauer,sekunden,false,6,7,2020,540,460,380,540,440,370
+Schwimmen,200 m,Ausdauer,sekunden,false,8,9,2020,480,420,355,480,405,340
+Schwimmen,200 m,Ausdauer,sekunden,false,10,11,2020,440,385,530,420,380,310
+Schwimmen,400 m,Ausdauer,sekunden,false,12,13,2020,950,775,660,810,690,585
+Schwimmen,400 m,Ausdauer,sekunden,false,14,15,2020,785,700,600,720,615,530
+Schwimmen,400 m,Ausdauer,sekunden,false,16,17,2020,710,630,545,660,580,500
+Radfahren,5 km,Ausdauer,sekunden,false,8,9,2020,1620,1440,1260,1590,1410,1230
+Radfahren,10 km,Ausdauer,sekunden,false,10,11,2020,3030,2580,2130,2910,2460,2010
+Radfahren,10 km,Ausdauer,sekunden,false,1,13,2020,2700,2370,2010,2580,2220,1890
+Radfahren,10 km,Ausdauer,sekunden,false,14,15,2020,2280,1950,1710,1920,1680,1440
+Radfahren,10 km,Ausdauer,sekunden,false,16,17,2020,1950,1710,1500,1620,1410,1230
+Werfen Schlagball 80 g,Kraft,meter,true,6,7,2020,
+Werfen Schlagball 80 g,Kraft,meter,true,6,7,2020,
+Werfen Schlagball 80 g,Kraft,meter,true,6,7,2020,
+Werfen Schlagball 200 g,Kraft,meter,true,6,7,2020,
+Werfen Schlagball 200 g,Kraft,meter,true,6,7,2020,
+Werfen Schlagball 200 g,Kraft,meter,true,6,7,2020,
+Kugelstoßen,Kraft,,meter
+Standweitsprung,Kraft,,meter
+Laufen,Schnelligkeit,,sekunden
+25 m Schwimmen,Schnelligkeit,,sekunden
+200 m Radfahren,Schnelligkeit,,sekunden
+Hochsprung,Koordination,,meter
+Weitsprung,Koordination,,meter
+Zonenweitsprung,Koordination,,punkte
+Drehwurf,Koordination,,punkte
+Schleuderball,Koordination,,meter
+Seilspringen,Koordination,,anzahl
