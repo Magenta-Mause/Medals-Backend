@@ -1,6 +1,6 @@
 package com.medals.medalsbackend.config.security;
 
-import com.medals.medalsbackend.config.security.websocket.verifier.AllwaysAuthenticator;
+import com.medals.medalsbackend.config.security.websocket.verifier.NoAuthenticationRequiredVerifier;
 import com.medals.medalsbackend.config.security.websocket.verifier.IdBasedWebsocketVerifier;
 import com.medals.medalsbackend.config.security.websocket.verifier.RoleBasedWebsocketVerifier;
 import com.medals.medalsbackend.config.security.websocket.verifier.WebsocketVerifier;
@@ -74,9 +74,9 @@ public class SecurityConfiguration {
             .addVerifier("/topics/athlete/creation/{userId}", new IdBasedWebsocketVerifier("/topics/athlete/creation/{userId}"))
             .addVerifier("/topics/athlete/update/{userId}", new IdBasedWebsocketVerifier("/topics/athlete/update/{userId}"))
             .addVerifier("/topics/athlete/deletion/{userId}", new IdBasedWebsocketVerifier("/topics/athlete/deletion/{userId}"))
-            .addVerifier("/topics/discipline/creation", new AllwaysAuthenticator())
-            .addVerifier("/topics/discipline/update", new AllwaysAuthenticator())
-            .addVerifier("/topics/discipline/deletion", new AllwaysAuthenticator())
+            .addVerifier("/topics/discipline/creation", new NoAuthenticationRequiredVerifier())
+            .addVerifier("/topics/discipline/update", new NoAuthenticationRequiredVerifier())
+            .addVerifier("/topics/discipline/deletion", new NoAuthenticationRequiredVerifier())
             .addVerifier("/topics/trainer/creation/admin", new RoleBasedWebsocketVerifier(UserType.ADMIN))
             .addVerifier("/topics/trainer/update/admin", new RoleBasedWebsocketVerifier(UserType.ADMIN))
             .addVerifier("/topics/trainer/deletion/admin", new RoleBasedWebsocketVerifier(UserType.ADMIN))
