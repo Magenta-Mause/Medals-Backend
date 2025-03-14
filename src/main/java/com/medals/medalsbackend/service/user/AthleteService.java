@@ -105,21 +105,14 @@ public class AthleteService {
         return athlete.getMedalCollection();
     }
 
-    public void acceptRequest(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
+    public void approveRequest(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
         Map<String, Object> tokenBody = jwtService.getTokenContentBody(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
-        long trainerId = ((Integer) tokenBody.get("trainerId")).longValue();
         long athleteId = ((Integer) tokenBody.get("athleteId")).longValue();
-        Trainer trainer = trainerService.getTrainer(trainerId);
+        long trainerId = ((Integer) tokenBody.get("trainerId")).longValue();
         Athlete athlete = getAthlete(athleteId);
-        addAthleteToTrainer(trainer, athlete);
+        Trainer trainer = trainerService.getTrainer(trainerId);
         addTrainerToAthlete(athlete, trainer);
-    }
-
-    private void addAthleteToTrainer(Trainer trainer, Athlete athlete) {
-        List<Athlete> assignedAthletes = trainer.getAssignedAthletes();
-        assignedAthletes.add(athlete);
-        trainer.setAssignedAthletes(assignedAthletes);
-        userEntityService.update(trainer);
+        addAthleteToTrainer(trainer, athlete);
     }
 
     private void addTrainerToAthlete(Athlete athlete, Trainer trainer) {
@@ -127,5 +120,12 @@ public class AthleteService {
         trainersAssignedToAthlete.add(trainer);
         athlete.setTrainersAssignedTo(trainersAssignedToAthlete);
         userEntityService.update(athlete);
+    }
+
+    private void addAthleteToTrainer(Trainer trainer, Athlete athlete) {
+        List<Athlete> assignedAthletes = trainer.getAssignedAthletes();
+        assignedAthletes.add(athlete);
+        trainer.setAssignedAthletes(assignedAthletes);
+        userEntityService.update(trainer);
     }
 }

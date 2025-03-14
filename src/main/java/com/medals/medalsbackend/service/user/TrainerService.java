@@ -106,7 +106,7 @@ public class TrainerService {
     public void requestAthlete(TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException{
         Long athleteId = trainerAccessRequestDto.getAthleteId();
         Athlete inviteAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
-        log.info("Executing invite athlete {}", inviteAthlete);
+        log.info("Executing request athlete {}", inviteAthlete);
         Long trainerId = trainerAccessRequestDto.getTrainerId();
         Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
         jwtService.buildRequestToken(inviteAthlete.getEmail(), trainerAccessRequestDto, trainer);

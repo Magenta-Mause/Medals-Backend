@@ -51,7 +51,7 @@ public class TrainerController {
         return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
     }
 
-    @PostMapping(value = "/invite-athlete")
+    @PostMapping(value = "/request-athlete")
     public ResponseEntity<Void> inviteAthlete(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException {
         trainerService.requestAthlete(trainerAccessRequestDto);
         return ResponseEntity.ok().build();
