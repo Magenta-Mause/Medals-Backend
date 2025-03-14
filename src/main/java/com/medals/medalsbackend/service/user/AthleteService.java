@@ -11,6 +11,7 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
+import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Slf4j
 @Service
@@ -31,6 +33,7 @@ public class AthleteService {
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
+    private final UserEntityRepository userEntityRepository;
     private final Environment environment;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
@@ -81,15 +84,8 @@ public class AthleteService {
         }
     }
 
-    public boolean checkAthleteExistence(String email, LocalDate birthdate) {
-        Athlete[] athletes = userEntityService.getAllAthletes().toArray(new Athlete[0]);
-        for (Athlete athlete : athletes) {
-            if (athlete.getEmail().trim().equalsIgnoreCase(email.trim()) &&
-                    athlete.getBirthdate().isEqual(birthdate)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean existsByBirthdateAndEmail(String email, LocalDate birthdate){
+        return userEntityRepository.findAthleteByEmailAndBirthdate(email, birthdate).isPresent();
     }
 
     public void deleteAthlete(Long athleteId) throws AthleteNotFoundException {

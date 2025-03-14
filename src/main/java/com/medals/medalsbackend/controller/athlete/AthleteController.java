@@ -68,7 +68,7 @@ public class AthleteController {
             @RequestParam String email,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) {
 
-        boolean exists = athleteService.checkAthleteExistence(email, birthdate);
+        boolean exists = athleteService.existsByBirthdateAndEmail(email,  birthdate);
         return ResponseEntity.ok(exists);
     }
 }
