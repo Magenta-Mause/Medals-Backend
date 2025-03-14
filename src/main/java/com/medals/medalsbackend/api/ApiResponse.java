@@ -1,6 +1,5 @@
 package com.medals.medalsbackend.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -12,10 +11,10 @@ import java.time.LocalDateTime;
 @Data
 @ToString
 public class ApiResponse<T> {
-    private int status;
-    private HttpStatusCode httpStatus;
-    private String message;
-    private String endpoint;
-    private LocalDateTime timestamp;
-    private T data;
+	private int status;
+	private HttpStatusCode httpStatus;
+	private String message;
+	private String endpoint;
+	private LocalDateTime timestamp;
+	private T data;
 }
