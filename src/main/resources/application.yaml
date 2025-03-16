@@ -17,7 +17,7 @@ app:
   admin:
     enabled: true
     admins:
-      - email: "example@example.org"
+      - email: "admin@example.org"
         first-name: "Mighty"
         last-name: "God"
   security:
@@ -32,6 +32,8 @@ app:
       invite-trainer-notification: "template_trainer_invitation"
       reset-password-notification: "template_reset_password"
       reset-password-confirmation-notification: "template_reset_password_confirmation"
+  notification:
+    front-end-base-url: "http://localhost:5173"
   otc:
     set-password-token-validity-duration: 604800000 # 1 week
     reset-password-token-validity-duration: 3600000 # 1 hour

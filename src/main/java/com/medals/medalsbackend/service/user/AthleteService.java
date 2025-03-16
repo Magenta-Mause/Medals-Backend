@@ -3,11 +3,14 @@ package com.medals.medalsbackend.service.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
 import com.medals.medalsbackend.dto.AthleteDto;
+import com.medals.medalsbackend.entity.medals.InitializedEntity;
+import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +32,16 @@ public class AthleteService {
     private final Environment environment;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
+    private final InitializedEntityRepository initializedEntityRepository;
 
     @EventListener(ApplicationReadyEvent.class)
     @Profile("!test")
     public void instantiateDummies() {
         if (!insertDummies) {
+            return;
+        }
+        if (initializedEntityRepository.existsById(InitializedEntityType.Athlete)) {
+            log.info("Athletes already initiated");
             return;
         }
 
@@ -45,6 +53,7 @@ public class AthleteService {
                 throw new RuntimeException(e);
             }
         });
+        initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Athlete));
     }
 
     public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {
@@ -56,13 +65,10 @@ public class AthleteService {
     }
 
     public Athlete[] getAthletes() {
-        Athlete[] athletes = userEntityService.getAllAthletes().toArray(new Athlete[0]);
-        log.info("Executing get all athletes: {}", athletes.length);
-        return athletes;
+        return userEntityService.getAllAthletes().toArray(new Athlete[0]);
     }
 
     public Athlete getAthlete(Long athleteId) throws AthleteNotFoundException {
-        log.info("Executing get athlete by id {}", athleteId);
         try {
             return (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         } catch (Exception e) {
@@ -87,7 +93,6 @@ public class AthleteService {
     }
 
     public MedalCollection getAthleteMedalCollection(Long athleteId) throws AthleteNotFoundException {
-        log.info("Executing get athlete medal collection by id {}", athleteId);
         Athlete athlete = getAthlete(athleteId);
         return athlete.getMedalCollection();
     }
