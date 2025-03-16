@@ -10,5 +10,5 @@ public class MailTemplateConfiguration {
     private String setPasswordNotification;
     private String inviteTrainerNotification;
     private String resetPasswordNotification;
-    private String passwordResetNotification;
+    private String resetPasswordConfirmationNotification;
 }
