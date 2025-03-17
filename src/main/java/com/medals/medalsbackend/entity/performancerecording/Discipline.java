@@ -13,7 +13,6 @@ import lombok.*;
 @ToString
 public class Discipline {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false)
