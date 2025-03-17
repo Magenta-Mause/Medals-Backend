@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.service.user;
 
+import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,13 +77,9 @@ public class UserEntityService {
     return userEntity;
   }
 
-  public List<Athlete> getSimilarAthletes(String athleteSearch) {
-    String[] nameParts = athleteSearch.trim().split(" ");
-    if (nameParts.length == 2){
-      return userEntityRepository.searchByName(nameParts[0], nameParts[1]);
-    } else {
-      return userEntityRepository.searchByGeneric(nameParts[0]);
-    }
+  public List<PrunedAthleteDto> getSimilarAthletes(String athleteSearch) {
+    System.out.println(athleteSearch);
+    return userEntityRepository.searchGeneric(athleteSearch);
   }
 
   public boolean existsById(Long id) {

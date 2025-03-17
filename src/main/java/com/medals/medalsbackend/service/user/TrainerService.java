@@ -2,6 +2,7 @@ package com.medals.medalsbackend.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
+import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.Athlete;
@@ -105,7 +106,7 @@ public class TrainerService {
         trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
     }
 
-    public void requestAthleteToJoinTrainer(TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException{
+    public void requestAthleteAccess(TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException{
         Long athleteId = trainerAccessRequestDto.getAthleteId();
         Athlete inviteAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         log.info("Executing request athlete {}", inviteAthlete);
@@ -115,7 +116,8 @@ public class TrainerService {
         notificationService.sendRequestAthleteNotification(inviteAthlete.getEmail(), token, trainer);
     }
 
-    public List<Athlete> searchAthletes(String athleteSearch) {
+    public List<PrunedAthleteDto> searchAthletes(String athleteSearch) {
+        System.out.println(athleteSearch);
         return userEntityService.getSimilarAthletes(athleteSearch);
     }
 }

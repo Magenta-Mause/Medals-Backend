@@ -22,14 +22,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="font-family: Arial, sans-serif; font-size: 18px; color: #333;" th:text="${trainerName} + ' requested management access to your account'">
-                    </td>
                 </tr>
                 <tr>
                     <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555; line-height: 1.5; text-align: left;">
                         <p>Dear User,</p>
                         <h3 th:text="${trainerName}"></h3>
-                        <p> Requested access to manage your account. Click the button below to accept the invitation.</p>
+                        <p> requested access to manage your account. Click the button below to accept the invitation.</p>
                         <p><a th:href="${otcLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Accept Invitation</a></p>
                         <p>If the button does not work, use this link:<br>
                             <a th:href="${otcLink}" th:text="${otcLink}" style="color: #007bff; text-decoration: none;"></a>
@@ -41,8 +39,6 @@
                     <td><hr></td>
                 </tr>
                 <tr>
-                    <td style="font-family: Arial, sans-serif; font-size: 18px; color: #333;" th:text="${trainerName} + ' hat Zugriff angefordert, um Ihr Konto zu verwalten'">
-                    </td>
                 </tr>
                 <tr>
                     <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555; line-height: 1.5; text-align: left;">

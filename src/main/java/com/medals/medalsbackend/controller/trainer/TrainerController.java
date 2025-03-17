@@ -1,9 +1,9 @@
 package com.medals.medalsbackend.controller.trainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
-import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
@@ -53,12 +53,12 @@ public class TrainerController {
 
     @PostMapping(value = "/request-athlete-access")
     public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException {
-        trainerService.requestAthleteToJoinTrainer(trainerAccessRequestDto);
+        trainerService.requestAthleteAccess(trainerAccessRequestDto);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/search-athletes")
-    public ResponseEntity<List<Athlete>> searchAthletes(@RequestParam String athleteSearch) {
+    public ResponseEntity<List<PrunedAthleteDto>> searchAthletes(@RequestParam String athleteSearch) {
         return ResponseEntity.ok(trainerService.searchAthletes(athleteSearch));
     }
 }

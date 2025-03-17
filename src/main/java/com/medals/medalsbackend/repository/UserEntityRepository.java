@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.repository;
 
+import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
@@ -27,14 +28,9 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
   @Query("SELECT u FROM Trainer u")
   List<Trainer> findAllTrainers();
 
-  @Query("SELECT a FROM Athlete a WHERE " +
-          "(LOWER(a.firstName) LIKE LOWER(CONCAT('%', :athleteSearch, '%')) " +
-          "OR LOWER(a.lastName) LIKE LOWER(CONCAT('%', :athleteSearch, '%')))" +
-          "OR LOWER(a.email) LIKE LOWER(CONCAT('%', :athleteSearch, '%'))")
-  List<Athlete> searchByGeneric(@Param("athleteSearch") String athleteSearch);
-
-  @Query("SELECT a FROM Athlete a WHERE " +
-          "(LOWER(a.firstName) LIKE LOWER(CONCAT('%', :athleteFirstName, '%')) " +
-          "OR LOWER(a.lastName) LIKE LOWER(CONCAT('%', :athleteLastName, '%')))")
-  List<Athlete> searchByName(@Param("athleteFirstName") String athleteFirstName, @Param("athleteLastName") String athleteLastName);
+  @Query("SELECT new com.medals.medalsbackend.dto.PrunedAthleteDto(a.firstName, a.lastName, a.birthdate) " +
+          "FROM Athlete a WHERE " +
+          "CONCAT(a.firstName, ' ', a.lastName) LIKE %:userInput% " +
+          "OR a.email LIKE %:userInput%")
+  List<PrunedAthleteDto> searchGeneric(@Param("userInput") String userInput);
 }
