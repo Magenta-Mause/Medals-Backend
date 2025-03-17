@@ -32,7 +32,7 @@ app:
       set-password-notification: "template_account_created"
       invite-trainer-notification: "template_trainer_invitation"
       reset-password-notification: "template_reset_password"
-      password-reset-notification: "template_password_reset"
+      reset-password-confirmation-notification: "template_reset_password_confirmation"
       trainer-request-athlete-access-notification: "template_trainer_request_athlete_access"
   notification:
     front-end-base-url: "http://localhost:5173"

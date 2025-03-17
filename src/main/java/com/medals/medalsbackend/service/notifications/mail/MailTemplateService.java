@@ -35,9 +35,9 @@ public class MailTemplateService {
         return templateEngine.process(configuration.getResetPasswordNotification(), context);
     }
 
-    public String generatePasswordResetNotification(String email) {
+    public String generatePasswordResetConfirmationNotification(String email) {
         Context context = new Context();
-        return templateEngine.process(configuration.getPasswordResetNotification(), context);
+        return templateEngine.process(configuration.getResetPasswordConfirmationNotification(), context);
     }
 
     public String generateRequestAthleteAccessNotification(String link, Trainer trainer) {
