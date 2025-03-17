@@ -87,14 +87,14 @@ public class DummyData {
                 .name("800m Lauf")
                 .unit(Discipline.Unit.seconds)
                 .category(DisciplineCategory.ENDURANCE)
-                .moreBetter(false)
+                .isMoreBetter(false)
                 .build();
 
         Discipline throwing = Discipline.builder()
                 .name("Werfen")
                 .unit(Discipline.Unit.meters)
                 .category(DisciplineCategory.STRENGTH)
-                .moreBetter(false)
+                .isMoreBetter(false)
                 .build();
 
 
