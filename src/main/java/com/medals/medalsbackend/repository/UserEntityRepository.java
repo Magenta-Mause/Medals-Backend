@@ -28,6 +28,8 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
   @Query("SELECT u FROM Trainer u")
   List<Trainer> findAllTrainers();
 
+  List<UserEntity> getAllByEmail(String email);
+
   @Query("SELECT new com.medals.medalsbackend.dto.PrunedAthleteDto(a.firstName, a.lastName, a.birthdate) " +
           "FROM Athlete a WHERE " +
           "CONCAT(a.firstName, ' ', a.lastName) LIKE %:userInput% " +

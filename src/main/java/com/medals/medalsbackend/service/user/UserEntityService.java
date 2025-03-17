@@ -23,59 +23,61 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserEntityService {
-  private final UserEntityRepository userEntityRepository;
-  private final LoginEntryService loginEntryService;
+    private final UserEntityRepository userEntityRepository;
+    private final LoginEntryService loginEntryService;
 
-  @Transactional
-  public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) {
-    try {
-      loginEntryService.createLoginEntry(email, reason);
-    } catch (EmailAlreadyExistsException ignored) {
+    @Transactional
+    public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) throws InternalException {
+        try {
+            loginEntryService.createLoginEntry(email, reason);
+        } catch (EmailAlreadyExistsException ignored) {
+        }
+
+        try {
+            return loginEntryService.addUserToLogin(email, userEntity);
+        } catch (EmailDoesntExistException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    try {
-      return loginEntryService.addUserToLogin(email, userEntity);
-    } catch (EmailDoesntExistException e) {
-      throw new RuntimeException(e);
+    @Transactional
+    public UserEntity save(String email, UserEntity userEntity) throws InternalException {
+        return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED);
     }
-  }
 
-  @Transactional
-  public UserEntity save(String email, UserEntity userEntity) throws InternalException {
-    return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED);
-  }
+    public UserEntity update(UserEntity userEntity) {
+        return userEntityRepository.save(userEntity);
+    }
 
-  public UserEntity update(UserEntity userEntity) {
-    return userEntityRepository.save(userEntity);
-  }
+    public Optional<UserEntity> findById(long id) {
+        return userEntityRepository.findById(id);
+    }
 
-  public Optional<UserEntity> findById(long id) {
-    return userEntityRepository.findById(id);
-  }
+    public List<UserEntity> getAll() {
+        return userEntityRepository.findAll();
+    }
 
-  public Optional<UserEntity> findByEmail(String email) { return userEntityRepository.findByEmail(email); }
+    public List<UserEntity> getAllByEmail(String email) {
+        return userEntityRepository.getAllByEmail(email);
+    }
 
-  public List<UserEntity> getAll() {
-    return userEntityRepository.findAll();
-  }
+    public List<Athlete> getAllAthletes() {
+        return userEntityRepository.findAllAthletes();
+    }
 
-  public List<Athlete> getAllAthletes() {
-    return userEntityRepository.findAllAthletes();
-  }
+    public List<Trainer> getAllTrainers() {
+        return userEntityRepository.findAllTrainers();
+    }
 
-  public List<Trainer> getAllTrainers() {
-    return userEntityRepository.findAllTrainers();
-  }
+    public List<Admin> getAllAdmins() {
+        return userEntityRepository.findAllAdmins();
+    }
 
-  public List<Admin> getAllAdmins() {
-    return userEntityRepository.findAllAdmins();
-  }
-
-  public UserEntity deleteById(Long id) {
-    UserEntity userEntity = userEntityRepository.findById(id).orElseThrow();
-    userEntityRepository.delete(userEntity);
-    return userEntity;
-  }
+    public UserEntity deleteById(Long id) {
+        UserEntity userEntity = userEntityRepository.findById(id).orElseThrow();
+        userEntityRepository.delete(userEntity);
+        return userEntity;
+    }
 
   public List<PrunedAthleteDto> getSimilarAthletes(String athleteSearch) {
     return userEntityRepository.searchGeneric(athleteSearch);

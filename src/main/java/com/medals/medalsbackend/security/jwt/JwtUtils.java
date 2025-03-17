@@ -43,6 +43,17 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Validates a JWT and extracts the subject claim of that token
+     * @param token the JWT
+     * @param tokenType the expected Token type
+     * @return the subject claim of the token (in our case the email of the authorized user)
+     * @throws JwtTokenInvalidException if JWT cant be validated or is a bad token
+     */
+    public String getJwtTokenUser(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
+        return (String) getTokenContentBody(token, tokenType).get("sub");
+    }
+
     public Map<String, Object> getTokenContentBody(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
         try {
             Claims claims = jwtParser.parseClaimsJws(token).getBody();
