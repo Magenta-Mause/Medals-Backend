@@ -117,7 +117,6 @@ public class TrainerService {
     }
 
     public List<PrunedAthleteDto> searchAthletes(String athleteSearch) {
-        System.out.println(athleteSearch);
         return userEntityService.getSimilarAthletes(athleteSearch);
     }
 }
