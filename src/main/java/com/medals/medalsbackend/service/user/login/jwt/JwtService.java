@@ -35,6 +35,6 @@ public class JwtService {
     }
 
     public String getUserEmailFromRefreshToken(String refreshToken) throws JwtTokenInvalidException {
-        return jwtUtils.validateToken(refreshToken, JwtTokenBody.TokenType.REFRESH_TOKEN);
+        return jwtUtils.getJwtTokenUser(refreshToken, JwtTokenBody.TokenType.REFRESH_TOKEN);
     }
 }
