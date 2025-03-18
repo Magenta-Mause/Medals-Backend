@@ -27,7 +27,6 @@ public class AthleteServiceTest {
   @SneakyThrows
   @Test
   public void testAthleteCreation() {
-    // Prepare
     AthleteDto athlete = AthleteDto.builder()
       .firstName("John")
       .lastName("Doe")
@@ -36,10 +35,8 @@ public class AthleteServiceTest {
       .gender(Athlete.Gender.MALE)
       .build();
 
-    // Act
     Athlete resultAthlete = (Athlete) athleteService.insertAthlete(athlete);
 
-    // Assert
     Assertions.assertThat(resultAthlete).isNotNull();
     Assertions.assertThat(resultAthlete.getEmail()).isEqualTo("john@doe.com");
     Assertions.assertThat(resultAthlete.getFirstName()).isEqualTo("John");
