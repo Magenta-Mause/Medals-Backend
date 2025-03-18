@@ -2,20 +2,26 @@ package com.medals.medalsbackend.entity.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Setter
 @Getter
 @Entity(name = "user_entity")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Admin.class, name = "ADMIN"),
+    @JsonSubTypes.Type(value = Athlete.class, name = "ATHLETE"),
+    @JsonSubTypes.Type(value = Trainer.class, name = "TRAINER")
+})
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @SuperBuilder
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public abstract class UserEntity {
   @Id

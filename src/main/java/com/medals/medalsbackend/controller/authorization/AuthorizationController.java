@@ -81,7 +81,7 @@ public class AuthorizationController {
     }
 
     @PostMapping("/resetPassword/{email}")
-    public ResponseEntity<String> startResetPasswordFlow(@PathVariable String email) throws EmailDoesntExistException {
+    public ResponseEntity<String> startResetPasswordFlow(@PathVariable String email) {
         loginEntryService.initiateResetPasswordRequest(email);
         return ResponseEntity.ok("Success");
     }
