@@ -8,6 +8,8 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
+import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.authorization.AuthorizationService;
 import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.authorization.ForbiddenException;
@@ -36,6 +38,7 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 @RequiredArgsConstructor
 public class AthleteController {
     private final AthleteService athleteService;
+    private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
     private final AuthorizationService authorizationService;
     private final PerformanceRecordingService performanceRecordingService;
@@ -92,8 +95,9 @@ public class AthleteController {
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(userId));
     }
 
-    @PostMapping("/{athleteId}/approve-access")
-    public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode, @PathVariable Long athleteId) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
+    @PostMapping("approve-access")
+    public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
+        Long athleteId = (Long) jwtUtils.getTokenContentBody(oneTimeCode, JwtTokenBody.TokenType.REQUEST_TOKEN).get("athletId");
         authorizationService.assertUserHasAccess(athleteId);
         athleteService.approveAccessRequest(oneTimeCode);
         return ResponseEntity.ok("Accepted the Invite");

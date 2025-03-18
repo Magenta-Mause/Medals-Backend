@@ -17,8 +17,6 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
 
   Optional<UserEntity> findById(Long id);
 
-  Optional<UserEntity> findByEmail(String email);
-
   @Query("SELECT u FROM Admin u")
   List<Admin> findAllAdmins();
 
@@ -32,7 +30,7 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
 
   @Query("SELECT new com.medals.medalsbackend.dto.PrunedAthleteDto(a.firstName, a.lastName, a.birthdate) " +
           "FROM Athlete a WHERE " +
-          "CONCAT(a.firstName, ' ', a.lastName) LIKE %:userInput% " +
-          "OR a.email LIKE %:userInput%")
+          "(LOWER(CONCAT(a.firstName, ' ', a.lastName)) LIKE LOWER(CONCAT('%', :userInput, '%')) " +
+          "OR LOWER(a.email) LIKE LOWER(CONCAT('%', :userInput, '%')))")
   List<PrunedAthleteDto> searchGeneric(@Param("userInput") String userInput);
 }

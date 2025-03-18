@@ -44,6 +44,6 @@ public class NotificationService {
     public void sendRequestAthleteNotification(String email, String token, Trainer trainer) {
         String link = configuration.getFrontendBaseUrl() + "/approve-request?oneTimeCode=" + token;
         String text = templateService.generateRequestAthleteAccessNotification(link, trainer);
-        mailService.sendEmail(email, "Medals - Trainer Request", text);
+        mailService.sendEmail(email, "Medals - Trainer requested access", text);
     }
 }

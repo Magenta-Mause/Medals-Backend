@@ -68,15 +68,14 @@ public class TrainerController {
 	}
 
     @PostMapping(value = "/request-athlete-access")
-    public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-		authorizationService.assertUserHasOwnerAccess(trainerAccessRequestDto.getTrainerId());
-        trainerService.requestAthleteAccess(trainerAccessRequestDto);
+    public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException {
+		trainerService.requestAthleteAccess(trainerAccessRequestDto);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/{trainerId}/search-athletes")
-    public ResponseEntity<List<PrunedAthleteDto>> searchAthletes(@RequestParam String athleteSearch, @PathVariable Long trainerId) throws ForbiddenException, NoAuthenticationFoundException {
-		authorizationService.assertUserHasOwnerAccess(trainerId);
+    @GetMapping(value = "/search-athletes")
+    public ResponseEntity<List<PrunedAthleteDto>> searchAthletes(@RequestParam String athleteSearch) throws NoAuthenticationFoundException {
+		authorizationService.getSelectedUser();
         return ResponseEntity.ok(trainerService.searchAthletes(athleteSearch));
     }
 }
