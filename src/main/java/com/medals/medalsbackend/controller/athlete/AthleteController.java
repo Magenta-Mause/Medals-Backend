@@ -92,7 +92,7 @@ public class AthleteController {
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(userId));
     }
 
-    @PostMapping("/approve-access/{athleteId}")
+    @PostMapping("/{athleteId}/approve-access")
     public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode, @PathVariable Long athleteId) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertUserHasAccess(athleteId);
         athleteService.approveAccessRequest(oneTimeCode);
