@@ -1,7 +1,10 @@
 package com.medals.medalsbackend.controller.trainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
+import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
+import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
@@ -63,4 +66,16 @@ public class TrainerController {
 		authorizationService.assertUserHasOwnerAccess(trainerId);
 		return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
 	}
+
+    @PostMapping(value = "/request-athlete-access")
+    public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException {
+		trainerService.requestAthleteAccess(trainerAccessRequestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/search-athletes")
+    public ResponseEntity<List<PrunedAthleteDto>> searchAthletes(@RequestParam String athleteSearch) throws NoAuthenticationFoundException {
+		authorizationService.getSelectedUser();
+        return ResponseEntity.ok(trainerService.searchAthletes(athleteSearch));
+    }
 }

@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @ToString
@@ -52,4 +53,11 @@ public class Athlete extends UserEntity {
         }
     }
 
+    @ManyToMany
+    @JoinTable(
+            name = "trainers_assinged_to_athlete",
+            joinColumns = @JoinColumn(name = "athlete_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainer_id")
+    )
+    private List<Trainer> trainersAssignedTo;
 }

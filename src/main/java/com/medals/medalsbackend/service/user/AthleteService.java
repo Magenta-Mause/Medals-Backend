@@ -7,9 +7,14 @@ import com.medals.medalsbackend.entity.medals.InitializedEntity;
 import com.medals.medalsbackend.entity.medals.InitializedEntityType;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
+import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
@@ -18,18 +23,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AthleteService {
 
+    private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
-    private final Environment environment;
+    private final TrainerService trainerService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -95,5 +103,26 @@ public class AthleteService {
     public MedalCollection getAthleteMedalCollection(Long athleteId) throws AthleteNotFoundException {
         Athlete athlete = getAthlete(athleteId);
         return athlete.getMedalCollection();
+    }
+
+    public void approveAccessRequest(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
+        Map<String, Object> tokenBody = jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
+        long athleteId = ((Integer) tokenBody.get("athleteId")).longValue();
+        long trainerId = ((Integer) tokenBody.get("trainerId")).longValue();
+        Athlete athlete = getAthlete(athleteId);
+        Trainer trainer = trainerService.getTrainer(trainerId);
+        allowTrainerAthleteAccess(athlete, trainer);
+    }
+
+    private void allowTrainerAthleteAccess(Athlete athlete, Trainer trainer) {
+        List<Trainer> trainersAssignedToAthlete = athlete.getTrainersAssignedTo();
+        trainersAssignedToAthlete.add(trainer);
+        athlete.setTrainersAssignedTo(trainersAssignedToAthlete);
+        userEntityService.update(athlete);
+
+        List<Athlete> assignedAthletes = trainer.getAssignedAthletes();
+        assignedAthletes.add(athlete);
+        trainer.setAssignedAthletes(assignedAthletes);
+        userEntityService.update(trainer);
     }
 }

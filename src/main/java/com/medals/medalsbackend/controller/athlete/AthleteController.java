@@ -8,10 +8,14 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
+import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.authorization.AuthorizationService;
 import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.authorization.ForbiddenException;
 import com.medals.medalsbackend.service.performancerecording.PerformanceRecordingService;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.service.user.AthleteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,7 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 @RequiredArgsConstructor
 public class AthleteController {
     private final AthleteService athleteService;
+    private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
     private final AuthorizationService authorizationService;
     private final PerformanceRecordingService performanceRecordingService;
@@ -88,5 +93,13 @@ public class AthleteController {
     public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertUserHasAccess(userId);
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(userId));
+    }
+
+    @PostMapping("/approve-access")
+    public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
+        Integer athleteId = (Integer) jwtUtils.getTokenContentBody(oneTimeCode, JwtTokenBody.TokenType.REQUEST_TOKEN).get("athleteId");
+        authorizationService.assertUserHasAccess(athleteId.longValue());
+        athleteService.approveAccessRequest(oneTimeCode);
+        return ResponseEntity.ok("Accepted the Invite");
     }
 }

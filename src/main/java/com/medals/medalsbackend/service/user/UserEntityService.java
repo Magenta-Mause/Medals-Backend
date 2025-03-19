@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.service.user;
 
+import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
@@ -78,7 +79,11 @@ public class UserEntityService {
         return userEntity;
     }
 
-    public boolean existsById(Long id) {
-        return userEntityRepository.existsById(id);
-    }
+  public List<PrunedAthleteDto> getSimilarAthletes(String athleteSearch) {
+    return userEntityRepository.searchGeneric(athleteSearch);
+  }
+
+  public boolean existsById(Long id) {
+    return userEntityRepository.existsById(id);
+  }
 }
