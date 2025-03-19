@@ -95,10 +95,10 @@ public class AthleteController {
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(userId));
     }
 
-    @PostMapping("approve-access")
+    @PostMapping("/approve-access")
     public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        Long athleteId = (Long) jwtUtils.getTokenContentBody(oneTimeCode, JwtTokenBody.TokenType.REQUEST_TOKEN).get("athletId");
-        authorizationService.assertUserHasAccess(athleteId);
+        Integer athleteId = (Integer) jwtUtils.getTokenContentBody(oneTimeCode, JwtTokenBody.TokenType.REQUEST_TOKEN).get("athleteId");
+        authorizationService.assertUserHasAccess(athleteId.longValue());
         athleteService.approveAccessRequest(oneTimeCode);
         return ResponseEntity.ok("Accepted the Invite");
     }
