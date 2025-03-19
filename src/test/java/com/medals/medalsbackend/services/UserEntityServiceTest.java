@@ -106,13 +106,12 @@ public class UserEntityServiceTest {
         List<PrunedAthleteDto> result = userEntityService.getSimilarAthletes("@example.org");
 
         assertThat(result).hasSize(2);
-        assertThat(result).hasSize(2);
         assertThat(result.getFirst().getFirstName()).isEqualTo("Jane");
         assertThat(result.getFirst().getLastName()).isEqualTo("Reiter");
         assertThat(result.getFirst().getBirthdate()).isEqualTo("2009-04-07");
-        assertThat(result.getFirst().getFirstName()).isEqualTo("John");
-        assertThat(result.getFirst().getLastName()).isEqualTo("Reiter");
-        assertThat(result.getFirst().getBirthdate()).isEqualTo("2010-03-07");
+        assertThat(result.get(1).getFirstName()).isEqualTo("John");
+        assertThat(result.get(1).getLastName()).isEqualTo("Reiter");
+        assertThat(result.get(1).getBirthdate()).isEqualTo("2010-03-07");
     }
 
     @Test
