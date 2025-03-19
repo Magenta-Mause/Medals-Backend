@@ -36,7 +36,7 @@ public class NotificationService {
     }
 
     public void sendPasswordResetNotification(String email) {
-        String text = templateService.generatePasswordResetNotification(email);
+        String text = templateService.generatePasswordResetConfirmationNotification(email);
         mailService.sendEmail(email, "Medals - Password Changed", text);
     }
 }
