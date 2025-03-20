@@ -91,7 +91,7 @@ public class CsvDataLoader {
                 .build();
     }
 
-    private Double parseTimeOrDouble(String value) {
+    Double parseTimeOrDouble(String value) {
         if (value == null || value.isBlank()) {
             return null;
         }
@@ -108,7 +108,7 @@ public class CsvDataLoader {
                 .orElseThrow(() -> new CsvLoadingException("Discipline not found: " + id, null));
     }
 
-    private Integer parseInt(String value, String fieldName) {
+    Integer parseInt(String value, String fieldName) {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
