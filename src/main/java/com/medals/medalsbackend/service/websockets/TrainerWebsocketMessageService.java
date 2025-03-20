@@ -12,14 +12,14 @@ public class TrainerWebsocketMessageService {
     private final SimpMessagingTemplate messagingTemplate;
 
     public void sendTrainerCreation(TrainerDto trainer) {
-        messagingTemplate.convertAndSend("/topics/trainer/creation", trainer);
+        messagingTemplate.convertAndSend("/topics/trainer/creation/admin", trainer);
     }
 
     public void sendTrainerUpdate(TrainerDto trainer) {
-        messagingTemplate.convertAndSend("/topics/trainer/update", trainer);
+        messagingTemplate.convertAndSend("/topics/trainer/update/admin", trainer);
     }
 
     public void sendTrainerDelete(Long trainerId) {
-        messagingTemplate.convertAndSend("/topics/trainer/deletion", trainerId);
+        messagingTemplate.convertAndSend("/topics/trainer/deletion/admin", trainerId);
     }
 }

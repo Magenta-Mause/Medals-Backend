@@ -56,6 +56,10 @@ public class UserEntityService {
         return userEntityRepository.findAll();
     }
 
+    public List<UserEntity> getAllByEmail(String email) {
+        return userEntityRepository.getAllByEmail(email);
+    }
+
     public List<Athlete> getAllAthletes() {
         return userEntityRepository.findAllAthletes();
     }

@@ -37,18 +37,22 @@ public class LoginEntryService {
         loginEntryRepository.save(loginEntry);
     }
 
-    public void initiateResetPasswordRequest(String email) throws EmailDoesntExistException {
+    public void initiateResetPasswordRequest(String email) {
         if (!loginEntryRepository.existsById(email.toLowerCase())) {
-            throw new EmailDoesntExistException(email);
+            return;
         }
         oneTimeCodeService.createResetPasswordToken(email);
     }
 
+    public void setEntryPassword(String email, String newPassword) {
+        LoginEntry loginEntry = loginEntryRepository.findById(email).get();
+        loginEntry.setPassword(passwordEncoder.encode(newPassword));
+        loginEntryRepository.save(loginEntry);
+    }
+
     public void setPassword(String oneTimeCode, String password) throws OneTimeCodeNotFoundException, OneTimeCodeExpiredException {
         String email = oneTimeCodeService.getEmailFromOneTimeCode(oneTimeCode, OneTimeCodeType.SET_PASSWORD);
-        LoginEntry loginEntry = loginEntryRepository.findById(email).get();
-        loginEntry.setPassword(passwordEncoder.encode(password));
-        loginEntryRepository.save(loginEntry);
+        setEntryPassword(email, password);
         oneTimeCodeService.deleteOneTimeCode(oneTimeCode);
     }
 

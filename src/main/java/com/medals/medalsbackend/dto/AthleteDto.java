@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.medals.medalsbackend.entity.medals.MedalType;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -47,4 +48,7 @@ public class AthleteDto {
 
     @JsonProperty("swimming_certificate")
     private boolean swimmingCertificate = false;
+
+    @Builder.Default
+    private UserType type = UserType.ATHLETE;
 }

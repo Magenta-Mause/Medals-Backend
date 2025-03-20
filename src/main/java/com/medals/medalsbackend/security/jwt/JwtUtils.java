@@ -48,10 +48,20 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String validateToken(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
+    /**
+     * Validates a JWT and extracts the subject claim of that token
+     * @param token the JWT
+     * @param tokenType the expected Token type
+     * @return the subject claim of the token (in our case the email of the authorized user)
+     * @throws JwtTokenInvalidException if JWT cant be validated or is a bad token
+     */
+    public String getJwtTokenUser(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
+        return (String) getJwtTokenClaims(token, tokenType).get("sub");
+    }
+
+    public Map<String, Object> getJwtTokenClaims(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
         try {
             Claims claims = jwtParser.parseClaimsJws(token).getBody();
-            String subject = claims.getSubject();
             claims.getExpiration();
             if (!"medals-backend".equals(claims.getAudience())) {
                 throw new SecurityException("Missing/Bad audience claim");
@@ -62,12 +72,8 @@ public class JwtUtils {
             if (claims.getSubject() == null) {
                 throw new SecurityException("Missing/Bad subject claim");
             }
-            return subject;
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SecurityException | AssertionError e) {
-            log.error("Error validating token", e);
-            throw new JwtTokenInvalidException();
-        } catch (Exception e) {
-            log.error("Error while parsing JWT refresh token", e);
+            return claims;
+        } catch (AssertionError | Exception e) {
             throw new JwtTokenInvalidException();
         }
     }

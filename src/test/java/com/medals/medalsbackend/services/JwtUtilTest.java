@@ -75,7 +75,7 @@ class JwtUtilTest {
                 ))
                 .build();
         String token = jwtUtils.generateToken(tokenBody);
-        jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+        jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
     }
 
     @Test
@@ -85,13 +85,13 @@ class JwtUtilTest {
                 .tokenType(JwtTokenBody.TokenType.REFRESH_TOKEN)
                 .build();
         String token = jwtUtils.generateToken(tokenBody);
-        jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
+        jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
     }
 
     @Test
     void testInvalidTokenException() {
         assertThrows(JwtTokenInvalidException.class, () -> {
-            jwtUtils.validateToken("testtoken.token.secret", JwtTokenBody.TokenType.IDENTITY_TOKEN);
+            jwtUtils.getJwtTokenUser("testtoken.token.secret", JwtTokenBody.TokenType.IDENTITY_TOKEN);
         });
     }
 
@@ -108,7 +108,7 @@ class JwtUtilTest {
                 .compact();
 
         assertThrows(JwtTokenInvalidException.class, () -> {
-            jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+            jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
         });
     }
 
@@ -125,7 +125,7 @@ class JwtUtilTest {
                 .compact();
 
         assertThrows(JwtTokenInvalidException.class, () -> {
-            jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+            jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
         });
     }
 
@@ -145,7 +145,7 @@ class JwtUtilTest {
                 .signWith(signingKey)
                 .compact();
 
-        String user = jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
+        String user = jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.REFRESH_TOKEN);
         assertEquals(user, testEmail);
     }
 
@@ -164,7 +164,7 @@ class JwtUtilTest {
                 .signWith(signingKey)
                 .compact();
 
-        assertThrows(JwtTokenInvalidException.class, () -> jwtUtils.validateToken(token, JwtTokenBody.TokenType.REFRESH_TOKEN));
+        assertThrows(JwtTokenInvalidException.class, () -> jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.REFRESH_TOKEN));
     }
 
     @SneakyThrows
@@ -182,6 +182,6 @@ class JwtUtilTest {
                 .signWith(signingKey)
                 .compact();
 
-        assertThrows(JwtTokenInvalidException.class, () -> jwtUtils.validateToken(token, JwtTokenBody.TokenType.IDENTITY_TOKEN));
+        assertThrows(JwtTokenInvalidException.class, () -> jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.IDENTITY_TOKEN));
     }
 }
