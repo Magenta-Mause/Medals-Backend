@@ -11,6 +11,7 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
+import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class AthleteService {
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
+    private final UserEntityRepository userEntityRepository;
     private final Environment environment;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
@@ -74,6 +78,10 @@ public class AthleteService {
         } catch (Exception e) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
         }
+    }
+
+    public boolean existsByBirthdateAndEmail(String email, LocalDate birthdate){
+        return userEntityRepository.findAthleteByEmailAndBirthdate(email, birthdate).isPresent();
     }
 
     public void deleteAthlete(Long athleteId) throws AthleteNotFoundException {

@@ -82,3 +82,4 @@ public class UserEntityService {
         return userEntityRepository.existsById(id);
     }
 }
+

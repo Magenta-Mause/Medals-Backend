@@ -7,6 +7,7 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +26,8 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
     List<Trainer> findAllTrainers();
 
     List<UserEntity> getAllByEmail(String email);
+
+    @Query("SELECT u FROM Athlete u WHERE u.email=?1 AND u.birthdate=?2")
+    Optional<Athlete> findAthleteByEmailAndBirthdate(String email, LocalDate birthdate);
+
 }
