@@ -28,7 +28,7 @@ class CsvDataLoaderTest {
         assertNotNull(disciplines, "Disciplines list should not be null");
         assertFalse(disciplines.isEmpty(), "Disciplines list should not be empty");
 
-        Discipline firstDiscipline = disciplines.get(0);
+        Discipline firstDiscipline = disciplines.getFirst();
         assertNotNull(firstDiscipline.getId());
         assertNotNull(firstDiscipline.getName());
         assertNotNull(firstDiscipline.getCategory());
