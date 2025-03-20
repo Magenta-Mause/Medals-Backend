@@ -130,6 +130,11 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
             <version>3.4.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.9</version>
+        </dependency>
 
     </dependencies>
 
