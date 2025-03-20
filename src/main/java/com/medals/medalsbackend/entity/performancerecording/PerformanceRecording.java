@@ -28,7 +28,6 @@ public class PerformanceRecording {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "athlete_id", nullable = false)
     @ToString.Exclude
-    @JsonIgnore
     private Athlete athlete;
 
     @ManyToOne(fetch = FetchType.LAZY)
