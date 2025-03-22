@@ -49,7 +49,7 @@ public class UserEntityServiceTest {
     @Test
     void testUserEntitySearchAthleteWithFirstname() {
         when(userEntityRepository.searchGeneric("John")).thenReturn(
-                List.of(new PrunedAthleteDto("John", "Reiter", LocalDate.of(2010, 3, 7)))
+                List.of(new PrunedAthleteDto(1L, "John", "Reiter", LocalDate.of(2010, 3, 7)))
         );
 
         List<PrunedAthleteDto> result = userEntityService.getSimilarAthletes("John");
@@ -64,8 +64,8 @@ public class UserEntityServiceTest {
     void testUserEntitySearchAthleteWithLastname() {
         when(userEntityRepository.searchGeneric("Reiter")).thenReturn(
                 List.of(
-                        new PrunedAthleteDto("Jane", "Reiter", LocalDate.of(2009, 4, 7)),
-                        new PrunedAthleteDto("John", "Reiter", LocalDate.of(2010, 3, 7))
+                        new PrunedAthleteDto(1L,"Jane", "Reiter", LocalDate.of(2009, 4, 7)),
+                        new PrunedAthleteDto(1L, "John", "Reiter", LocalDate.of(2010, 3, 7))
                 )
         );
 
@@ -83,7 +83,7 @@ public class UserEntityServiceTest {
     @Test
     void testUserEntitySearchAthleteWithFullname() {
         when(userEntityRepository.searchGeneric("John Reiter")).thenReturn(
-                List.of(new PrunedAthleteDto("John", "Reiter", LocalDate.of(2010, 3, 7)))
+                List.of(new PrunedAthleteDto(1L, "John", "Reiter", LocalDate.of(2010, 3, 7)))
         );
 
         List<PrunedAthleteDto> result = userEntityService.getSimilarAthletes("John Reiter");
@@ -98,8 +98,8 @@ public class UserEntityServiceTest {
     void testUserEntitySearchAthleteWithEmail() {
         when(userEntityRepository.searchGeneric("@example.org")).thenReturn(
                 List.of(
-                        new PrunedAthleteDto("Jane", "Reiter", LocalDate.of(2009, 4, 7)),
-                        new PrunedAthleteDto("John", "Reiter", LocalDate.of(2010, 3, 7))
+                        new PrunedAthleteDto(1L, "Jane", "Reiter", LocalDate.of(2009, 4, 7)),
+                        new PrunedAthleteDto(1L, "John", "Reiter", LocalDate.of(2010, 3, 7))
                 )
         );
 

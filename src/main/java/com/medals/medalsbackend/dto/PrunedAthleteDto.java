@@ -16,6 +16,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PrunedAthleteDto {
+    private Long id;
+
     @NotNull
     @Size(min = 1, max = 255)
     @JsonProperty("first_name")
