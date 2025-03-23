@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.entity.medals;
+package com.medals.medalsbackend.entity.initializedentity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

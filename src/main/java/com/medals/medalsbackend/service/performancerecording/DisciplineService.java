@@ -1,8 +1,8 @@
 package com.medals.medalsbackend.service.performancerecording;
 
 import com.medals.medalsbackend.DummyData;
-import com.medals.medalsbackend.entity.medals.InitializedEntity;
-import com.medals.medalsbackend.entity.medals.InitializedEntityType;
+import com.medals.medalsbackend.entity.initializedentity.InitializedEntity;
+import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.performancerecording.Discipline;
 import com.medals.medalsbackend.entity.performancerecording.DisciplineRatingMetric;
 import com.medals.medalsbackend.entity.users.Athlete;
