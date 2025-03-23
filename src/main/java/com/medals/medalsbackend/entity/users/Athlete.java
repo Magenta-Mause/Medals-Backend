@@ -1,6 +1,7 @@
 package com.medals.medalsbackend.entity.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.medals.MedalType;
@@ -53,9 +54,10 @@ public class Athlete extends UserEntity {
         }
     }
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
-            name = "trainers_assinged_to_athlete",
+            name = "trainers_assigned_to_athlete",
             joinColumns = @JoinColumn(name = "athlete_id"),
             inverseJoinColumns = @JoinColumn(name = "trainer_id")
     )
