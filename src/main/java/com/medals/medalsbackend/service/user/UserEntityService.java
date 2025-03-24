@@ -86,4 +86,8 @@ public class UserEntityService {
   public boolean existsById(Long id) {
     return userEntityRepository.existsById(id);
   }
+
+  public List<Athlete> getAthletesAssignedToTrainer(Long id) {
+        return userEntityRepository.findAthletes(id);
+  }
 }

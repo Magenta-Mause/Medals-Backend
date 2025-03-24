@@ -44,12 +44,14 @@ public class AthleteController {
     private final PerformanceRecordingService performanceRecordingService;
 
     @GetMapping
-    public ResponseEntity<AthleteDto[]> getAthletes() throws NoAuthenticationFoundException, AthleteNotFoundException {
+    public ResponseEntity<AthleteDto[]> getAthletes() throws NoAuthenticationFoundException, AthleteNotFoundException, ForbiddenException {
         UserEntity selectedUser = authorizationService.getSelectedUser();
         return ResponseEntity.ok((switch (selectedUser.getType()) {
             case UserType.ADMIN -> Arrays.stream(athleteService.getAthletes());
             case UserType.ATHLETE -> Stream.of(athleteService.getAthlete(selectedUser.getId()));
-            case UserType.TRAINER -> Arrays.stream(athleteService.getAthletes()); // TODO: Add assign logic here
+            case UserType.TRAINER -> {
+                authorizationService.assertUserHasOwnerAccess(selectedUser.getId());
+                yield Arrays.stream(athleteService.getAthletesFromTrainer(selectedUser.getId()));}
         }).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
     }
 

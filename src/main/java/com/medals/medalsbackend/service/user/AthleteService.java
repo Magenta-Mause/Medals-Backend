@@ -76,6 +76,9 @@ public class AthleteService {
         return userEntityService.getAllAthletes().toArray(new Athlete[0]);
     }
 
+    public Athlete[] getAthletesFromTrainer(Long id) {
+        return userEntityService.getAthletesAssignedToTrainer(id).toArray(new Athlete[0]);
+    }
     public Athlete getAthlete(Long athleteId) throws AthleteNotFoundException {
         try {
             return (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
