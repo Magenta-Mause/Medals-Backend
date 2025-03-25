@@ -1,5 +1,5 @@
 ID,NAME,DESCRIPTION,CATEGORY,UNIT,IS_MORE_BETTER
-100,800 m Lauf,,ENDURANCE,seconds,false
+100,Lauf 800 m,,ENDURANCE,seconds,false
 101,Dauer-/Geländelauf,,ENDURANCE,seconds,true
 102,Schwimmen 200 m,,ENDURANCE,seconds,false
 103,Schwimmen 400 m,,ENDURANCE,seconds,false
@@ -15,8 +15,8 @@ ID,NAME,DESCRIPTION,CATEGORY,UNIT,IS_MORE_BETTER
 300,Laufen 30 m,,SPEED,seconds,false
 301,Laufen 50 m,,SPEED,seconds,false
 302,Laufen 100 m,,SPEED,seconds,false
-303,25 m Schwimmen,,SPEED,seconds,false
-304,200 m Radfahren,,SPEED,seconds,false
+303,Schwimmen 25 m,,SPEED,seconds,false
+304,Radfahren 200 m,,SPEED,seconds,false
 400,Hochsprung,,COORDINATION,seconds,true
 401,Zonenweitsprung,,COORDINATION,points,true
 402,Weitsprung,,COORDINATION,meters,true
