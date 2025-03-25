@@ -64,10 +64,15 @@ public class CsvDataLoader {
     }
 
     private Discipline toDiscipline(Map<String, String> row) {
+        String description = row.get("DESCRIPTION");
+        if (description != null && description.isEmpty()) {
+            description = null;
+        }
+
         return Discipline.builder()
                 .id(Long.parseLong(row.get("ID")))
                 .name(row.get("NAME"))
-                .description(row.get("DESCRIPTION"))
+                .description(description)
                 .category(DisciplineCategory.valueOf(row.get("CATEGORY")))
                 .unit(Discipline.Unit.valueOf(row.get("UNIT")))
                 .isMoreBetter(Boolean.parseBoolean(row.get("IS_MORE_BETTER")))
