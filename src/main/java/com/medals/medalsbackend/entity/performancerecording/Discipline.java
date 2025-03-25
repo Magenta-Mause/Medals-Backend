@@ -32,9 +32,9 @@ public class Discipline {
     private boolean isMoreBetter;
 
     public enum Unit {
-        meters,
-        seconds,
-        points
+        METERS,
+        SECONDS,
+        POINTS
     }
 
 }
