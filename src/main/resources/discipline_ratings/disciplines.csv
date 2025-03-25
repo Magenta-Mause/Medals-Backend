@@ -22,7 +22,7 @@ ID,NAME,DESCRIPTION,CATEGORY,UNIT,IS_MORE_BETTER
 402,Weitsprung,,COORDINATION,meters,true
 403,Drehwurf,,COORDINATION,points,true
 404,Schleuderball,,COORDINATION,meters,true
-405,Seilspringen,Grundsprung vorwärts mit oder ohne Zwischensprung ODER Galoppsprung,COORDINATION,points,true
+405,Seilspringen,Grundsprung vorwärts mit oder ohne Zwischensprung oder Galoppsprung,COORDINATION,points,true
 406,Seilspringen,Grundsprung vorwärts ohne Zwischensprung,COORDINATION,points,true
 407,Seilspringen,Grundsprung rückwärts ohne Zwischensprung,COORDINATION,points,true
 408,Seilspringen,kreuzdurchschlag ohne Zwischensprung,COORDINATION,points,true
