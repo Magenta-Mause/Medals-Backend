@@ -6,6 +6,7 @@ import com.medals.medalsbackend.entity.performancerecording.DisciplineRatingMetr
 import com.medals.medalsbackend.entity.performancerecording.RatingMetric;
 import com.medals.medalsbackend.exception.CsvLoadingException;
 import com.opencsv.CSVReaderHeaderAware;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,10 @@ import java.util.stream.Collectors;
 @Component
 public class CsvDataLoader {
 
-    private static final String DISCIPLINES_CSV = "discipline_ratings/disciplines.csv";
-    private static final String RATING_METRICS_CSV = "discipline_ratings/discipline_rating_metric.csv";
+    @Value("${app.files.disciplines-csv}")
+    private String DISCIPLINES_CSV;
+    @Value("${app.files.rating-metrics-csv}")
+    private String RATING_METRICS_CSV;
 
     public List<Discipline> loadDisciplines() {
         List<Discipline> disciplines = readCsv(DISCIPLINES_CSV).stream()
