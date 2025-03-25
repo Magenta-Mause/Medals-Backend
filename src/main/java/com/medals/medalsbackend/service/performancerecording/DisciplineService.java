@@ -126,8 +126,8 @@ public class DisciplineService {
     return disciplineRatingMetricRepository.getDisciplineRatingMetricByDisciplineId(disciplineById);
   }
 
-  public Collection<DisciplineRatingMetric> getDisciplineRatingsForSelectedYear(int selectedYear) {
-    return disciplineRatingMetricRepository.getDisciplineRatingMetricBySelectedYear(selectedYear);
+  public Collection<DisciplineRatingMetric> getAllDisciplineRatings() {
+    return disciplineRatingMetricRepository.getAllDisciplineRatingMetrics();
   }
 
   public Collection<Discipline> getDisciplines() {

@@ -42,11 +42,8 @@ public class DisciplineController {
     }
 
     @GetMapping("/metrics")
-    public ResponseEntity<Collection<DisciplineRatingMetric>> getDisciplineMetrics(@RequestParam(value = "selected_year", defaultValue = "0") int selectedYear) {
-        if (selectedYear == 0) {
-            selectedYear = Calendar.getInstance().get(Calendar.YEAR);
-        }
-        return ResponseEntity.ok(disciplineService.getDisciplineRatingsForSelectedYear(selectedYear));
+    public ResponseEntity<Collection<DisciplineRatingMetric>> getAllDisciplineMetrics() {
+        return ResponseEntity.ok(disciplineService.getAllDisciplineRatings());
     }
 
     @PostMapping("/metrics/{disciplineId}")
