@@ -6,17 +6,20 @@ import com.medals.medalsbackend.entity.performancerecording.DisciplineRatingMetr
 import com.medals.medalsbackend.entity.performancerecording.RatingMetric;
 import com.medals.medalsbackend.exception.CsvLoadingException;
 import com.opencsv.CSVReaderHeaderAware;
-import org.springframework.beans.factory.annotation.Value;
+import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -49,14 +52,16 @@ public class CsvDataLoader {
         try (CSVReaderHeaderAware reader = new CSVReaderHeaderAware(
                 new InputStreamReader(new ClassPathResource(classpathResource).getInputStream()))) {
 
-            List<Map<String, String>> rows = new ArrayList<>();
-            Map<String, String> row;
+            return Stream.generate(() -> {
+                        try {
+                            return reader.readMap();
+                        } catch (IOException | CsvValidationException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .takeWhile(Objects::nonNull)
+                    .collect(Collectors.toList());
 
-            while ((row = reader.readMap()) != null) {
-                rows.add(row);
-            }
-
-            return rows;
         } catch (Exception e) {
             log.error("Error loading CSV resource: {}", classpathResource, e);
             throw new CsvLoadingException("Error loading CSV: " + classpathResource, e);
