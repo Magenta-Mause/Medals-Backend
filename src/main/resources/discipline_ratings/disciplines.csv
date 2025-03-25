@@ -1,28 +1,28 @@
 ID,NAME,DESCRIPTION,CATEGORY,UNIT,IS_MORE_BETTER
-100,Lauf 800 m,,ENDURANCE,seconds,false
-101,Dauer-/Geländelauf,,ENDURANCE,seconds,true
-102,Schwimmen 200 m,,ENDURANCE,seconds,false
-103,Schwimmen 400 m,,ENDURANCE,seconds,false
-104,Radfahren 5 km,,ENDURANCE,seconds,false
-105,Radfahren 10km,,ENDURANCE,seconds,false
-200,Schlagball 80 g,,STRENGTH,meters,true
-201,Wurfball 200 g,,STRENGTH,meters,true
-202,Medizinball 1 kg,,STRENGTH,meters,true
-203,Kugelstoßen 3 kg,,STRENGTH,meters,true
-204,Kugelstoßen 4 kg,,STRENGTH,meters,true
-205,Kugelstoßen 5 kg,,STRENGTH,meters,true
-206,Standweitsprung,,STRENGTH,meters,true
-300,Laufen 30 m,,SPEED,seconds,false
-301,Laufen 50 m,,SPEED,seconds,false
-302,Laufen 100 m,,SPEED,seconds,false
-303,Schwimmen 25 m,,SPEED,seconds,false
-304,Radfahren 200 m,,SPEED,seconds,false
-400,Hochsprung,,COORDINATION,seconds,true
-401,Zonenweitsprung,,COORDINATION,points,true
-402,Weitsprung,,COORDINATION,meters,true
-403,Drehwurf,,COORDINATION,points,true
-404,Schleuderball,,COORDINATION,meters,true
-405,Seilspringen,Grundsprung vorwärts mit oder ohne Zwischensprung oder Galoppsprung,COORDINATION,points,true
-406,Seilspringen,Grundsprung vorwärts ohne Zwischensprung,COORDINATION,points,true
-407,Seilspringen,Grundsprung rückwärts ohne Zwischensprung,COORDINATION,points,true
-408,Seilspringen,kreuzdurchschlag ohne Zwischensprung,COORDINATION,points,true
+100,Lauf 800 m,,ENDURANCE,SECONDS,false
+101,Dauer-/Geländelauf,,ENDURANCE,SECONDS,true
+102,Schwimmen 200 m,,ENDURANCE,SECONDS,false
+103,Schwimmen 400 m,,ENDURANCE,SECONDS,false
+104,Radfahren 5 km,,ENDURANCE,SECONDS,false
+105,Radfahren 10km,,ENDURANCE,SECONDS,false
+200,Schlagball 80 g,,STRENGTH,METERS,true
+201,Wurfball 200 g,,STRENGTH,METERS,true
+202,Medizinball 1 kg,,STRENGTH,METERS,true
+203,Kugelstoßen 3 kg,,STRENGTH,METERS,true
+204,Kugelstoßen 4 kg,,STRENGTH,METERS,true
+205,Kugelstoßen 5 kg,,STRENGTH,METERS,true
+206,Standweitsprung,,STRENGTH,METERS,true
+300,Laufen 30 m,,SPEED,SECONDS,false
+301,Laufen 50 m,,SPEED,SECONDS,false
+302,Laufen 100 m,,SPEED,SECONDS,false
+303,Schwimmen 25 m,,SPEED,SECONDS,false
+304,Radfahren 200 m,,SPEED,SECONDS,false
+400,Hochsprung,,COORDINATION,SECONDS,true
+401,Zonenweitsprung,,COORDINATION,POINTS,true
+402,Weitsprung,,COORDINATION,METERS,true
+403,Drehwurf,,COORDINATION,POINTS,true
+404,Schleuderball,,COORDINATION,METERS,true
+405,Seilspringen,Grundsprung vorwärts mit oder ohne Zwischensprung oder Galoppsprung,COORDINATION,POINTS,true
+406,Seilspringen,Grundsprung vorwärts ohne Zwischensprung,COORDINATION,POINTS,true
+407,Seilspringen,Grundsprung rückwärts ohne Zwischensprung,COORDINATION,POINTS,true
+408,Seilspringen,kreuzdurchschlag ohne Zwischensprung,COORDINATION,POINTS,true
