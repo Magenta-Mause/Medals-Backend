@@ -59,7 +59,7 @@ public class DisciplineServiceTest {
       .isMoreBetter(true)
       .name("Test")
       .description("test")
-      .unit(Discipline.Unit.meters)
+      .unit(Discipline.Unit.METERS)
       .build();
     when(disciplineRepository.save(any(Discipline.class))).thenReturn(d);
     Discipline dRes = disciplineService.insertDiscipline(d);
