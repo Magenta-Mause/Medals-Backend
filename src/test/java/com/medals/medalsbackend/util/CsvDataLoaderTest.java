@@ -3,10 +3,12 @@ package com.medals.medalsbackend.util;
 import com.medals.medalsbackend.entity.performancerecording.Discipline;
 import com.medals.medalsbackend.entity.performancerecording.DisciplineRatingMetric;
 import com.medals.medalsbackend.exception.CsvLoadingException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
+@ActiveProfiles("test")
 class CsvDataLoaderTest {
 
     @InjectMocks
