@@ -3,8 +3,8 @@ ID,NAME,DESCRIPTION,CATEGORY,UNIT,IS_MORE_BETTER
 101,Dauer-/Geländelauf,,ENDURANCE,seconds,true
 102,Schwimmen 200 m,,ENDURANCE,seconds,false
 103,Schwimmen 400 m,,ENDURANCE,seconds,false
-104,Radfahren 5 km,,ENDURANCE,meters,false
-105,Radfahren 10km,,ENDURANCE,meters,false
+104,Radfahren 5 km,,ENDURANCE,seconds,false
+105,Radfahren 10km,,ENDURANCE,seconds,false
 200,Schlagball 80 g,,STRENGTH,meters,true
 201,Wurfball 200 g,,STRENGTH,meters,true
 202,Medizinball 1 kg,,STRENGTH,meters,true
