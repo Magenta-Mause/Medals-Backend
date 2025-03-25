@@ -56,7 +56,7 @@ public class DisciplineService {
 
 
     initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Discipline));
-    log.info("Initialization completed successfully.");
+    log.info("Discipline and rating metrics initialization completed successfully.");
   }
 
   public Discipline insertDiscipline(Discipline discipline) {
