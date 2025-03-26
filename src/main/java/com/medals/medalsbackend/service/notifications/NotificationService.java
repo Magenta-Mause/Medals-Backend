@@ -41,7 +41,7 @@ public class NotificationService {
         mailService.sendEmail(email, "Medals - Password Changed", text);
     }
 
-    public void sendRequestAthleteNotification(String email, String token, Trainer trainer) {
+    public void sendRequestAthleteNotification(String email, String token, String trainer) {
         String link = configuration.getFrontendBaseUrl() + "/approve-request?oneTimeCode=" + token;
         String text = templateService.generateRequestAthleteAccessNotification(link, trainer);
         mailService.sendEmail(email, "Medals - Trainer requested access", text);

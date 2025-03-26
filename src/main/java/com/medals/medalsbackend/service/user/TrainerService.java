@@ -114,8 +114,9 @@ public class TrainerService {
         Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
         log.info("Sending request to athlete {}", inviteAthlete);
         log.info("Request send by trainer {}", trainer);
-        String token = jwtService.buildTrainerAccessRequestToken(inviteAthlete.getEmail(), trainerAccessRequestDto, trainer);
-        notificationService.sendRequestAthleteNotification(inviteAthlete.getEmail(), token, trainer);
+        String trainerName = trainer.getFirstName() + " " + trainer.getLastName();
+        String token = jwtService.buildTrainerAccessRequestToken(inviteAthlete.getEmail(), trainerAccessRequestDto, trainerName);
+        notificationService.sendRequestAthleteNotification(inviteAthlete.getEmail(), token, trainerName);
     }
 
     public List<PrunedAthleteDto> searchAthletes(String athleteSearch) {

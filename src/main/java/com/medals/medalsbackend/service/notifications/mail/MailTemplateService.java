@@ -40,10 +40,10 @@ public class MailTemplateService {
         return templateEngine.process(configuration.getResetPasswordConfirmationNotification(), context);
     }
 
-    public String generateRequestAthleteAccessNotification(String link, Trainer trainer) {
+    public String generateRequestAthleteAccessNotification(String link, String trainer) {
         Context context = new Context();
         context.setVariable("otcLink", link);
-        context.setVariable("trainerName", trainer.getFirstName() + " " + trainer.getLastName());
+        context.setVariable("trainerName", trainer);
         return templateEngine.process(configuration.getTrainerRequestAthleteAccessNotification(), context);
     }
 }

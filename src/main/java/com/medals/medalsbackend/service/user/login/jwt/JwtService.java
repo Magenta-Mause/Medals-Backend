@@ -34,11 +34,11 @@ public class JwtService {
         return jwtUtils.generateToken(claims);
     }
 
-    public String buildTrainerAccessRequestToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto, Trainer trainer) {
+    public String buildTrainerAccessRequestToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto, String trainerName) {
         Map<String, Object> claims = Map.of(
                 "email", athleteEmail,
                 "trainerId", trainerAccessRequestDto.getTrainerId(),
-                "trainerName", trainer.getFirstName() + " " + trainer.getLastName(),
+                "trainerName", trainerName,
                 "athleteId", trainerAccessRequestDto.getAthleteId(),
                 "tokenType", JwtTokenBody.TokenType.REQUEST_TOKEN
         );
