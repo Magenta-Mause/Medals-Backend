@@ -15,11 +15,13 @@ import com.medals.medalsbackend.service.performancerecording.PerformanceRecordin
 import com.medals.medalsbackend.service.user.AthleteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -82,6 +84,14 @@ public class AthleteController {
     public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertUserHasAccess(athleteId);
         return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
+    }
+
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> checkAthleteExists(
+            @RequestParam String email,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) throws NoAuthenticationFoundException, ForbiddenException {
+        authorizationService.assertRoleIn(List.of(UserType.ADMIN, UserType.TRAINER));
+        return ResponseEntity.ok(athleteService.existsByBirthdateAndEmail(email, birthdate));
     }
 
     @GetMapping("/performance-recordings/{userId}")
