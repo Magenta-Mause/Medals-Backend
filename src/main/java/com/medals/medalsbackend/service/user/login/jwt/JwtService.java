@@ -2,6 +2,7 @@ package com.medals.medalsbackend.service.user.login.jwt;
 
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.LoginEntry;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +34,11 @@ public class JwtService {
         return jwtUtils.generateToken(claims);
     }
 
-    public String buildTrainerAccessRequestToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto) {
+    public String buildTrainerAccessRequestToken(String athleteEmail, TrainerAccessRequestDto trainerAccessRequestDto, Trainer trainer) {
         Map<String, Object> claims = Map.of(
                 "email", athleteEmail,
                 "trainerId", trainerAccessRequestDto.getTrainerId(),
+                "trainerName", trainer.getFirstName() + " " + trainer.getLastName(),
                 "athleteId", trainerAccessRequestDto.getAthleteId(),
                 "tokenType", JwtTokenBody.TokenType.REQUEST_TOKEN
         );
