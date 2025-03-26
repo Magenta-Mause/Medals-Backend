@@ -78,8 +78,8 @@ public class CsvDataLoader {
                 .id(Long.parseLong(row.get("ID")))
                 .name(row.get("NAME"))
                 .description(description)
-                .category(DisciplineCategory.valueOf(row.get("CATEGORY")))
-                .unit(Discipline.Unit.valueOf(row.get("UNIT")))
+                .category(DisciplineCategory.valueOf(row.get("CATEGORY").toUpperCase()))
+                .unit(Discipline.Unit.valueOf(row.get("UNIT").toUpperCase()))
                 .isMoreBetter(Boolean.parseBoolean(row.get("IS_MORE_BETTER")))
                 .build();
     }
