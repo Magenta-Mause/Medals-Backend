@@ -1,7 +1,7 @@
 package com.medals.medalsbackend.service.user;
 
-import com.medals.medalsbackend.entity.medals.InitializedEntity;
-import com.medals.medalsbackend.entity.medals.InitializedEntityType;
+import com.medals.medalsbackend.entity.initializedentity.InitializedEntity;
+import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.exception.AdminNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
