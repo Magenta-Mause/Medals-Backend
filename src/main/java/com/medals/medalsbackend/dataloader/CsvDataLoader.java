@@ -1,4 +1,4 @@
-package com.medals.medalsbackend.util;
+package com.medals.medalsbackend.dataloader;
 
 import com.medals.medalsbackend.entity.performancerecording.Discipline;
 import com.medals.medalsbackend.entity.performancerecording.DisciplineCategory;

@@ -1,6 +1,6 @@
 package com.medals.medalsbackend.service.performancerecording;
 
-import com.medals.medalsbackend.util.CsvDataLoader;
+import com.medals.medalsbackend.dataloader.CsvDataLoader;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntity;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.performancerecording.Discipline;
