@@ -89,12 +89,9 @@ public class AthleteController {
     @GetMapping("/exists")
     public ResponseEntity<Boolean> checkAthleteExists(
             @RequestParam String email,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) throws NoAuthenticationFoundException {
-        UserEntity selectedUser = authorizationService.getSelectedUser();
-        if (selectedUser.getType() == UserType.ADMIN||selectedUser.getType() == UserType.TRAINER) {
-            return ResponseEntity.ok(athleteService.existsByBirthdateAndEmail(email, birthdate));
-        }
-       throw new NoAuthenticationFoundException();
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) throws NoAuthenticationFoundException, ForbiddenException {
+        authorizationService.assertRoleIn(List.of(UserType.ADMIN, UserType.TRAINER));
+        return ResponseEntity.ok(athleteService.existsByBirthdateAndEmail(email, birthdate));
     }
 
     @GetMapping("/performance-recordings/{userId}")
