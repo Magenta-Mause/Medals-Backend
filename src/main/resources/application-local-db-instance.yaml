@@ -9,6 +9,9 @@ spring:
         format_sql: true
   datasource:
     url: jdbc:postgresql://localhost:5432/medals
-    username: postgres
-    password: localDataBasePassword
+    username: root
+    password: toor
     driver-class-name: org.postgresql.Driver
+app:
+  email:
+    url: https://projektejwkk.de/_____mailGen

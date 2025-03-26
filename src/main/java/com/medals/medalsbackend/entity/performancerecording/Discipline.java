@@ -13,7 +13,6 @@ import lombok.*;
 @ToString
 public class Discipline {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false)
@@ -28,13 +27,14 @@ public class Discipline {
     @Column(nullable = false)
     private Unit unit;
 
-    @Column(name = "more_better", nullable = false)
-    @JsonProperty("more_better")
-    private boolean moreBetter;
+    @Column(name = "is_more_better", nullable = false)
+    @JsonProperty("is_more_better")
+    private boolean isMoreBetter;
 
     public enum Unit {
-        meters,
-        seconds
+        METERS,
+        SECONDS,
+        POINTS
     }
 
 }
