@@ -122,7 +122,7 @@ public class TrainerService {
         notificationService.sendRequestAthleteNotification(inviteAthlete.getEmail(), token, trainerName);
     }
 
-    public List<PrunedAthleteDto> searchAthletes(String athleteSearch) {
-        return userEntityService.getSimilarAthletes(athleteSearch);
+    public List<Athlete> searchAthletes(String athleteSearch) {
+        return userEntityService.getAthletes(athleteSearch);
     }
 }

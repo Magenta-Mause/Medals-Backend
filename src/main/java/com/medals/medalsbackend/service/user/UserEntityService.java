@@ -81,7 +81,7 @@ public class UserEntityService {
         return userEntity;
     }
 
-  public List<PrunedAthleteDto> getSimilarAthletes(String athleteSearch) {
+  public List<Athlete> getAthletes(String athleteSearch) {
     return userEntityRepository.searchGeneric(athleteSearch);
   }
 

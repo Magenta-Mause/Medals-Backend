@@ -35,10 +35,9 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT u FROM Athlete u WHERE u.email=?1 AND u.birthdate=?2")
     Optional<Athlete> findAthleteByEmailAndBirthdate(String email, LocalDate birthdate);
 
-    @Query("SELECT new com.medals.medalsbackend.dto.PrunedAthleteDto(a.id, a.firstName, a.lastName, a.birthdate) " +
-          "FROM Athlete a " +
+    @Query("SELECT a FROM Athlete a " +
           "WHERE LOWER(CONCAT(a.firstName, ' ', a.lastName)) LIKE LOWER(CONCAT('%', :userInput, '%'))")
-    List<PrunedAthleteDto> searchGeneric(@Param("userInput") String userInput);
+    List<Athlete> searchGeneric(@Param("userInput") String userInput);
 
     @Query("SELECT u.assignedAthletes FROM Trainer u WHERE u.id = :id")
     List<Athlete> findAthletes(Long id);

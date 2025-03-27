@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
+import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.InternalException;
@@ -18,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 
@@ -76,6 +79,10 @@ public class TrainerController {
     @GetMapping(value = "/search-athletes")
     public ResponseEntity<List<PrunedAthleteDto>> searchAthletes(@RequestParam String athleteSearch) throws NoAuthenticationFoundException {
 		authorizationService.getSelectedUser();
-        return ResponseEntity.ok(trainerService.searchAthletes(athleteSearch));
+		List<Athlete> athletes = trainerService.searchAthletes(athleteSearch);
+		List<PrunedAthleteDto> prunedAthletes = athletes.stream()
+				.map(athlete -> objectMapper.convertValue(athlete, PrunedAthleteDto.class))
+				.toList();
+        return ResponseEntity.ok(prunedAthletes);
     }
 }

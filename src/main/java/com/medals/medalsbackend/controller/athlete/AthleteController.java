@@ -49,9 +49,7 @@ public class AthleteController {
         return ResponseEntity.ok((switch (selectedUser.getType()) {
             case UserType.ADMIN -> Arrays.stream(athleteService.getAthletes());
             case UserType.ATHLETE -> Stream.of(athleteService.getAthlete(selectedUser.getId()));
-            case UserType.TRAINER -> {
-                authorizationService.assertUserHasOwnerAccess(selectedUser.getId());
-                yield Arrays.stream(athleteService.getAthletesFromTrainer(selectedUser.getId()));}
+            case UserType.TRAINER -> Arrays.stream(athleteService.getAthletesFromTrainer(selectedUser.getId()));
         }).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
     }
 
@@ -100,7 +98,7 @@ public class AthleteController {
     @PostMapping("/approve-access")
     public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
         Integer athleteId = (Integer) jwtUtils.getTokenContentBody(oneTimeCode, JwtTokenBody.TokenType.REQUEST_TOKEN).get("athleteId");
-        authorizationService.assertUserHasAccess(athleteId.longValue());
+        authorizationService.assertUserHasOwnerAccess(athleteId.longValue());
         athleteService.approveAccessRequest(oneTimeCode);
         return ResponseEntity.ok("Accepted the Invite");
     }
