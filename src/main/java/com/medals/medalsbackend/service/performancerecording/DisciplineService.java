@@ -1,6 +1,6 @@
 package com.medals.medalsbackend.service.performancerecording;
 
-import com.medals.medalsbackend.DummyData;
+import com.medals.medalsbackend.dataloader.CsvDataLoader;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntity;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.performancerecording.Discipline;
@@ -15,15 +15,14 @@ import com.medals.medalsbackend.service.websockets.DisciplineWebsocketMessagingS
 import com.medals.medalsbackend.service.websockets.RatingMetricWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,33 +33,30 @@ public class DisciplineService {
   private final DisciplineWebsocketMessagingService disciplineWebsocketMessagingService;
   private final RatingMetricWebsocketMessageService ratingMetricWebsocketMessageService;
   private final InitializedEntityRepository initializedEntityRepository;
-  @Value("${app.dummies.enabled}")
-  private boolean insertDummies;
+  private final CsvDataLoader csvDataLoader;
 
   @EventListener(ApplicationReadyEvent.class)
   @Profile("!test")
-  public void instantiateDummies() {
-    if (!insertDummies) {
-      return;
-    }
+  public void initDisciplines() {
     if (initializedEntityRepository.existsById(InitializedEntityType.Discipline)) {
+      log.info("Disciplines already initialized.");
       return;
     }
 
-    log.info("Inserting dummy data...");
-    Collection<DisciplineRatingMetric> disciplineRatingMetrics = DummyData.getDisciplineRatingMetric();
-    Set<Discipline> disciplines = new LinkedHashSet<>(disciplineRatingMetrics.stream().map(DisciplineRatingMetric::getDiscipline).toList());
-    disciplines.forEach(this::insertDiscipline);
-    disciplineRatingMetrics.forEach(metric -> {
-      try {
-        insertDisciplineRatingMetric(metric);
-      } catch (DisciplineNotFoundException e) {
-        throw new RuntimeException(e);
-      }
-    });
-    initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Discipline));
+    log.info("Loading Disciplines...");
+    List<Discipline> disciplines = csvDataLoader.loadDisciplines();
+    disciplineRepository.saveAll(disciplines);
 
-    log.info("Inserted dummy data...");
+    Map<Long, Discipline> disciplineMap = disciplines.stream()
+            .collect(Collectors.toMap(Discipline::getId, d -> d));
+
+    log.info("Loading Discipline Rating Metrics...");
+    List<DisciplineRatingMetric> metrics = csvDataLoader.loadDisciplineRatingMetrics(disciplineMap);
+    disciplineRatingMetricRepository.saveAll(metrics);
+
+
+    initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Discipline));
+    log.info("Discipline and rating metrics initialization completed successfully.");
   }
 
   public Discipline insertDiscipline(Discipline discipline) {
@@ -130,8 +126,8 @@ public class DisciplineService {
     return disciplineRatingMetricRepository.getDisciplineRatingMetricByDisciplineId(disciplineById);
   }
 
-  public Collection<DisciplineRatingMetric> getDisciplineRatingsForSelectedYear(int selectedYear) {
-    return disciplineRatingMetricRepository.getDisciplineRatingMetricBySelectedYear(selectedYear);
+  public Collection<DisciplineRatingMetric> getAllDisciplineRatings() {
+    return disciplineRatingMetricRepository.getAllDisciplineRatingMetrics();
   }
 
   public Collection<Discipline> getDisciplines() {

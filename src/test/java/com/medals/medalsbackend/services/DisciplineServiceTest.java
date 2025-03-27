@@ -56,10 +56,10 @@ public class DisciplineServiceTest {
   public void testInsertDiscipline() {
     Discipline d = Discipline.builder()
       .category(DisciplineCategory.ENDURANCE)
-      .moreBetter(true)
+      .isMoreBetter(true)
       .name("Test")
       .description("test")
-      .unit(Discipline.Unit.meters)
+      .unit(Discipline.Unit.METERS)
       .build();
     when(disciplineRepository.save(any(Discipline.class))).thenReturn(d);
     Discipline dRes = disciplineService.insertDiscipline(d);

@@ -14,11 +14,11 @@ import lombok.*;
 public class RatingMetric {
     @Column(nullable = false)
     @JsonProperty("bronze_rating")
-    private double bronzeRating;
+    private Double bronzeRating;
     @Column(nullable = false)
     @JsonProperty("silver_rating")
-    private double silverRating;
+    private Double silverRating;
     @Column(nullable = false)
     @JsonProperty("gold_rating")
-    private double goldRating;
+    private Double goldRating;
 }

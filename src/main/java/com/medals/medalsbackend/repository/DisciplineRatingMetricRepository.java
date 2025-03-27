@@ -17,6 +17,6 @@ public interface DisciplineRatingMetricRepository extends JpaRepository<Discipli
     @Query("SELECT d FROM discipline_rating_metric d WHERE d.discipline.id=?1")
     Collection<DisciplineRatingMetric> getDisciplineRatingMetricByDisciplineId(long disciplineId);
 
-    @Query("SELECT d from discipline_rating_metric d WHERE d.validIn=?1")
-    Collection<DisciplineRatingMetric> getDisciplineRatingMetricBySelectedYear(int selectedYear);
+    @Query("SELECT d FROM discipline_rating_metric d")
+    Collection<DisciplineRatingMetric> getAllDisciplineRatingMetrics();
 }

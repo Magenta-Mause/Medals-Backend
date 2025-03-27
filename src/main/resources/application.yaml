@@ -39,3 +39,6 @@ app:
   otc:
     set-password-token-validity-duration: 604800000 # 1 week
     reset-password-token-validity-duration: 3600000 # 1 hour
+  files:
+    disciplines-csv: "discipline_ratings/disciplines.csv"
+    rating-metrics-csv: "discipline_ratings/discipline_rating_metric.csv"
