@@ -127,15 +127,18 @@ public class AthleteService {
         allowTrainerAthleteAccess(athlete, trainer);
     }
 
-    private void allowTrainerAthleteAccess(Athlete athlete, Trainer trainer) {
+    private void allowTrainerAthleteAccess(Athlete athlete, Trainer trainer) throws JwtTokenInvalidException {
         List<Trainer> trainersAssignedToAthlete = athlete.getTrainersAssignedTo();
-        trainersAssignedToAthlete.add(trainer);
-        athlete.setTrainersAssignedTo(trainersAssignedToAthlete);
-        userEntityService.update(athlete);
-
         List<Athlete> assignedAthletes = trainer.getAssignedAthletes();
+        if (trainersAssignedToAthlete.contains(trainer)) {
+            throw new JwtTokenInvalidException();
+        }
+
+        trainersAssignedToAthlete.add(trainer);
         assignedAthletes.add(athlete);
+        athlete.setTrainersAssignedTo(trainersAssignedToAthlete);
         trainer.setAssignedAthletes(assignedAthletes);
         userEntityService.update(trainer);
+        userEntityService.update(athlete);
     }
 }

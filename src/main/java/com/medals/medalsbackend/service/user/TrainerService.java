@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -80,6 +79,10 @@ public class TrainerService {
 
     public List<Trainer> getAllTrainers() {
         return userEntityService.getAllTrainers();
+    };
+
+    public List<Trainer> getAllTrainersAssignedToAthlete(Long id) {
+        return userEntityService.getAllTrainersAssignedToAthlete(id);
     }
 
     public void deleteTrainer(Long trainerId) throws TrainerNotFoundException {

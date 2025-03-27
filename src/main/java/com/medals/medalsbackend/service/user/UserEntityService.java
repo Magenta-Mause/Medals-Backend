@@ -65,8 +65,10 @@ public class UserEntityService {
         return userEntityRepository.findAllAthletes();
     }
 
-    public List<Trainer> getAllTrainers() {
-        return userEntityRepository.findAllTrainers();
+    public List<Trainer> getAllTrainers() {return userEntityRepository.findAllTrainers();}
+
+    public List<Trainer> getAllTrainersAssignedToAthlete(Long id) {
+        return userEntityRepository.findAllTrainersAssignedToAthlete(id);
     }
 
     public List<Admin> getAllAdmins() {
