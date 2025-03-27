@@ -25,23 +25,18 @@ public class JwtUtils {
     private final Key signingKey;
     private final ObjectMapper objectMapper;
 
-    public String generateToken(JwtTokenBody tokenBody) {
-        Map<String, Object> claims = tokenBody.getTokenType() == JwtTokenBody.TokenType.IDENTITY_TOKEN ? Map.of(
-                "tokenType", tokenBody.getTokenType(),
-                "users", tokenBody.getAuthorizedUsers()
-        ) : Map.of(
-                "tokenType", tokenBody.getTokenType()
-        );
-
-        long tokenValidityDuration = tokenBody.getTokenType() == JwtTokenBody.TokenType.IDENTITY_TOKEN ?
-                jwtConfigurationProperties.identityTokenExpirationTime() :
-                jwtConfigurationProperties.refreshTokenExpirationTime();
+    public String generateToken(Map<String, Object> claims) {
+        long tokenValidityDuration = switch ((JwtTokenBody.TokenType) claims.get("tokenType")) {
+            case JwtTokenBody.TokenType.IDENTITY_TOKEN -> jwtConfigurationProperties.identityTokenExpirationTime();
+            case JwtTokenBody.TokenType.REFRESH_TOKEN -> jwtConfigurationProperties.refreshTokenExpirationTime();
+            case JwtTokenBody.TokenType.REQUEST_TOKEN -> jwtConfigurationProperties.athleteRequestTokenExpirationTime();
+        };
 
         return Jwts.builder()
                 .serializeToJsonWith(new JacksonSerializer<>(objectMapper))
                 .setIssuedAt(new Date())
                 .setAudience("medals-backend")
-                .setSubject(tokenBody.getEmail())
+                .setSubject((String) claims.get("email"))
                 .setExpiration(new Date(new Date().getTime() + tokenValidityDuration))
                 .addClaims(claims)
                 .signWith(signingKey)
@@ -56,24 +51,29 @@ public class JwtUtils {
      * @throws JwtTokenInvalidException if JWT cant be validated or is a bad token
      */
     public String getJwtTokenUser(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
-        return (String) getJwtTokenClaims(token, tokenType).get("sub");
+        return (String) getTokenContentBody(token, tokenType).get("sub");
     }
 
-    public Map<String, Object> getJwtTokenClaims(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
+    public Map<String, Object> getTokenContentBody(String token, JwtTokenBody.TokenType tokenType) throws JwtTokenInvalidException {
         try {
             Claims claims = jwtParser.parseClaimsJws(token).getBody();
             claims.getExpiration();
-            if (!"medals-backend".equals(claims.getAudience())) {
+            if (!"medals-backend".equals(claims.get("aud"))) {
                 throw new SecurityException("Missing/Bad audience claim");
             }
             if (!tokenType.toString().equals(claims.get("tokenType"))) {
                 throw new SecurityException("Token type is not matching");
             }
-            if (claims.getSubject() == null) {
+            if (claims.get("sub") == null) {
                 throw new SecurityException("Missing/Bad subject claim");
             }
+
             return claims;
-        } catch (AssertionError | Exception e) {
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SecurityException | AssertionError e) {
+            log.error("Error validating token", e);
+            throw new JwtTokenInvalidException();
+        } catch (Exception e) {
+            log.error("Error while parsing JWT token", e);
             throw new JwtTokenInvalidException();
         }
     }

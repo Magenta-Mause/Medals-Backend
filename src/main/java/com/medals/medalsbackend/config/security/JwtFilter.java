@@ -55,7 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         Map<String, Object> tokenBody;
         try {
-            tokenBody = jwtUtils.getJwtTokenClaims(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+            tokenBody = jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
         } catch (JwtTokenInvalidException e) {
             filterChain.doFilter(request, response);
             return;
@@ -71,7 +71,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         try {
             UserEntity user = selectedUser.get();
-            String subject = jwtUtils.getJwtTokenUser(token, JwtTokenBody.TokenType.IDENTITY_TOKEN);
+            String subject = (String) jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.IDENTITY_TOKEN).get("sub");
 
             if (!user.getEmail().equals(subject)) {
                 filterChain.doFilter(request, response);
