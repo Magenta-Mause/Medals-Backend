@@ -1,6 +1,8 @@
 package com.medals.medalsbackend.services;
 
 import com.medals.medalsbackend.dto.PrunedAthleteDto;
+import com.medals.medalsbackend.dto.TrainerDto;
+import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.service.user.UserEntityService;
@@ -48,11 +50,21 @@ public class UserEntityServiceTest {
 
     @Test
     void testUserEntitySearchAthleteWithFirstname() {
+        Athlete athlete = Athlete.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Reiter")
+                .birthdate(LocalDate.of(2010, 3, 7))
+                .build();
+
+
         when(userEntityRepository.searchGeneric("John")).thenReturn(
-                List.of(new PrunedAthleteDto(1L, "John", "Reiter", LocalDate.of(2010, 3, 7)))
+                List.of(
+                        athlete
+                )
         );
 
-        List<PrunedAthleteDto> result = userEntityService.getSimilarAthletes("John");
+        List<Athlete> result = userEntityService.getAthletes("John");
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst().getFirstName()).isEqualTo("John");
@@ -62,19 +74,34 @@ public class UserEntityServiceTest {
 
     @Test
     void testUserEntitySearchAthleteWithLastname() {
+        Athlete athlete = Athlete.builder()
+                .id(1L)
+                .firstName("Jane")
+                .lastName("Reiter")
+                .birthdate(LocalDate.of(2010, 3, 7))
+                .build();
+
+        Athlete athlete2 = Athlete.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Reiter")
+                .birthdate(LocalDate.of(2010, 3, 7))
+                .build();
+
+
         when(userEntityRepository.searchGeneric("Reiter")).thenReturn(
                 List.of(
-                        new PrunedAthleteDto(1L,"Jane", "Reiter", LocalDate.of(2009, 4, 7)),
-                        new PrunedAthleteDto(1L, "John", "Reiter", LocalDate.of(2010, 3, 7))
+                        athlete,
+                        athlete2
                 )
         );
 
-        List<PrunedAthleteDto> result = userEntityService.getSimilarAthletes("Reiter");
+        List<Athlete> result = userEntityService.getAthletes("Reiter");
 
         assertThat(result).hasSize(2);
         assertThat(result.getFirst().getFirstName()).isEqualTo("Jane");
         assertThat(result.getFirst().getLastName()).isEqualTo("Reiter");
-        assertThat(result.getFirst().getBirthdate()).isEqualTo("2009-04-07");
+        assertThat(result.getFirst().getBirthdate()).isEqualTo("2010-03-07");
         assertThat(result.get(1).getFirstName()).isEqualTo("John");
         assertThat(result.get(1).getLastName()).isEqualTo("Reiter");
         assertThat(result.get(1).getBirthdate()).isEqualTo("2010-03-07");
@@ -82,11 +109,18 @@ public class UserEntityServiceTest {
 
     @Test
     void testUserEntitySearchAthleteWithFullname() {
+        Athlete athlete = Athlete.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Reiter")
+                .birthdate(LocalDate.of(2010, 3, 7))
+                .build();
+
         when(userEntityRepository.searchGeneric("John Reiter")).thenReturn(
-                List.of(new PrunedAthleteDto(1L, "John", "Reiter", LocalDate.of(2010, 3, 7)))
+                List.of(athlete)
         );
 
-        List<PrunedAthleteDto> result = userEntityService.getSimilarAthletes("John Reiter");
+        List<Athlete> result = userEntityService.getAthletes("John Reiter");
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst().getFirstName()).isEqualTo("John");
@@ -96,19 +130,34 @@ public class UserEntityServiceTest {
 
     @Test
     void testUserEntitySearchAthleteWithEmail() {
+        Athlete athlete = Athlete.builder()
+                .id(1L)
+                .firstName("Jane")
+                .lastName("Reiter")
+                .birthdate(LocalDate.of(2010, 3, 7))
+                .build();
+
+        Athlete athlete2 = Athlete.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Reiter")
+                .birthdate(LocalDate.of(2010, 3, 7))
+                .build();
+
+
         when(userEntityRepository.searchGeneric("@example.org")).thenReturn(
                 List.of(
-                        new PrunedAthleteDto(1L, "Jane", "Reiter", LocalDate.of(2009, 4, 7)),
-                        new PrunedAthleteDto(1L, "John", "Reiter", LocalDate.of(2010, 3, 7))
+                        athlete,
+                        athlete2
                 )
         );
 
-        List<PrunedAthleteDto> result = userEntityService.getSimilarAthletes("@example.org");
+        List<Athlete> result = userEntityService.getAthletes("@example.org");
 
         assertThat(result).hasSize(2);
         assertThat(result.getFirst().getFirstName()).isEqualTo("Jane");
         assertThat(result.getFirst().getLastName()).isEqualTo("Reiter");
-        assertThat(result.getFirst().getBirthdate()).isEqualTo("2009-04-07");
+        assertThat(result.getFirst().getBirthdate()).isEqualTo("2010-03-07");
         assertThat(result.get(1).getFirstName()).isEqualTo("John");
         assertThat(result.get(1).getLastName()).isEqualTo("Reiter");
         assertThat(result.get(1).getBirthdate()).isEqualTo("2010-03-07");
@@ -120,7 +169,7 @@ public class UserEntityServiceTest {
                 List.of()
         );
 
-        List<PrunedAthleteDto> result = userEntityService.getSimilarAthletes("Test");
+        List<Athlete> result = userEntityService.getAthletes("Test");
 
         assertThat(result).isEmpty();
     }
