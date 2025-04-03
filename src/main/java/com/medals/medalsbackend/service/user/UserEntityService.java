@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.service.user;
 
+import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
@@ -64,8 +65,10 @@ public class UserEntityService {
         return userEntityRepository.findAllAthletes();
     }
 
-    public List<Trainer> getAllTrainers() {
-        return userEntityRepository.findAllTrainers();
+    public List<Trainer> getAllTrainers() {return userEntityRepository.findAllTrainers();}
+
+    public List<Trainer> getAllTrainersAssignedToAthlete(Long id) {
+        return userEntityRepository.findAllTrainersAssignedToAthlete(id);
     }
 
     public List<Admin> getAllAdmins() {
@@ -78,8 +81,15 @@ public class UserEntityService {
         return userEntity;
     }
 
-    public boolean existsById(Long id) {
-        return userEntityRepository.existsById(id);
-    }
-}
+  public List<Athlete> getAthletes(String athleteSearch) {
+    return userEntityRepository.searchGeneric(athleteSearch);
+  }
 
+  public boolean existsById(Long id) {
+    return userEntityRepository.existsById(id);
+  }
+
+  public List<Athlete> getAthletesAssignedToTrainer(Long id) {
+        return userEntityRepository.findAthletes(id);
+  }
+}

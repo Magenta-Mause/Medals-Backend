@@ -7,7 +7,6 @@ import com.medals.medalsbackend.dto.authorization.SetPasswordDto;
 import com.medals.medalsbackend.entity.onetimecode.OneTimeCode;
 import com.medals.medalsbackend.entity.onetimecode.OneTimeCodeType;
 import com.medals.medalsbackend.entity.users.Admin;
-import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.repository.LoginEntryRepository;
 import com.medals.medalsbackend.repository.OneTimeCodeRepository;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
@@ -116,7 +115,7 @@ public class AuthControllerTest {
     public void testUserCreation() throws ClassCastException {
         String identityToken = getIdentityToken("test@example.org", "newPassword");
         log.info("identityToken: {}", identityToken);
-        Collection<Map<String, Object>> users = (Collection<Map<String, Object>>) jwtUtils.getJwtTokenClaims(identityToken, JwtTokenBody.TokenType.IDENTITY_TOKEN).get("users");
+        Collection<Map<String, Object>> users = (Collection<Map<String, Object>>) jwtUtils.getTokenContentBody(identityToken, JwtTokenBody.TokenType.IDENTITY_TOKEN).get("users");
         Optional<Map<String, Object>> user = users.stream().findFirst();
         Assertions.assertTrue(user.isPresent());
         int userId = (int) user.get().get("id");
