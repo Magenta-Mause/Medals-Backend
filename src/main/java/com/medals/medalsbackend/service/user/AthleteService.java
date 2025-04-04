@@ -11,8 +11,11 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
+import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
 import com.medals.medalsbackend.repository.UserEntityRepository;
+import com.medals.medalsbackend.service.performancerecording.PerformanceRecordingService;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +36,7 @@ public class AthleteService {
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
     private final UserEntityRepository userEntityRepository;
-    private final Environment environment;
+    private final PerformanceRecordingRepository performanceRecordingRepository;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -80,15 +83,18 @@ public class AthleteService {
         }
     }
 
-    public boolean existsByBirthdateAndEmail(String email, LocalDate birthdate){
+    public boolean existsByBirthdateAndEmail(String email, LocalDate birthdate) {
         return userEntityRepository.findAthleteByEmailAndBirthdate(email, birthdate).isPresent();
     }
 
+    @Transactional
     public void deleteAthlete(Long athleteId) throws AthleteNotFoundException {
         log.info("Executing delete athlete by id {}", athleteId);
         if (!userEntityService.existsById(athleteId)) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
         }
+
+        performanceRecordingRepository.deleteByAthleteId(athleteId);
         athleteWebsocketMessageService.sendAthleteDelete(athleteId);
         userEntityService.deleteById(athleteId);
     }
