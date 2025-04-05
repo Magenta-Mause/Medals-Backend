@@ -28,9 +28,13 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleUnrecognizedPropertyException(UnrecognizedPropertyException ex, WebRequest request) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.badRequest().body("Malformed Json, invalid property: '" + ex.getPropertyName() + "'");
+    public ResponseEntity<String> handleUnrecognizedPropertyException(HttpMessageNotReadableException ex, WebRequest request) {
+        try {
+            UnrecognizedPropertyException exception = (UnrecognizedPropertyException) ex.getCause();
+            return ResponseEntity.badRequest().body("Malformed Json, invalid property: '" + exception.getPropertyName() + "'");
+        } catch (Exception ignored) {
+            return ResponseEntity.badRequest().body("Message not readable");
+        }
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
