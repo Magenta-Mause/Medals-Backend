@@ -1,8 +1,10 @@
 package com.medals.medalsbackend.exception;
 
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
@@ -23,6 +25,12 @@ public class CustomExceptionHandler {
     public ResponseEntity<String> internalErrorHandler(Exception ex, WebRequest request) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.internalServerError().body("Internal Server Error");
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleUnrecognizedPropertyException(UnrecognizedPropertyException ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest().body("Malformed Json, invalid property: '" + ex.getPropertyName() + "'");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
