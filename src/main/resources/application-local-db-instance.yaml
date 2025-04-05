@@ -3,14 +3,14 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
   datasource:
     url: jdbc:postgresql://localhost:5432/medals
-    username: postgres
-    password: localDataBaseReCovered
+    username: root
+    password: toor
     driver-class-name: org.postgresql.Driver
 app:
   email:
