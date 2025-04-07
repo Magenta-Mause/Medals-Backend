@@ -1,12 +1,12 @@
 package com.medals.medalsbackend.entity.performancerecording;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.medals.medalsbackend.entity.users.Athlete;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity(name = "performance_recording")
@@ -27,6 +27,7 @@ public class PerformanceRecording {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "athlete_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Athlete athlete;
 

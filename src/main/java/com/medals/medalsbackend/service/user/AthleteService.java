@@ -16,15 +16,16 @@ import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
+import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
 import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,8 +43,8 @@ public class AthleteService {
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
     private final UserEntityRepository userEntityRepository;
-    private final Environment environment;
     private final TrainerService trainerService;
+    private final PerformanceRecordingRepository performanceRecordingRepository;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -93,15 +94,18 @@ public class AthleteService {
         }
     }
 
-    public boolean existsByBirthdateAndEmail(String email, LocalDate birthdate){
+    public boolean existsByBirthdateAndEmail(String email, LocalDate birthdate) {
         return userEntityRepository.findAthleteByEmailAndBirthdate(email, birthdate).isPresent();
     }
 
+    @Transactional
     public void deleteAthlete(Long athleteId) throws AthleteNotFoundException {
         log.info("Executing delete athlete by id {}", athleteId);
         if (!userEntityService.existsById(athleteId)) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
         }
+
+        performanceRecordingRepository.deleteByAthleteId(athleteId);
         athleteWebsocketMessageService.sendAthleteDelete(athleteId);
         userEntityService.deleteById(athleteId);
     }
