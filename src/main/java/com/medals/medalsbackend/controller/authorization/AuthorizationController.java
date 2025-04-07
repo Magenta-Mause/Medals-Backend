@@ -8,6 +8,7 @@ import com.medals.medalsbackend.exception.GenericAPIRequestException;
 import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeExpiredException;
 import com.medals.medalsbackend.exception.onetimecode.OneTimeCodeNotFoundException;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginDoesntMatchException;
@@ -68,7 +69,7 @@ public class AuthorizationController {
 
     @GetMapping("/token")
     public ResponseEntity<String> getToken(@CookieValue(name = "refreshToken") String refreshToken) throws JwtTokenInvalidException, EmailDoesntExistException {
-        String userEmail = jwtService.getUserEmailFromRefreshToken(refreshToken);
+        String userEmail = (String) jwtUtils.getTokenContentBody(refreshToken, JwtTokenBody.TokenType.REFRESH_TOKEN).get("sub");
         LoginEntry loginEntry = loginEntryService.getLoginEntry(userEmail);
         String identityToken = jwtService.buildIdentityToken(loginEntry);
         return ResponseEntity.ok(identityToken);

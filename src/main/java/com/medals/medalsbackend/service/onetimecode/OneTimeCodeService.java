@@ -45,7 +45,6 @@ public class OneTimeCodeService {
         throw new InternalException("Couldnt generate one time code");
     }
 
-
     public OneTimeCode createSetPasswordToken(String email, OneTimeCodeCreationReason reason) {
         try {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.SET_PASSWORD, email, oneTimeCodeConfiguration.setPasswordTokenValidityDuration());
@@ -93,5 +92,4 @@ public class OneTimeCodeService {
         }
         oneTimeCodeRepository.deleteAllByOneTimeCode(oneTimeCode);
     }
-
 }
