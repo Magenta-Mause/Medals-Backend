@@ -8,20 +8,22 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
+import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.authorization.AuthorizationService;
 import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.authorization.ForbiddenException;
 import com.medals.medalsbackend.service.performancerecording.PerformanceRecordingService;
+import com.medals.medalsbackend.exception.JwtTokenInvalidException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.service.user.AthleteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -36,17 +38,18 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 @RequiredArgsConstructor
 public class AthleteController {
     private final AthleteService athleteService;
+    private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
     private final AuthorizationService authorizationService;
     private final PerformanceRecordingService performanceRecordingService;
 
     @GetMapping
-    public ResponseEntity<AthleteDto[]> getAthletes() throws NoAuthenticationFoundException, AthleteNotFoundException {
+    public ResponseEntity<AthleteDto[]> getAthletes() throws NoAuthenticationFoundException, AthleteNotFoundException, ForbiddenException {
         UserEntity selectedUser = authorizationService.getSelectedUser();
         return ResponseEntity.ok((switch (selectedUser.getType()) {
             case UserType.ADMIN -> Arrays.stream(athleteService.getAthletes());
             case UserType.ATHLETE -> Stream.of(athleteService.getAthlete(selectedUser.getId()));
-            case UserType.TRAINER -> Arrays.stream(athleteService.getAthletes()); // TODO: Add assign logic here
+            case UserType.TRAINER -> Arrays.stream(athleteService.getAthletesFromTrainer(selectedUser.getId()));
         }).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
     }
 
@@ -86,17 +89,17 @@ public class AthleteController {
         return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
     }
 
-    @GetMapping("/exists")
-    public ResponseEntity<Boolean> checkAthleteExists(
-            @RequestParam String email,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) throws NoAuthenticationFoundException, ForbiddenException {
-        authorizationService.assertRoleIn(List.of(UserType.ADMIN, UserType.TRAINER));
-        return ResponseEntity.ok(athleteService.existsByBirthdateAndEmail(email, birthdate));
-    }
-
     @GetMapping("/performance-recordings/{userId}")
     public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertUserHasAccess(userId);
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(userId));
+    }
+
+    @PostMapping("/approve-access")
+    public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
+        Integer athleteId = (Integer) jwtUtils.getTokenContentBody(oneTimeCode, JwtTokenBody.TokenType.REQUEST_TOKEN).get("athleteId");
+        authorizationService.assertUserHasOwnerAccess(athleteId.longValue());
+        athleteService.approveAccessRequest(oneTimeCode);
+        return ResponseEntity.ok("Accepted the Invite");
     }
 }

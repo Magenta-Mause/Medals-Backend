@@ -16,21 +16,21 @@ public class AthleteWebsocketMessageService {
 
 	public void sendAthleteCreation(AthleteDto athlete) {
 		messagingTemplate.convertAndSend("/topics/athlete/creation", athlete);
-		for (Trainer trainer : trainerService.getAllTrainers()) {
+		for (Trainer trainer : trainerService.getAllTrainersAssignedToAthlete(athlete.getId())) {
 			messagingTemplate.convertAndSend("/topics/athlete/creation/" + trainer.getId(), athlete);
 		}
 	}
 
 	public void sendAthleteUpdate(AthleteDto athlete) {
 		messagingTemplate.convertAndSend("/topics/athlete/update", athlete);
-		for (Trainer trainer : trainerService.getAllTrainers()) {
+		for (Trainer trainer : trainerService.getAllTrainersAssignedToAthlete(athlete.getId())) {
 			messagingTemplate.convertAndSend("/topics/athlete/update/" + trainer.getId(), athlete);
 		}
 	}
 
 	public void sendAthleteDelete(Long athleteId) {
 		messagingTemplate.convertAndSend("/topics/athlete/deletion", athleteId);
-		for (Trainer trainer : trainerService.getAllTrainers()) {
+		for (Trainer trainer : trainerService.getAllTrainersAssignedToAthlete(athleteId)) {
 			messagingTemplate.convertAndSend("/topics/athlete/deletion/" + trainer.getId(), athleteId);
 		}
 	}

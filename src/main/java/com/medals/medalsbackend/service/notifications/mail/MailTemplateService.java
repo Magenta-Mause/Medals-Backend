@@ -1,6 +1,7 @@
 package com.medals.medalsbackend.service.notifications.mail;
 
 import com.medals.medalsbackend.config.MailTemplateConfiguration;
+import com.medals.medalsbackend.entity.users.Trainer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,5 +38,12 @@ public class MailTemplateService {
     public String generatePasswordResetConfirmationNotification(String email) {
         Context context = new Context();
         return templateEngine.process(configuration.getResetPasswordConfirmationNotification(), context);
+    }
+
+    public String generateRequestAthleteAccessNotification(String link, String trainer) {
+        Context context = new Context();
+        context.setVariable("otcLink", link);
+        context.setVariable("trainerName", trainer);
+        return templateEngine.process(configuration.getTrainerRequestAthleteAccessNotification(), context);
     }
 }
