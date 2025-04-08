@@ -34,7 +34,6 @@ public class AthleteService {
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
     private final UserEntityRepository userEntityRepository;
-    private final Environment environment;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
