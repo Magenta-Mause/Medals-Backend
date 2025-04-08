@@ -6,6 +6,7 @@ import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntity;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
+import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
@@ -145,4 +146,13 @@ public class AthleteService {
         userEntityService.update(trainer);
         userEntityService.update(athlete);
     }
+
+    public Athlete updateSwimmingCertificate(Long athleteId, SwimCertificateType certificate) throws AthleteNotFoundException {
+        Athlete athlete = getAthlete(athleteId);
+        athlete.setSwimmingCertificate(certificate);
+        Athlete updated = (Athlete) userEntityService.update(athlete);
+        athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(updated, AthleteDto.class));
+        return updated;
+    }
+
 }

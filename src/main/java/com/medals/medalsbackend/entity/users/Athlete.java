@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.medals.MedalType;
+import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -26,9 +27,8 @@ public class Athlete extends UserEntity {
     @Column(nullable = false)
     private Gender gender;
 
-    @Column(nullable = false)
     @JsonProperty("swimming_certificate")
-    private boolean swimmingCertificate = false;
+    private SwimCertificateType swimmingCertificate = null;
 
     @Column
     @JsonProperty("total_medal")

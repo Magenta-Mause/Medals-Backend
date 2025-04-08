@@ -2,6 +2,7 @@ package com.medals.medalsbackend;
 
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.medals.MedalType;
+import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 
@@ -29,9 +30,9 @@ public class DummyData {
     );
 
     public static final List<Athlete> ATHLETES = List.of(
-            Athlete.builder().email("johnreiter@example.org").firstName("John").lastName("Reiter").birthdate(LocalDate.of(2010, 3, 7)).gender(Athlete.Gender.MALE).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.GOLD).medalSpeed(MedalType.SILVER).build()).build(),
-            Athlete.builder().email("paul@example.org").firstName("Jane").lastName("Reiter").birthdate(LocalDate.of(2009, 4, 10)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.GOLD).medalCollection(MedalCollection.builder().medalEndurance(MedalType.BRONZE).medalCoordination(MedalType.SILVER).medalStrength(MedalType.GOLD).medalSpeed(MedalType.BRONZE).build()).build(),
-            Athlete.builder().email("emily@example.org").firstName("Emily").lastName("Johnson").birthdate(LocalDate.of(2008, 5, 13)).gender(Athlete.Gender.DIVERSE).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build()
+            Athlete.builder().email("johnreiter@example.org").firstName("John").lastName("Reiter").birthdate(LocalDate.of(2010, 3, 7)).gender(Athlete.Gender.MALE).swimmingCertificate(SwimCertificateType.BADGES).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.GOLD).medalSpeed(MedalType.SILVER).build()).build(),
+            Athlete.builder().email("paul@example.org").firstName("Jane").lastName("Reiter").birthdate(LocalDate.of(2009, 4, 10)).gender(Athlete.Gender.FEMALE).swimmingCertificate(SwimCertificateType.ENDURANCE).totalMedal(MedalType.GOLD).medalCollection(MedalCollection.builder().medalEndurance(MedalType.BRONZE).medalCoordination(MedalType.SILVER).medalStrength(MedalType.GOLD).medalSpeed(MedalType.BRONZE).build()).build(),
+            Athlete.builder().email("emily@example.org").firstName("Emily").lastName("Johnson").birthdate(LocalDate.of(2008, 5, 13)).gender(Athlete.Gender.DIVERSE).swimmingCertificate(null).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build()
             /* Athlete.builder().email("test@gmx.de").firstName("Sarah").lastName("Davis").birthdate(LocalDate.of(2002, 2, 14)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.GOLD).medalCollection(MedalCollection.builder().medalEndurance(MedalType.BRONZE).medalCoordination(MedalType.SILVER).medalStrength(MedalType.GOLD).medalSpeed(MedalType.SILVER).build()).build(),
             Athlete.builder().email("test@gmx.de").firstName("Chris").lastName("Taylor").birthdate(LocalDate.of(2003, 11, 3)).gender(Athlete.Gender.MALE).totalMedal(MedalType.SILVER).medalCollection(MedalCollection.builder().medalEndurance(MedalType.GOLD).medalCoordination(MedalType.BRONZE).medalStrength(MedalType.SILVER).medalSpeed(MedalType.GOLD).build()).build(),
             Athlete.builder().email("test@gmx.de").firstName("Jessica").lastName("Wilson").birthdate(LocalDate.of(1999, 6, 24)).gender(Athlete.Gender.FEMALE).totalMedal(MedalType.BRONZE).medalCollection(MedalCollection.builder().medalEndurance(MedalType.SILVER).medalCoordination(MedalType.GOLD).medalStrength(MedalType.BRONZE).medalSpeed(MedalType.BRONZE).build()).build(),
