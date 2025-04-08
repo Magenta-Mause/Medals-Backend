@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.performancerecording.PerformanceRecording;
+import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
+import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
@@ -80,12 +82,6 @@ public class AthleteController {
         return ResponseEntity.ok(athleteService.getAthleteMedalCollection(athleteId));
     }
 
-    @GetMapping(value = "/{athleteId}/swimmingCertificate")
-    public ResponseEntity<Boolean> getSwimmingCertificate(@PathVariable Long athleteId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.assertUserHasAccess(athleteId);
-        return ResponseEntity.ok(athleteService.getAthlete(athleteId).isSwimmingCertificate());
-    }
-
     @GetMapping("/exists")
     public ResponseEntity<Boolean> checkAthleteExists(
             @RequestParam String email,
@@ -98,5 +94,24 @@ public class AthleteController {
     public ResponseEntity<Collection<PerformanceRecording>> getPerformanceRecordings(@PathVariable Long userId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertUserHasAccess(userId);
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(userId));
+    }
+
+    @PostMapping("/{athleteId}/swimming-certificate")
+    public ResponseEntity<AthleteDto> addSwimmingCertificate(
+            @PathVariable Long athleteId,
+            @RequestBody SwimCertificateType certificate
+    ) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
+        authorizationService.assertUserHasAccess(athleteId);
+        Athlete updatedAthlete = athleteService.updateSwimmingCertificate(athleteId, certificate);
+        return ResponseEntity.ok(objectMapper.convertValue(updatedAthlete, AthleteDto.class));
+    }
+
+    @DeleteMapping("/{athleteId}/swimming-certificate")
+    public ResponseEntity<AthleteDto> removeSwimmingCertificate(
+            @PathVariable Long athleteId
+    ) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
+        authorizationService.assertUserHasAccess(athleteId);
+        Athlete updatedAthlete = athleteService.updateSwimmingCertificate(athleteId, null);
+        return ResponseEntity.ok(objectMapper.convertValue(updatedAthlete, AthleteDto.class));
     }
 }

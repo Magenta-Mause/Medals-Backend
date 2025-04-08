@@ -3,6 +3,7 @@ package com.medals.medalsbackend.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.medals.medalsbackend.entity.medals.MedalType;
+import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.UserType;
 import jakarta.validation.constraints.Email;
@@ -47,7 +48,7 @@ public class AthleteDto {
     private MedalType totalMedal;
 
     @JsonProperty("swimming_certificate")
-    private boolean swimmingCertificate = false;
+    private SwimCertificateType swimmingCertificate = null;
 
     @Builder.Default
     private UserType type = UserType.ATHLETE;
