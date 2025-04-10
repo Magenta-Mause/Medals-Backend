@@ -130,6 +130,7 @@ public class AthleteService {
         Athlete athlete = getAthlete(athleteId);
         Trainer trainer = trainerService.getTrainer(trainerId);
         allowTrainerAthleteAccess(athlete, trainer);
+        athleteWebsocketMessageService.sendAthleteAssign(athlete, trainer);
     }
 
     private void allowTrainerAthleteAccess(Athlete athlete, Trainer trainer) throws JwtTokenInvalidException {
