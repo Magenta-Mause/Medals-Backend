@@ -89,4 +89,8 @@ public class LoginEntryService {
     public LoginEntry getLoginEntry(String userEmail) throws EmailDoesntExistException {
         return loginEntryRepository.findById(userEmail.toLowerCase()).orElseThrow(() -> new EmailDoesntExistException(userEmail));
     }
+
+    public void deleteEntry(String email) {
+        loginEntryRepository.deleteById(email.toLowerCase());
+    }
 }

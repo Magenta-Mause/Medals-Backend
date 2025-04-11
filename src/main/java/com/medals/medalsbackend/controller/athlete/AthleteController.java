@@ -53,7 +53,7 @@ public class AthleteController {
         return ResponseEntity.ok((switch (selectedUser.getType()) {
             case UserType.ADMIN -> Arrays.stream(athleteService.getAthletes());
             case UserType.ATHLETE -> Stream.of(athleteService.getAthlete(selectedUser.getId()));
-            case UserType.TRAINER -> Arrays.stream(athleteService.getAthletesFromTrainer(selectedUser.getId()));
+            case UserType.TRAINER -> Arrays.stream(athleteService.getAthletesAssignedToTrainer(selectedUser.getId()));
         }).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
     }
 
@@ -69,7 +69,7 @@ public class AthleteController {
     }
 
     @DeleteMapping("/{athleteId}")
-    public ResponseEntity<Void> deleteAthlete(@PathVariable Long athleteId) throws AthleteNotFoundException, NoAuthenticationFoundException, ForbiddenException {
+    public ResponseEntity<Void> deleteAthlete(@PathVariable Long athleteId) throws Exception {
         authorizationService.assertUserHasAccess(athleteId);
         athleteService.deleteAthlete(athleteId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
