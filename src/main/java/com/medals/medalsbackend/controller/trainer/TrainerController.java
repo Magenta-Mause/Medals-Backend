@@ -58,7 +58,7 @@ public class TrainerController {
 	}
 
 	@DeleteMapping("/{trainerId}")
-	public ResponseEntity<Void> deleteTrainer(@PathVariable Long trainerId) throws TrainerNotFoundException, NoAuthenticationFoundException, ForbiddenException {
+	public ResponseEntity<Void> deleteTrainer(@PathVariable Long trainerId) throws Throwable {
 		authorizationService.assertUserHasOwnerAccess(trainerId);
 		trainerService.deleteTrainer(trainerId);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
@@ -71,7 +71,7 @@ public class TrainerController {
 	}
 
     @PostMapping(value = "/request-athlete-access")
-    public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException {
+    public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws Exception {
 		trainerService.requestAthleteAccess(trainerAccessRequestDto);
         return ResponseEntity.ok().build();
     }
