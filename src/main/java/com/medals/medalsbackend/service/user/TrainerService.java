@@ -81,17 +81,13 @@ public class TrainerService {
         return userEntityService.getAllTrainers();
     }
 
-    ;
-
     public List<Trainer> getAllTrainersAssignedToAthlete(Long id) {
         return userEntityService.getAllTrainersAssignedToAthlete(id);
     }
 
-    public void deleteTrainer(Long trainerId) throws TrainerNotFoundException {
+    public void deleteTrainer(Long trainerId) throws Throwable {
         log.info("Executing delete trainer by id {}", trainerId);
-        if (!userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId)).getType().equals(UserType.TRAINER)) {
-            throw TrainerNotFoundException.fromTrainerId(trainerId);
-        }
+        userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
         userEntityService.deleteById(trainerId);
         trainerWebsocketMessageService.sendTrainerDelete(trainerId);
     }
@@ -99,29 +95,36 @@ public class TrainerService {
     public Trainer getTrainer(Long trainerId) throws TrainerNotFoundException {
         log.info("Executing get trainer by id {}", trainerId);
         try {
+            userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
             return (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
         } catch (Exception e) {
             throw TrainerNotFoundException.fromTrainerId(trainerId);
         }
     }
 
-    public void updateTrainer(Long trainerId, TrainerDto trainerDto) {
+    public void updateTrainer(Long trainerId, TrainerDto trainerDto) throws Exception {
         log.info("Updating trainer with ID: {}", trainerId);
+        userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
         trainerDto.setId(trainerId);
         Trainer savedTrainer = (Trainer) userEntityService.update(objectMapper.convertValue(trainerDto, Trainer.class));
         trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
     }
 
-    public void requestAthleteAccess(TrainerAccessRequestDto trainerAccessRequestDto) throws AthleteNotFoundException, TrainerNotFoundException {
+    public void requestAthleteAccess(TrainerAccessRequestDto trainerAccessRequestDto) throws Exception {
         Long athleteId = trainerAccessRequestDto.getAthleteId();
         Long trainerId = trainerAccessRequestDto.getTrainerId();
-        Athlete inviteAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
+
+        userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
+        userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
+
+        Athlete requestedAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
-        log.info("Sending request to athlete {}", inviteAthlete);
-        log.info("Request send by trainer {}", trainer);
+
+        log.info("Sending request to manage athlete {} from trainer {}", requestedAthlete, trainer);
+
         String trainerName = trainer.getFirstName() + " " + trainer.getLastName();
-        String token = jwtService.buildTrainerAccessRequestToken(inviteAthlete.getEmail(), trainerAccessRequestDto, trainerName);
-        notificationService.sendRequestAthleteNotification(inviteAthlete.getEmail(), token, trainerName);
+        String token = jwtService.buildTrainerAccessRequestToken(requestedAthlete.getEmail(), trainerAccessRequestDto, trainerName);
+        notificationService.sendRequestAthleteNotification(requestedAthlete.getEmail(), token, trainerName);
     }
 
     public List<Athlete> searchAthletes(String athleteSearch) {

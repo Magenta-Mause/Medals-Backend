@@ -3,6 +3,7 @@ package com.medals.medalsbackend.service.user;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntity;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.users.Admin;
+import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AdminNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
@@ -56,14 +57,13 @@ public class AdminService {
     }
 
     public Admin createAdmin(Admin admin) throws InternalException {
+        admin.setId(null);
         return (Admin) userEntityService.save(admin.getEmail(), admin);
     }
 
-    public void deleteAdmin(Long adminId) throws AdminNotFoundException{
+    public void deleteAdmin(Long adminId) throws Exception {
         log.info("Executing delete admin by id {}", adminId);
-        if (!userEntityService.existsById(adminId)) {
-            throw AdminNotFoundException.fromAdminId(adminId);
-        }
+        userEntityService.assertUserType(adminId, UserType.ADMIN, AdminNotFoundException.fromAdminId(adminId));
         userEntityService.deleteById(adminId);
         adminWebsocketMessageService.sendAdminDelete(adminId);
     }

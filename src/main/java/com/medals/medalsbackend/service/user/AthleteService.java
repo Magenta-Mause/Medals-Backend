@@ -84,12 +84,13 @@ public class AthleteService {
         return userEntityService.getAllAthletes().toArray(new Athlete[0]);
     }
 
-    public Athlete[] getAthletesFromTrainer(Long id) {
+    public Athlete[] getAthletesAssignedToTrainer(Long id) {
         return userEntityService.getAthletesAssignedToTrainer(id).toArray(new Athlete[0]);
     }
 
     public Athlete getAthlete(Long athleteId) throws AthleteNotFoundException {
         try {
+            userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
             return (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         } catch (Exception e) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
@@ -101,18 +102,17 @@ public class AthleteService {
     }
 
     @Transactional
-    public void deleteAthlete(Long athleteId) throws AthleteNotFoundException {
+    public void deleteAthlete(Long athleteId) throws Exception {
         log.info("Executing delete athlete by id {}", athleteId);
-        if (!userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId)).getType().equals(UserType.ATHLETE)) {
-            throw AthleteNotFoundException.fromAthleteId(athleteId);
-        }
+        userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
         performanceRecordingRepository.deleteByAthleteId(athleteId);
         athleteWebsocketMessageService.sendAthleteDelete(athleteId);
         userEntityService.deleteById(athleteId);
     }
 
-    public void updateAthlete(Long athleteId, AthleteDto athleteDto) {
+    public void updateAthlete(Long athleteId, AthleteDto athleteDto) throws Exception {
         log.info("Updating athlete with ID: {}", athleteId);
+        userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
         athleteDto.setId(athleteId);
         Athlete savedAthlete = (Athlete) userEntityService.update(objectMapper.convertValue(athleteDto, Athlete.class));
         athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(savedAthlete, AthleteDto.class));

@@ -1,15 +1,12 @@
 package com.medals.medalsbackend.service.user;
 
-import com.medals.medalsbackend.entity.users.Admin;
-import com.medals.medalsbackend.entity.users.Athlete;
-import com.medals.medalsbackend.entity.users.Trainer;
-import com.medals.medalsbackend.entity.users.UserEntity;
+import com.medals.medalsbackend.entity.users.*;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.repository.UserEntityRepository;
+import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.user.login.EmailAlreadyExistsException;
 import com.medals.medalsbackend.service.user.login.EmailDoesntExistException;
 import com.medals.medalsbackend.service.user.login.LoginEntryService;
-import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +61,9 @@ public class UserEntityService {
         return userEntityRepository.findAllAthletes();
     }
 
-    public List<Trainer> getAllTrainers() {return userEntityRepository.findAllTrainers();}
+    public List<Trainer> getAllTrainers() {
+        return userEntityRepository.findAllTrainers();
+    }
 
     public List<Trainer> getAllTrainersAssignedToAthlete(Long id) {
         return userEntityRepository.findAllTrainersAssignedToAthlete(id);
@@ -82,15 +81,21 @@ public class UserEntityService {
         }
     }
 
-  public List<Athlete> getAthletes(String athleteSearch) {
-    return userEntityRepository.searchGeneric(athleteSearch);
-  }
+    public void assertUserType(Long userId, UserType userType, Exception e) throws Exception {
+        if (!userEntityRepository.findById(userId).orElseThrow(() -> e).getType().equals(userType)) {
+            throw e;
+        }
+    }
 
-  public boolean existsById(Long id) {
-    return userEntityRepository.existsById(id);
-  }
+    public List<Athlete> getAthletes(String athleteSearch) {
+        return userEntityRepository.searchGeneric(athleteSearch);
+    }
 
-  public List<Athlete> getAthletesAssignedToTrainer(Long id) {
+    public boolean existsById(Long id) {
+        return userEntityRepository.existsById(id);
+    }
+
+    public List<Athlete> getAthletesAssignedToTrainer(Long id) {
         return userEntityRepository.findAthletes(id);
-  }
+    }
 }
