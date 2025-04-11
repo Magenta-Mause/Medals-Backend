@@ -106,10 +106,9 @@ public class AthleteService {
         if (!userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId)).getType().equals(UserType.ATHLETE)) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
         }
-
         performanceRecordingRepository.deleteByAthleteId(athleteId);
-        userEntityService.deleteById(athleteId);
         athleteWebsocketMessageService.sendAthleteDelete(athleteId);
+        userEntityService.deleteById(athleteId);
     }
 
     public void updateAthlete(Long athleteId, AthleteDto athleteDto) {
