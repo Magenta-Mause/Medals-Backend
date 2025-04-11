@@ -1,6 +1,5 @@
 package com.medals.medalsbackend.service.user;
 
-import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
@@ -75,10 +74,12 @@ public class UserEntityService {
         return userEntityRepository.findAllAdmins();
     }
 
-    public UserEntity deleteById(Long id) {
+    public void deleteById(Long id) {
         UserEntity userEntity = userEntityRepository.findById(id).orElseThrow();
         userEntityRepository.delete(userEntity);
-        return userEntity;
+        if (userEntityRepository.getAllByEmail(userEntity.getEmail()).isEmpty()) {
+            loginEntryService.deleteEntry(userEntity.getEmail());
+        }
     }
 
   public List<Athlete> getAthletes(String athleteSearch) {

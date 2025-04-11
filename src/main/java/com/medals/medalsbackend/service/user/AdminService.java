@@ -64,7 +64,7 @@ public class AdminService {
         if (!userEntityService.existsById(adminId)) {
             throw AdminNotFoundException.fromAdminId(adminId);
         }
-        adminWebsocketMessageService.sendAdminDelete(adminId);
         userEntityService.deleteById(adminId);
+        adminWebsocketMessageService.sendAdminDelete(adminId);
     }
 }
