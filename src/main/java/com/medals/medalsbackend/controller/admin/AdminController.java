@@ -34,7 +34,7 @@ public class AdminController {
     private final AuthorizationService authorizationService;
 
     @DeleteMapping("/{adminId}")
-    public ResponseEntity<Void> deleteAdmin(@PathVariable Long adminId) throws AdminNotFoundException, ForbiddenException, NoAuthenticationFoundException {
+    public ResponseEntity<Void> deleteAdmin(@PathVariable Long adminId) throws Exception {
         authorizationService.assertRoleIn(List.of(UserType.ADMIN));
         adminService.deleteAdmin(adminId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
