@@ -9,8 +9,8 @@ import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.performancerecording.DisciplineNotFoundException;
 import com.medals.medalsbackend.exception.performancerecording.NoMatchingDisciplineRatingFoundForAge;
 import com.medals.medalsbackend.service.authorization.AuthorizationService;
-import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.authorization.ForbiddenException;
+import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.performancerecording.DisciplineService;
 import com.medals.medalsbackend.service.performancerecording.PerformanceRecordingNotFoundException;
 import com.medals.medalsbackend.service.performancerecording.PerformanceRecordingService;
@@ -21,7 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(BaseController.BASE_PATH + "/performance-recordings")
@@ -55,11 +58,18 @@ public class PerformanceRecordingController {
             case UserType.ADMIN -> performanceRecordingService.getAllPerformanceRecordings();
             case UserType.ATHLETE ->
                 performanceRecordingService.getPerformanceRecordingsForAthlete(selectedUser.getId());
-            case UserType.TRAINER ->
-                performanceRecordingService.getAllPerformanceRecordings(); // TODO: Add assign logic here
+            case UserType.TRAINER -> Arrays.stream(athleteService.getAthletesAssignedToTrainer(selectedUser.getId()))
+                .map(athlete -> {
+                    try {
+                        return performanceRecordingService.getPerformanceRecordingsForAthlete(athlete.getId());
+                    } catch (AthleteNotFoundException e) {
+                        return Collections.<PerformanceRecording>emptyList();
+                    }
+                })
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         });
     }
-
 
 
     @DeleteMapping("/{id}")
