@@ -102,18 +102,12 @@ public class UserEntityService {
     }
 
     public void removeConnection(Long trainerId, Long athleteId) throws Exception {
-        assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
-        assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
-
         Athlete athlete = (Athlete) findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
         Trainer trainer = (Trainer) findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
 
-        log.info("The connection between athlete: {} and trainer: {} is getting removed", athlete, trainer);
+        log.info("removing connection between athlete: {} and trainer: {}", athlete, trainer);
         athlete.getTrainersAssignedTo().removeIf(assignedTrainer -> assignedTrainer.equals(trainer));
         trainer.getAssignedAthletes().removeIf(assignedAthlete -> assignedAthlete.equals(athlete));
-
-        athlete.setTrainersAssignedTo(athlete.getTrainersAssignedTo());
-        trainer.setAssignedAthletes(trainer.getAssignedAthletes());
 
         update(athlete);
         update(trainer);
