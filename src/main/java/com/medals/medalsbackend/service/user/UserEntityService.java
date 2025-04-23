@@ -117,8 +117,5 @@ public class UserEntityService {
 
         update(athlete);
         update(trainer);
-
-        System.out.println(athlete.getTrainersAssignedTo());
-        System.out.println(trainer.getAssignedAthletes());
     }
 }
