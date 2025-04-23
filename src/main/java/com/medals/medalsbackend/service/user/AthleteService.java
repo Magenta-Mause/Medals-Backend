@@ -10,15 +10,16 @@ import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
+import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
-import com.medals.medalsbackend.security.jwt.JwtTokenBody;
-import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
 import com.medals.medalsbackend.repository.UserEntityRepository;
+import com.medals.medalsbackend.security.jwt.JwtTokenBody;
+import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +30,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-
-import java.time.LocalDate;
 
 @Slf4j
 @Service
@@ -84,11 +84,13 @@ public class AthleteService {
         return userEntityService.getAllAthletes().toArray(new Athlete[0]);
     }
 
-    public Athlete[] getAthletesFromTrainer(Long id) {
+    public Athlete[] getAthletesAssignedToTrainer(Long id) {
         return userEntityService.getAthletesAssignedToTrainer(id).toArray(new Athlete[0]);
     }
+
     public Athlete getAthlete(Long athleteId) throws AthleteNotFoundException {
         try {
+            userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
             return (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         } catch (Exception e) {
             throw AthleteNotFoundException.fromAthleteId(athleteId);
@@ -100,19 +102,17 @@ public class AthleteService {
     }
 
     @Transactional
-    public void deleteAthlete(Long athleteId) throws AthleteNotFoundException {
+    public void deleteAthlete(Long athleteId) throws Exception {
         log.info("Executing delete athlete by id {}", athleteId);
-        if (!userEntityService.existsById(athleteId)) {
-            throw AthleteNotFoundException.fromAthleteId(athleteId);
-        }
-
+        userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
         performanceRecordingRepository.deleteByAthleteId(athleteId);
         athleteWebsocketMessageService.sendAthleteDelete(athleteId);
         userEntityService.deleteById(athleteId);
     }
 
-    public void updateAthlete(Long athleteId, AthleteDto athleteDto) {
+    public void updateAthlete(Long athleteId, AthleteDto athleteDto) throws Exception {
         log.info("Updating athlete with ID: {}", athleteId);
+        userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
         athleteDto.setId(athleteId);
         Athlete savedAthlete = (Athlete) userEntityService.update(objectMapper.convertValue(athleteDto, Athlete.class));
         athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(savedAthlete, AthleteDto.class));
