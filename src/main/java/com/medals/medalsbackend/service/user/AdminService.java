@@ -17,6 +17,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -66,5 +67,9 @@ public class AdminService {
         }
         adminWebsocketMessageService.sendAdminDelete(adminId);
         userEntityService.deleteById(adminId);
+    }
+
+    public List<Admin> getAllAdmins() {
+        return userEntityService.getAllAdmins();
     }
 }
