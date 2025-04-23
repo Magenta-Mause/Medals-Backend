@@ -42,9 +42,9 @@ public class UserEntityServiceTest {
     @SneakyThrows
     @Test
     public void testUserEntityCreationCreatesLoginEntry() {
-        userEntityService.save("test@gmail.com", Trainer.builder().email("test@gmail.com").firstName("tom").lastName("tailor").build());
+        userEntityService.save("test@gmail.com", Trainer.builder().email("test@gmail.com").firstName("tom").lastName("tailor").build(), "system");
 
-        verify(loginEntryService, times(1)).createLoginEntry(eq("test@gmail.com"), eq(OneTimeCodeCreationReason.ACCOUNT_CREATED));
+        verify(loginEntryService, times(1)).createLoginEntry(eq("test@gmail.com"), eq(OneTimeCodeCreationReason.ACCOUNT_CREATED), eq("system"));
         verify(loginEntryService, times(1)).addUserToLogin(eq("test@gmail.com"), any());
     }
 

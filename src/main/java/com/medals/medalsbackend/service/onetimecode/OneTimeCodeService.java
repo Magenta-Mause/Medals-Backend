@@ -45,12 +45,12 @@ public class OneTimeCodeService {
         throw new InternalException("Couldnt generate one time code");
     }
 
-    public OneTimeCode createSetPasswordToken(String email, OneTimeCodeCreationReason reason) {
+    public OneTimeCode createSetPasswordToken(String email, OneTimeCodeCreationReason reason, String invitingParty) {
         try {
             OneTimeCode oneTimeCode = generateOneTimeCode(OneTimeCodeType.SET_PASSWORD, email, oneTimeCodeConfiguration.setPasswordTokenValidityDuration());
             switch (reason) {
-                case ACCOUNT_CREATED -> notificationService.sendCreateAccountNotification(email, oneTimeCode.oneTimeCode);
-                case ACCOUNT_INVITED -> notificationService.sendInviteTrainerNotification(email, oneTimeCode.oneTimeCode);
+                case ACCOUNT_CREATED -> notificationService.sendCreateAccountNotification(email, oneTimeCode.oneTimeCode, invitingParty);
+                case ACCOUNT_INVITED -> notificationService.sendInviteTrainerNotification(email, oneTimeCode.oneTimeCode, invitingParty);
             }
             return oneTimeCode;
         } catch (InternalException e) {

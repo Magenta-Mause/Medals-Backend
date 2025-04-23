@@ -58,7 +58,7 @@ public class AdminService {
 
     public Admin createAdmin(Admin admin) throws InternalException {
         admin.setId(null);
-        return (Admin) userEntityService.save(admin.getEmail(), admin);
+        return (Admin) userEntityService.save(admin.getEmail(), admin, "system");
     }
 
     public void deleteAdmin(Long adminId) throws Exception {
