@@ -29,7 +29,7 @@
                 <tr>
                     <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555; line-height: 1.5; text-align: left;">
                         <p>Hello,</p>
-                        <p>We have just created an account for you. Please set a password to access your account.</p>
+                        <p>The trainer <span th:text="${invitingTrainerName}" style="font-weight: bold"></span> has just created an account for you. Please set a password to access your account.</p>
                         <p><a th:href="${otcLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Set Password</a></p>
                         <p>If the button does not work, use this link:<br>
                             <a th:href="${otcLink}" th:text="${otcLink}" style="color: #007bff; text-decoration: none;"></a>
@@ -48,7 +48,7 @@
                 <tr>
                     <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555; line-height: 1.5; text-align: left;">
                         <p>Hallo,</p>
-                        <p>Wir haben soeben ein Konto für dich erstellt. Bitte setze ein Passwort, um auf dein Konto zuzugreifen.</p>
+                        <p>Der Trainer <span th:text="${invitingTrainerName}" style="font-weight: bold"></span> hat soeben ein Konto für dich erstellt. Bitte setze ein Passwort, um auf dein Konto zuzugreifen.</p>
                         <p><a th:href="${otcLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Passwort festlegen</a></p>
                         <p>Falls die Schaltfläche nicht funktioniert, verwende bitte diesen Link: <br>
                             <a th:href="${otcLink}" th:text="${otcLink}" style="color: #007bff; text-decoration: none;"></a>
