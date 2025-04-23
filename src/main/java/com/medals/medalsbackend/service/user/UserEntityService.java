@@ -1,7 +1,9 @@
 package com.medals.medalsbackend.service.user;
 
 import com.medals.medalsbackend.entity.users.*;
+import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.user.login.EmailAlreadyExistsException;
@@ -97,5 +99,26 @@ public class UserEntityService {
 
     public List<Athlete> getAthletesAssignedToTrainer(Long id) {
         return userEntityRepository.findAthletes(id);
+    }
+
+    public void removeConnection(Long trainerId, Long athleteId) throws Exception {
+        assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
+        assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
+
+        Athlete athlete = (Athlete) findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
+        Trainer trainer = (Trainer) findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
+
+        log.info("The connection between athlete: {} and trainer: {} is getting removed", athlete, trainer);
+        athlete.getTrainersAssignedTo().removeIf(assignedTrainer -> assignedTrainer.equals(trainer));
+        trainer.getAssignedAthletes().removeIf(assignedAthlete -> assignedAthlete.equals(athlete));
+
+        athlete.setTrainersAssignedTo(athlete.getTrainersAssignedTo());
+        trainer.setAssignedAthletes(trainer.getAssignedAthletes());
+
+        update(athlete);
+        update(trainer);
+
+        System.out.println(athlete.getTrainersAssignedTo());
+        System.out.println(trainer.getAssignedAthletes());
     }
 }
