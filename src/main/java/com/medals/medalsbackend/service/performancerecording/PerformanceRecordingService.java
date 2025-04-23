@@ -45,9 +45,9 @@ public class PerformanceRecordingService {
         return performanceRecording;
     }
 
-    public void deletePerformanceRecording(Long performanceRecordingId) {
+    public void deletePerformanceRecording(Long performanceRecordingId) throws PerformanceRecordingNotFoundException {
+        performanceRecordingWebsocketMessagingService.sendPerformanceRecordingDeletion(getPerformanceRecording(performanceRecordingId));
         performanceRecordingRepository.deleteById(performanceRecordingId);
-        performanceRecordingWebsocketMessagingService.sendPerformanceRecordingDeletion(performanceRecordingId);
     }
 
     public void updatePerformanceRecording(long id, PerformanceRecording performanceRecording) {
