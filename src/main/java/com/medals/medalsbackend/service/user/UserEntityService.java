@@ -100,16 +100,4 @@ public class UserEntityService {
     public List<Athlete> getAthletesAssignedToTrainer(Long id) {
         return userEntityRepository.findAthletes(id);
     }
-
-    public void removeConnection(Long trainerId, Long athleteId) throws Exception {
-        Athlete athlete = (Athlete) findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
-        Trainer trainer = (Trainer) findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
-
-        log.info("removing connection between athlete: {} and trainer: {}", athlete, trainer);
-        athlete.getTrainersAssignedTo().removeIf(assignedTrainer -> assignedTrainer.equals(trainer));
-        trainer.getAssignedAthletes().removeIf(assignedAthlete -> assignedAthlete.equals(athlete));
-
-        update(athlete);
-        update(trainer);
-    }
 }
