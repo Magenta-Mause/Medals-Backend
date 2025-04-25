@@ -89,9 +89,9 @@ public class TrainerController {
     }
 
 	@DeleteMapping(value = "/trainer-athlete-connection")
-	public ResponseEntity<Void> removeTrainerAthleteConnection(@RequestParam Long trainerId, @RequestParam List<Long> athleteIds) throws Exception {
+	public ResponseEntity<Void> removeTrainerAthleteConnection(@RequestParam Long trainerId, @RequestParam Long athleteId) throws Exception {
 		authorizationService.assertUserHasOwnerAccess(trainerId);
-		athleteService.removeConnection(trainerId, athleteIds);
+		athleteService.removeConnection(trainerId, athleteId);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
 	}
 }
