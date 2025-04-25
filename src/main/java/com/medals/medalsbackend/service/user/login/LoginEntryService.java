@@ -24,7 +24,7 @@ public class LoginEntryService {
     private final OneTimeCodeService oneTimeCodeService;
     private final NotificationService notificationService;
 
-    public void createLoginEntry(String email, OneTimeCodeCreationReason reason) throws EmailAlreadyExistsException {
+    public void createLoginEntry(String email, OneTimeCodeCreationReason reason, String invitingParty) throws EmailAlreadyExistsException {
         if (loginEntryRepository.existsById(email)) {
             throw new EmailAlreadyExistsException(email);
         }
@@ -34,7 +34,7 @@ public class LoginEntryService {
                 .password(null)
                 .build();
 
-        oneTimeCodeService.createSetPasswordToken(email, reason);
+        oneTimeCodeService.createSetPasswordToken(email, reason, invitingParty);
         loginEntryRepository.save(loginEntry);
     }
 

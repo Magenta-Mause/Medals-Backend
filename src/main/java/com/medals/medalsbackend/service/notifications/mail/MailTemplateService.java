@@ -17,15 +17,17 @@ public class MailTemplateService {
     private final MailTemplateConfiguration configuration;
     private final TemplateEngine templateEngine;
 
-    public String generateSetPasswordNotification(String email, String link) {
+    public String generateSetPasswordNotification(String email, String link, String trainer) {
         Context context = new Context();
         context.setVariable("otcLink", link);
+        context.setVariable("invitingTrainerName", trainer);
         return templateEngine.process(configuration.getSetPasswordNotification(), context);
     }
 
-    public String generateInviteTrainerNotification(String email, String link) {
+    public String generateInviteTrainerNotification(String email, String link, String admin) {
         Context context = new Context();
         context.setVariable("otcLink", link);
+        context.setVariable("invitingAdminName", admin);
         return templateEngine.process(configuration.getInviteTrainerNotification(), context);
     }
 

@@ -38,11 +38,11 @@ public class OneTimeCodeServiceTest {
     @SneakyThrows
     public void testSetPasswordToken() {
         when(oneTimeCodeConfiguration.setPasswordTokenValidityDuration()).thenReturn(100L);
-        oneTimeCodeService.createSetPasswordToken("email", OneTimeCodeCreationReason.ACCOUNT_CREATED);
+        oneTimeCodeService.createSetPasswordToken("email", OneTimeCodeCreationReason.ACCOUNT_CREATED, "inviter");
 
         ArgumentCaptor<OneTimeCode> oneTimeCodeArgumentCaptor = ArgumentCaptor.forClass(OneTimeCode.class);
         verify(oneTimeCodeRepository, times(1)).save(oneTimeCodeArgumentCaptor.capture());
-        verify(notificationService, times(1)).sendCreateAccountNotification(eq("email"), any());
+        verify(notificationService, times(1)).sendCreateAccountNotification(eq("email"), any(), eq("inviter"));
         assertEquals("email", oneTimeCodeArgumentCaptor.getValue().authorizedEmail);
         assertEquals(OneTimeCodeType.SET_PASSWORD, oneTimeCodeArgumentCaptor.getValue().type);
         assertTrue(System.currentTimeMillis() <= oneTimeCodeArgumentCaptor.getValue().expiresAt && oneTimeCodeArgumentCaptor.getValue().expiresAt <= System.currentTimeMillis() + 100L);

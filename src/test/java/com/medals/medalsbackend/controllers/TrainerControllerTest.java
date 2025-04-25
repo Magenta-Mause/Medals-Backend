@@ -2,18 +2,28 @@ package com.medals.medalsbackend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.TrainerDto;
+import com.medals.medalsbackend.entity.users.Admin;
+import com.medals.medalsbackend.entity.users.UserEntity;
+import com.medals.medalsbackend.service.authorization.AuthorizationService;
+import com.medals.medalsbackend.service.authorization.ForbiddenException;
+import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.user.TrainerService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,6 +44,9 @@ public class TrainerControllerTest {
 
   private static TrainerDto testTrainer;
 
+  @MockitoBean
+  AuthorizationService authorizationService;
+
   @BeforeAll
   public static void setup() {
     testTrainer = TrainerDto.builder()
@@ -42,6 +55,16 @@ public class TrainerControllerTest {
             .lastName("Doe")
             .email("john.doe@example.com")
             .build();
+  }
+
+  @BeforeEach
+  public void setupEach() throws NoAuthenticationFoundException, ForbiddenException {
+    UserEntity mockAdmin = new Admin();
+    mockAdmin.setFirstName("Mock");
+    mockAdmin.setLastName("Admin");
+
+    when(authorizationService.getSelectedUser()).thenReturn(mockAdmin);
+    doNothing().when(authorizationService).assertRoleIn(anyList());
   }
 
   @Test

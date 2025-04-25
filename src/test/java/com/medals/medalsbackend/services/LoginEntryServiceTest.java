@@ -52,7 +52,7 @@ public class LoginEntryServiceTest {
   public void testPasswordReset() {
     when(oneTimeCodeService.getEmailFromOneTimeCode(eq("test"), eq(OneTimeCodeType.SET_PASSWORD))).thenReturn("admin@example.org");
     when(loginEntryRepository.findById(eq("admin@example.org"))).thenReturn(Optional.of(LoginEntry.builder().email("admin@example.org").password("oldPassword").build()));
-    loginEntryService.createLoginEntry("admin@example.org", OneTimeCodeCreationReason.ACCOUNT_CREATED);
+    loginEntryService.createLoginEntry("admin@example.org", OneTimeCodeCreationReason.ACCOUNT_CREATED, "mock");
     loginEntryService.setPassword("test", "newPassword");
 
     ArgumentCaptor<LoginEntry> loginEntryArgumentCaptor = ArgumentCaptor.forClass(LoginEntry.class);
@@ -64,8 +64,8 @@ public class LoginEntryServiceTest {
   @SneakyThrows
   public void testLoginEntryCreationTriggersEmailSending() {
     when(loginEntryRepository.existsById(any())).thenReturn(false);
-    loginEntryService.createLoginEntry("test@gmail.com", OneTimeCodeCreationReason.ACCOUNT_CREATED);
-    verify(oneTimeCodeService, times(1)).createSetPasswordToken(eq("test@gmail.com"), eq(OneTimeCodeCreationReason.ACCOUNT_CREATED));
+    loginEntryService.createLoginEntry("test@gmail.com", OneTimeCodeCreationReason.ACCOUNT_CREATED, "mock");
+    verify(oneTimeCodeService, times(1)).createSetPasswordToken(eq("test@gmail.com"), eq(OneTimeCodeCreationReason.ACCOUNT_CREATED), eq("mock"));
   }
 
   @Test
