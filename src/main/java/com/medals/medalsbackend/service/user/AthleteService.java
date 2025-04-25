@@ -156,17 +156,23 @@ public class AthleteService {
         return updated;
     }
 
-    public void removeConnection(Long trainerId, Long athleteId) throws Exception {
-        Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
+    public void removeConnection(Long trainerId, List<Long> athleteIds) throws Exception {
         Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
 
-        log.info("removing connection between athlete: {} and trainer: {}", athlete, trainer);
-        athlete.getTrainersAssignedTo().removeIf(assignedTrainer -> assignedTrainer.equals(trainer));
-        trainer.getAssignedAthletes().removeIf(assignedAthlete -> assignedAthlete.equals(athlete));
+        for (Long athleteId : athleteIds) {
+            Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
 
-        userEntityService.update(athlete);
-        userEntityService.update(trainer);
+            log.info("removing connection between athlete: {} and trainer: {}", athlete, trainer);
+            boolean removedFromAthlete = athlete.getTrainersAssignedTo().remove(trainer);
+            boolean removedFromTrainer = trainer.getAssignedAthletes().remove(athlete);
 
-        athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteId, trainerId);
+            if (removedFromAthlete && removedFromTrainer) {
+                userEntityService.update(athlete);
+                userEntityService.update(trainer);
+            }
+
+            athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteId, trainerId);
+        }
+
     }
 }
