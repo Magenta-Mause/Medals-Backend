@@ -25,9 +25,9 @@ public class UserEntityService {
     private final LoginEntryService loginEntryService;
 
     @Transactional
-    public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason) throws InternalException {
+    public UserEntity save(String email, UserEntity userEntity, OneTimeCodeCreationReason reason, String invitingParty) throws InternalException {
         try {
-            loginEntryService.createLoginEntry(email, reason);
+            loginEntryService.createLoginEntry(email, reason, invitingParty);
         } catch (EmailAlreadyExistsException ignored) {
         }
 
@@ -39,8 +39,8 @@ public class UserEntityService {
     }
 
     @Transactional
-    public UserEntity save(String email, UserEntity userEntity) throws InternalException {
-        return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED);
+    public UserEntity save(String email, UserEntity userEntity, String invitingParty) throws InternalException {
+        return save(email, userEntity, OneTimeCodeCreationReason.ACCOUNT_CREATED, invitingParty);
     }
 
     public UserEntity update(UserEntity userEntity) {

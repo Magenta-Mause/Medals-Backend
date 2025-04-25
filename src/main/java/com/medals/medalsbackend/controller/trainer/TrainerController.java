@@ -5,6 +5,7 @@ import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
@@ -48,7 +49,9 @@ public class TrainerController {
 	@PostMapping
 	public ResponseEntity<TrainerDto> postTrainer(@Valid @RequestBody TrainerDto trainerDto) throws InternalException, ForbiddenException, NoAuthenticationFoundException {
 		authorizationService.assertRoleIn(List.of(UserType.ADMIN));
-		return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(trainerService.insertTrainer(trainerDto), TrainerDto.class));
+		UserEntity admin = authorizationService.getSelectedUser();
+		String adminName = String.join(" ", admin.getFirstName(), admin.getLastName());
+		return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(trainerService.insertTrainer(trainerDto, adminName), TrainerDto.class));
 	}
 
 	@PostMapping(value = "/validate")

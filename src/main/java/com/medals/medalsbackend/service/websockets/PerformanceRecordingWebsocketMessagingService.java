@@ -12,27 +12,28 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PerformanceRecordingWebsocketMessagingService {
-	private final SimpMessagingTemplate messagingTemplate;
-	private final TrainerService trainerService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final TrainerService trainerService;
 
-	public void sendPerformanceRecordingCreation(PerformanceRecording performanceRecording) {
-		messagingTemplate.convertAndSend("/topics/performance-recording/creation/" + performanceRecording.getAthleteId(), performanceRecording);
-		for (Trainer trainer : trainerService.getAllTrainers()) {
-			messagingTemplate.convertAndSend("/topics/performance-recording/creation/" + trainer.getId(), performanceRecording);
-		}
-	}
+    public void sendPerformanceRecordingCreation(PerformanceRecording performanceRecording) {
+        messagingTemplate.convertAndSend("/topics/performance-recording/creation/" + performanceRecording.getAthleteId(), performanceRecording);
+        for (Trainer trainer : trainerService.getAllTrainers()) {
+            messagingTemplate.convertAndSend("/topics/performance-recording/creation/" + trainer.getId(), performanceRecording);
+        }
+    }
 
-	public void sendPerformanceRecordingUpdate(PerformanceRecording performanceRecording) {
-		messagingTemplate.convertAndSend("/topics/performance-recording/update/" + performanceRecording.getAthleteId(), performanceRecording);
-		for (Trainer trainer : trainerService.getAllTrainers()) {
-			messagingTemplate.convertAndSend("/topics/performance-recording/update/" + trainer.getId(), performanceRecording);
-		}
-	}
+    public void sendPerformanceRecordingUpdate(PerformanceRecording performanceRecording) {
+        messagingTemplate.convertAndSend("/topics/performance-recording/update/" + performanceRecording.getAthleteId(), performanceRecording);
+        for (Trainer trainer : trainerService.getAllTrainers()) {
+            messagingTemplate.convertAndSend("/topics/performance-recording/update/" + trainer.getId(), performanceRecording);
+        }
+    }
 
-	public void sendPerformanceRecordingDeletion(Long performanceRecordingId) {
-		messagingTemplate.convertAndSend("/topics/performance-recording/deletion", performanceRecordingId);
-		for (Trainer trainer : trainerService.getAllTrainers()) {
-			messagingTemplate.convertAndSend("/topics/performance-recording/deletion/" + trainer.getId(), performanceRecordingId);
-		}
-	}
+    public void sendPerformanceRecordingDeletion(PerformanceRecording performanceRecording) {
+        messagingTemplate.convertAndSend("/topics/performance-recording/deletion", performanceRecording.getId());
+        for (Trainer trainer : trainerService.getAllTrainers()) {
+            messagingTemplate.convertAndSend("/topics/performance-recording/deletion/" + trainer.getId(), performanceRecording.getId());
+        }
+        messagingTemplate.convertAndSend("/topics/performance-recording/deletion/" + performanceRecording.getAthleteId(), performanceRecording.getId());
+    }
 }

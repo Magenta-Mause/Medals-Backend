@@ -64,7 +64,7 @@ public class AthleteService {
         log.info("Inserting {} dummy athletes", DummyData.ATHLETES.size());
         DummyData.ATHLETES.forEach(athlete -> {
             try {
-                userEntityService.save(athlete.getEmail(), athlete);
+                userEntityService.save(athlete.getEmail(), athlete, "SYSTEM");
             } catch (InternalException e) {
                 throw new RuntimeException(e);
             }
@@ -72,12 +72,16 @@ public class AthleteService {
         initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Athlete));
     }
 
-    public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {
+    public UserEntity insertAthlete(AthleteDto athleteDto, String trainerName) throws InternalException {
         athleteDto.setId(null);
-        Athlete athlete = (Athlete) userEntityService.save(athleteDto.getEmail(), objectMapper.convertValue(athleteDto, Athlete.class));
-        log.info("Inserting Athlete: {}", athlete);
+        Athlete athlete = (Athlete) userEntityService.save(athleteDto.getEmail(), objectMapper.convertValue(athleteDto, Athlete.class), trainerName);
+        log.info("Inserting Athlete: {} (Invited by: {})", athlete, trainerName);
         athleteWebsocketMessageService.sendAthleteCreation(objectMapper.convertValue(athlete, AthleteDto.class));
         return athlete;
+    }
+
+    public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {
+        return insertAthlete(athleteDto, "SYSTEM");
     }
 
     public Athlete[] getAthletes() {

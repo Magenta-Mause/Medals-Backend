@@ -60,7 +60,9 @@ public class AthleteController {
     @PostMapping
     public ResponseEntity<AthleteDto> postAthlete(@Valid @RequestBody AthleteDto athleteDto) throws InternalException, ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertRoleIn(List.of(UserType.TRAINER, UserType.ADMIN));
-        return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(athleteService.insertAthlete(athleteDto), AthleteDto.class));
+        UserEntity trainer = authorizationService.getSelectedUser();
+        String trainerName = String.join(" ", trainer.getFirstName(), trainer.getLastName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(athleteService.insertAthlete(athleteDto, trainerName), AthleteDto.class));
     }
 
     @PostMapping(value = "/validate")
