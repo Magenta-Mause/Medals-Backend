@@ -74,7 +74,17 @@ public class AthleteService {
 
     public UserEntity insertAthlete(AthleteDto athleteDto, String trainerName) throws InternalException {
         athleteDto.setId(null);
-        Athlete athlete = (Athlete) userEntityService.save(athleteDto.getEmail(), objectMapper.convertValue(athleteDto, Athlete.class), trainerName);
+
+        if (existsByBirthdateAndEmail(athleteDto.getEmail(), athleteDto.getBirthdate())) {
+            throw new InternalException("An athlete with the same email and birthdate already exists.");
+        }
+
+        Athlete athlete = (Athlete) userEntityService.save(
+                athleteDto.getEmail(),
+                objectMapper.convertValue(athleteDto, Athlete.class),
+                trainerName
+        );
+
         log.info("Inserting Athlete: {} (Invited by: {})", athlete, trainerName);
         athleteWebsocketMessageService.sendAthleteCreation(objectMapper.convertValue(athlete, AthleteDto.class));
         return athlete;
