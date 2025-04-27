@@ -3,6 +3,7 @@ package com.medals.medalsbackend.services;
 import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.service.user.AthleteService;
+import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -25,6 +27,8 @@ public class AthleteServiceTest {
   private AthleteService athleteService;
 
   @SneakyThrows
+  @Transactional
+  @Rollback
   @Test
   public void testAthleteCreation() {
     AthleteDto athlete = AthleteDto.builder()
@@ -50,6 +54,8 @@ public class AthleteServiceTest {
   }
 
   @SneakyThrows
+  @Transactional
+  @Rollback
   @Test
   public void testAthleteUpdate() {
     AthleteDto athleteDto = AthleteDto.builder()
