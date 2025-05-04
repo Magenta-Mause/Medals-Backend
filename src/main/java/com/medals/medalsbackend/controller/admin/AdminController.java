@@ -2,6 +2,7 @@ package com.medals.medalsbackend.controller.admin;
 
 
 import com.medals.medalsbackend.dto.AdminCreationDto;
+import com.medals.medalsbackend.dto.AdminUpdateDto;
 import com.medals.medalsbackend.entity.users.Admin;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AdminNotFoundException;
@@ -43,17 +44,24 @@ public class AdminController {
     public ResponseEntity<Admin> createAdmin(@RequestBody @Valid AdminCreationDto admin) throws ForbiddenException, NoAuthenticationFoundException, InternalException {
         authorizationService.assertRoleIn(List.of(UserType.ADMIN));
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(Admin.builder()
-            .firstName(admin.getFirstName())
-            .lastName(admin.getLastName())
-            .email(admin.getEmail())
-            .type(UserType.ADMIN)
-            .build()));
+                .firstName(admin.getFirstName())
+                .lastName(admin.getLastName())
+                .email(admin.getEmail())
+                .type(UserType.ADMIN)
+                .build()));
     }
 
     @GetMapping
     public ResponseEntity<List<Admin>> getAllAdmins() throws ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertRoleIn(List.of(UserType.ADMIN));
         return ResponseEntity.ok(adminService.getAllAdmins());
+    }
+
+    @PutMapping("/{adminId}")
+    public ResponseEntity<Admin> updateAdmin(@PathVariable Long adminId, @RequestBody @Valid AdminUpdateDto admin)
+            throws ForbiddenException, NoAuthenticationFoundException, AdminNotFoundException {
+        authorizationService.assertRoleIn(List.of(UserType.ADMIN));
+        return ResponseEntity.ok(adminService.updateAdmin(adminId, admin.getFirstName(), admin.getLastName()));
     }
 
 }
