@@ -3,9 +3,10 @@ package com.medals.medalsbackend.controller.trainer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
+import com.medals.medalsbackend.dto.TrainerUpdateDto;
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.Athlete;
-import com.medals.medalsbackend.exception.AthleteNotFoundException;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
@@ -19,9 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 
@@ -70,19 +69,27 @@ public class TrainerController {
 		return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
 	}
 
-    @PostMapping(value = "/request-athlete-access")
-    public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws Exception {
-		trainerService.requestAthleteAccess(trainerAccessRequestDto);
-        return ResponseEntity.ok().build();
-    }
+	@PutMapping("/{trainerId}")
+	public ResponseEntity<TrainerDto> updateTrainer(@PathVariable Long trainerId, @RequestBody @Valid TrainerUpdateDto trainerUpdateDto)
+			throws ForbiddenException, NoAuthenticationFoundException, TrainerNotFoundException {
+		authorizationService.assertRoleIn(List.of(UserType.ADMIN));
+		Trainer updatedTrainer = trainerService.updateTrainer(trainerId, trainerUpdateDto.getFirstName(), trainerUpdateDto.getLastName());
+		return ResponseEntity.ok(objectMapper.convertValue(updatedTrainer, TrainerDto.class));
+	}
 
-    @GetMapping(value = "/search-athletes")
-    public ResponseEntity<List<PrunedAthleteDto>> searchAthletes(@RequestParam String athleteSearch) throws NoAuthenticationFoundException {
+	@PostMapping(value = "/request-athlete-access")
+	public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws Exception {
+		trainerService.requestAthleteAccess(trainerAccessRequestDto);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping(value = "/search-athletes")
+	public ResponseEntity<List<PrunedAthleteDto>> searchAthletes(@RequestParam String athleteSearch) throws NoAuthenticationFoundException {
 		authorizationService.getSelectedUser();
 		List<Athlete> athletes = trainerService.searchAthletes(athleteSearch);
 		List<PrunedAthleteDto> prunedAthletes = athletes.stream()
 				.map(athlete -> objectMapper.convertValue(athlete, PrunedAthleteDto.class))
 				.toList();
-        return ResponseEntity.ok(prunedAthletes);
-    }
+		return ResponseEntity.ok(prunedAthletes);
+	}
 }
