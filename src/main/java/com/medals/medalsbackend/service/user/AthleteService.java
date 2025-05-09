@@ -183,4 +183,9 @@ public class AthleteService {
 
         athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteId, trainerId);
     }
+
+    public List<Trainer> getTrainerAssignedToAthlete(Long athleteId) throws AthleteNotFoundException {
+        Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
+        return athlete.getTrainersAssignedTo();
+    }
 }
