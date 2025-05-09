@@ -8,17 +8,14 @@ import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.Athlete;
-import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.exception.JwtTokenInvalidException;
-import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
 import com.medals.medalsbackend.repository.UserEntityRepository;
-import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import jakarta.transaction.Transactional;
@@ -31,8 +28,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -46,6 +41,7 @@ public class AthleteService {
     private final UserEntityRepository userEntityRepository;
     private final TrainerService trainerService;
     private final PerformanceRecordingRepository performanceRecordingRepository;
+    private final AthleteAccessRequestRepository athleteAccessRequestRepository;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -80,9 +76,9 @@ public class AthleteService {
         }
 
         Athlete athlete = (Athlete) userEntityService.save(
-                athleteDto.getEmail(),
-                objectMapper.convertValue(athleteDto, Athlete.class),
-                trainerName
+            athleteDto.getEmail(),
+            objectMapper.convertValue(athleteDto, Athlete.class),
+            trainerName
         );
 
         log.info("Inserting Athlete: {} (Invited by: {})", athlete, trainerName);
@@ -137,29 +133,14 @@ public class AthleteService {
         return athlete.getMedalCollection();
     }
 
-    public void approveAccessRequest(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
-        Map<String, Object> tokenBody = jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
-        long athleteId = ((Integer) tokenBody.get("athleteId")).longValue();
-        long trainerId = ((Integer) tokenBody.get("trainerId")).longValue();
-        Athlete athlete = getAthlete(athleteId);
-        Trainer trainer = trainerService.getTrainer(trainerId);
-        allowTrainerAthleteAccess(athlete, trainer);
-        athleteWebsocketMessageService.sendAthleteAssign(athlete, trainer);
-    }
-
-    private void allowTrainerAthleteAccess(Athlete athlete, Trainer trainer) throws JwtTokenInvalidException {
-        List<Trainer> trainersAssignedToAthlete = athlete.getTrainersAssignedTo();
-        List<Athlete> assignedAthletes = trainer.getAssignedAthletes();
-        if (trainersAssignedToAthlete.contains(trainer)) {
-            throw new JwtTokenInvalidException();
-        }
-
-        trainersAssignedToAthlete.add(trainer);
-        assignedAthletes.add(athlete);
-        athlete.setTrainersAssignedTo(trainersAssignedToAthlete);
-        trainer.setAssignedAthletes(assignedAthletes);
-        userEntityService.update(trainer);
-        userEntityService.update(athlete);
+    public AthleteDto truncateAthlete(Athlete athlete) {
+        return AthleteDto.builder()
+            .firstName(athlete.getFirstName())
+            .lastName(athlete.getLastName())
+            .gender(athlete.getGender())
+            .birthdate(athlete.getBirthdate())
+            .hasAccess(false)
+            .build();
     }
 
     public Athlete updateSwimmingCertificate(Long athleteId, SwimCertificateType certificate) throws AthleteNotFoundException {
@@ -170,4 +151,11 @@ public class AthleteService {
         return updated;
     }
 
+    public boolean checkExistence(long athleteId) {
+        try {
+            return userEntityService.findById(athleteId).orElseThrow().getType().equals(UserType.ATHLETE);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

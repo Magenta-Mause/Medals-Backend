@@ -9,7 +9,10 @@ import com.medals.medalsbackend.entity.users.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -49,4 +52,7 @@ public class AthleteDto {
 
     @Builder.Default
     private UserType type = UserType.ATHLETE;
+
+    @JsonProperty("has_access")
+    private boolean hasAccess = true;
 }

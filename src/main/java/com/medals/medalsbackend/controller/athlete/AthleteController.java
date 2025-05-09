@@ -6,19 +6,22 @@ import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.performancerecording.PerformanceRecording;
 import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.AthleteAccessRequest;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
+import com.medals.medalsbackend.exception.AthleteAccessRequestNotFoundException;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.security.jwt.JwtTokenBody;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.authorization.AuthorizationService;
-import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.authorization.ForbiddenException;
+import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.performancerecording.PerformanceRecordingService;
-import com.medals.medalsbackend.exception.JwtTokenInvalidException;
-import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.service.user.AccessRequestService;
 import com.medals.medalsbackend.service.user.AthleteService;
+import com.medals.medalsbackend.service.user.TrainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
@@ -46,6 +50,9 @@ public class AthleteController {
     private final ObjectMapper objectMapper;
     private final AuthorizationService authorizationService;
     private final PerformanceRecordingService performanceRecordingService;
+    private final AthleteAccessRequestRepository athleteAccessRequestRepository;
+    private final AccessRequestService accessRequestService;
+    private final TrainerService trainerService;
 
     @GetMapping
     public ResponseEntity<AthleteDto[]> getAthletes() throws NoAuthenticationFoundException, AthleteNotFoundException, ForbiddenException {
@@ -53,7 +60,11 @@ public class AthleteController {
         return ResponseEntity.ok((switch (selectedUser.getType()) {
             case UserType.ADMIN -> Arrays.stream(athleteService.getAthletes());
             case UserType.ATHLETE -> Stream.of(athleteService.getAthlete(selectedUser.getId()));
-            case UserType.TRAINER -> Arrays.stream(athleteService.getAthletesAssignedToTrainer(selectedUser.getId()));
+            case UserType.TRAINER -> Stream.concat(
+                Arrays.stream(athleteService.getAthletesAssignedToTrainer(selectedUser.getId())),
+                accessRequestService.getAthleteAccessRequestsOfTrainer(selectedUser.getId()).stream()
+                    .map(request -> accessRequestService.convertAthleteAccessRequest(request).athlete()
+                    ));
         }).map(athlete -> objectMapper.convertValue(athlete, AthleteDto.class)).toArray(AthleteDto[]::new));
     }
 
@@ -91,8 +102,8 @@ public class AthleteController {
 
     @GetMapping("/exists")
     public ResponseEntity<Boolean> checkAthleteExists(
-            @RequestParam String email,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) throws NoAuthenticationFoundException, ForbiddenException {
+        @RequestParam String email,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) throws NoAuthenticationFoundException, ForbiddenException {
         authorizationService.assertRoleIn(List.of(UserType.ADMIN, UserType.TRAINER));
         return ResponseEntity.ok(athleteService.existsByBirthdateAndEmail(email, birthdate));
     }
@@ -103,18 +114,36 @@ public class AthleteController {
         return ResponseEntity.ok(performanceRecordingService.getPerformanceRecordingsForAthlete(userId));
     }
 
-    @PostMapping("/approve-access")
-    public ResponseEntity<String> approveTrainerAccessRequest(@RequestParam String oneTimeCode) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        Integer athleteId = (Integer) jwtUtils.getTokenContentBody(oneTimeCode, JwtTokenBody.TokenType.REQUEST_TOKEN).get("athleteId");
-        authorizationService.assertUserHasOwnerAccess(athleteId.longValue());
-        athleteService.approveAccessRequest(oneTimeCode);
-        return ResponseEntity.ok("Accepted the Invite");
+    @GetMapping("/access-requests")
+    public ResponseEntity<Collection<AthleteAccessRequestDto>> getAccessRequests() throws ForbiddenException, NoAuthenticationFoundException {
+        long userId = authorizationService.getSelectedUser().getId();
+        return ResponseEntity.ok(accessRequestService.getAthleteAccessRequestsOfAthlete(userId).stream()
+            .map(accessRequestService::convertAthleteAccessRequest)
+            .filter(request -> !Objects.isNull(request))
+            .collect(java.util.stream.Collectors.toList()));
+    }
+
+
+    @PostMapping("/access-requests/{accessRequestId}")
+    public ResponseEntity<String> approveTrainerAccessRequest(@PathVariable String accessRequestId) throws AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException, AthleteAccessRequestNotFoundException {
+        AthleteAccessRequest accessRequest = accessRequestService.getAthleteAccessRequest(accessRequestId);
+        authorizationService.assertUserHasOwnerAccess(accessRequest.getAthleteId());
+        accessRequestService.approveAccessRequest(accessRequest);
+        return ResponseEntity.ok("Invite Approved");
+    }
+
+    @DeleteMapping("/access-requests/{accessRequestId}")
+    public ResponseEntity<String> rejectTrainerAccessRequest(@PathVariable String accessRequestId) throws ForbiddenException, NoAuthenticationFoundException, AthleteAccessRequestNotFoundException {
+        AthleteAccessRequest accessRequest = accessRequestService.getAthleteAccessRequest(accessRequestId);
+        authorizationService.assertUserHasOwnerAccess(accessRequest.getAthleteId());
+        accessRequestService.revokeAccessRequest(accessRequest.getId());
+        return ResponseEntity.ok("Invite Rejected");
     }
 
     @PostMapping("/{athleteId}/swimming-certificate")
     public ResponseEntity<AthleteDto> addSwimmingCertificate(
-            @PathVariable Long athleteId,
-            @RequestBody SwimCertificateType certificate
+        @PathVariable Long athleteId,
+        @RequestBody SwimCertificateType certificate
     ) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertUserHasAccess(athleteId);
         Athlete updatedAthlete = athleteService.updateSwimmingCertificate(athleteId, certificate);
@@ -123,7 +152,7 @@ public class AthleteController {
 
     @DeleteMapping("/{athleteId}/swimming-certificate")
     public ResponseEntity<AthleteDto> removeSwimmingCertificate(
-            @PathVariable Long athleteId
+        @PathVariable Long athleteId
     ) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
         authorizationService.assertUserHasAccess(athleteId);
         Athlete updatedAthlete = athleteService.updateSwimmingCertificate(athleteId, null);

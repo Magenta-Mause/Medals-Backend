@@ -1,7 +1,6 @@
 package com.medals.medalsbackend.service.websockets;
 
 import com.medals.medalsbackend.dto.AthleteDto;
-import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.service.user.TrainerService;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,7 @@ public class AthleteWebsocketMessageService {
         }
     }
 
-    public void sendAthleteAssign(Athlete athlete, Trainer trainer) {
-        messagingTemplate.convertAndSend("/topics/athlete/creation/" + trainer.getId(), athlete);
+    public void sendAthleteAssign(AthleteDto athlete, long trainerId) {
+        messagingTemplate.convertAndSend("/topics/athlete/creation/" + trainerId, athlete);
     }
 }
