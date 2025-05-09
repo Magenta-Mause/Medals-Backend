@@ -1,5 +1,6 @@
 package com.medals.medalsbackend.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -25,11 +26,12 @@ public class Config {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .registerModule(new ParameterNamesModule())
-                .registerModule(new Jdk8Module())
-                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-                .setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+            .registerModule(new JavaTimeModule())
+            .registerModule(new ParameterNamesModule())
+            .registerModule(new Jdk8Module())
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
     }
 
     @Bean

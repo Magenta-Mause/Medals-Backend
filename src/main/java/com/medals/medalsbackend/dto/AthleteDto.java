@@ -54,5 +54,6 @@ public class AthleteDto {
     private UserType type = UserType.ATHLETE;
 
     @JsonProperty("has_access")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private boolean hasAccess = true;
 }
