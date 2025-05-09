@@ -170,4 +170,17 @@ public class AthleteService {
         return updated;
     }
 
+    public void removeConnection(Long trainerId, Long athleteId) throws Exception {
+        Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
+        Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
+
+        log.info("removing connection between athlete: {} and trainer: {}", athlete, trainer);
+        athlete.getTrainersAssignedTo().removeIf(assignedTrainer -> assignedTrainer.equals(trainer));
+        trainer.getAssignedAthletes().removeIf(assignedAthlete -> assignedAthlete.equals(athlete));
+
+        userEntityService.update(athlete);
+        userEntityService.update(trainer);
+
+        athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteId, trainerId);
+    }
 }

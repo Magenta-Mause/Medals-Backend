@@ -1,7 +1,9 @@
 package com.medals.medalsbackend.service.user;
 
 import com.medals.medalsbackend.entity.users.*;
+import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.user.login.EmailAlreadyExistsException;
