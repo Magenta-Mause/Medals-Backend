@@ -62,7 +62,7 @@ public class TrainerServiceTest {
     Long trainerId = trainerBeforeChange.getId();
     Assertions.assertThat(trainerBeforeChange.getFirstName()).isEqualTo("John");
     trainerDto.setFirstName("Jane");
-    trainerService.updateTrainer(trainerId, trainerDto);
+    trainerService.updateTrainer(trainerId, trainerDto.getFirstName(), trainerDto.getLastName());
     Trainer trainerAfterChange = trainerService.getTrainer(trainerId);
     Assertions.assertThat(trainerAfterChange.getFirstName()).isEqualTo("Jane");
   }
