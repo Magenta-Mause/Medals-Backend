@@ -31,8 +31,9 @@ public class AthleteAccessRequestWebsocketMessageService {
         athleteWebsocketMessageService.sendAthleteAssign(objectMapper.convertValue(athlete, AthleteDto.class), trainer.getId());
     }
 
+    @SneakyThrows
     public void sendAccessRequestRejection(AthleteAccessRequest athleteAccessRequest) {
-        messagingTemplate.convertAndSend("/topics/athlete-access-request/deletion/" + athleteAccessRequest.trainerId, athleteAccessRequest.getId());
-        messagingTemplate.convertAndSend("/topics/athlete-access-request/deletion/" + athleteAccessRequest.athleteId, athleteAccessRequest.getId());
+        messagingTemplate.convertAndSend("/topics/athlete-access-request/deletion/" + athleteAccessRequest.trainerId, objectMapper.writeValueAsString(athleteAccessRequest.getId()));
+        messagingTemplate.convertAndSend("/topics/athlete-access-request/deletion/" + athleteAccessRequest.athleteId, objectMapper.writeValueAsString(athleteAccessRequest.getId()));
     }
 }

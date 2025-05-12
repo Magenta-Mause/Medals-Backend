@@ -107,6 +107,7 @@ public class AccessRequestService {
     public void revokeAccessRequest(String athleteAccessRequestId) throws AthleteAccessRequestNotFoundException {
         AthleteAccessRequest athleteAccessRequest = getAthleteAccessRequest(athleteAccessRequestId);
         athleteAccessRequestRepository.deleteById(athleteAccessRequestId);
+        athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteAccessRequest.getAthleteId(), athleteAccessRequest.getTrainerId());
         athleteAccessRequestWebsocketMessageService.sendAccessRequestRejection(athleteAccessRequest);
     }
 
