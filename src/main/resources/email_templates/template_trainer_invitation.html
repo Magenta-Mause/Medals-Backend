@@ -29,7 +29,7 @@
                 <tr>
                     <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555; line-height: 1.5; text-align: left;">
                         <p>Hello,</p>
-                        <p>You have been invited by the Medals administration team to join as a trainer. Click the button below to accept the invitation and set up your trainer account.</p>
+                        <p>You have been invited by <span th:text="${invitingAdminName}" style="font-weight: bold"></span> to join as a trainer. Click the button below to accept the invitation and set up your trainer account.</p>
                         <p><a th:href="${otcLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Accept Invitation</a></p>
                         <p>If the button does not work, use this link:<br>
                             <a th:href="${otcLink}" th:text="${otcLink}" style="color: #007bff; text-decoration: none;"></a>
@@ -48,7 +48,7 @@
                 <tr>
                     <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555; line-height: 1.5; text-align: left;">
                         <p>Hallo,</p>
-                        <p>Du wurdest vom Medals-Administrationsteam eingeladen, als Trainer beizutreten. Klicke auf die Schaltfläche unten, um die Einladung anzunehmen und dein Trainerkonto einzurichten.</p>
+                        <p>Du wurdest von <span th:text="${invitingAdminName}" style="font-weight: bold"></span> eingeladen, als Trainer beizutreten. Klicke auf die Schaltfläche unten, um die Einladung anzunehmen und dein Trainerkonto einzurichten.</p>
                         <p><a th:href="${otcLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Einladung annehmen</a></p>
                         <p>Falls die Schaltfläche nicht funktioniert, verwende bitte diesen Link:<br>
                             <a th:href="${otcLink}" th:text="${otcLink}" style="color: #007bff; text-decoration: none;"></a>

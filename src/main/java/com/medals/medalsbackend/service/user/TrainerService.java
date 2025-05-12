@@ -65,17 +65,25 @@ public class TrainerService {
         initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Trainer));
     }
 
+    public Trainer createTrainer(Trainer trainer, String adminName) throws InternalException {
+        userEntityService.save(trainer.getEmail(), trainer, adminName);
+        return trainer;
+    }
+
     public Trainer createTrainer(Trainer trainer) throws InternalException {
-        userEntityService.save(trainer.getEmail(), trainer);
+        return createTrainer(trainer, "SYSTEM");
+    }
+
+    public UserEntity insertTrainer(TrainerDto trainerDto, String adminName) throws InternalException {
+        trainerDto.setId(null);
+        Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED, adminName);
+        log.info("Inserting Trainer: {} (Inviting admin: {})", trainer, adminName);
+        trainerWebsocketMessageService.sendTrainerCreate(objectMapper.convertValue(trainer, TrainerDto.class));
         return trainer;
     }
 
     public UserEntity insertTrainer(TrainerDto trainerDto) throws InternalException {
-        trainerDto.setId(null);
-        Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED);
-        log.info("Inserting Trainer: {}", trainer);
-        trainerWebsocketMessageService.sendTrainerCreate(trainer);
-        return trainer;
+        return insertTrainer(trainerDto, "SYSTEM");
     }
 
     public List<Trainer> getAllTrainers() {

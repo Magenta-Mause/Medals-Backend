@@ -7,12 +7,14 @@ import com.medals.medalsbackend.dto.TrainerUpdateDto;
 import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
+import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.service.authorization.AuthorizationService;
 import com.medals.medalsbackend.service.authorization.ForbiddenException;
 import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
+import com.medals.medalsbackend.service.user.AthleteService;
 import com.medals.medalsbackend.service.user.TrainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 @RequiredArgsConstructor
 public class TrainerController {
 	private final TrainerService trainerService;
+	private final AthleteService athleteService;
 	private final ObjectMapper objectMapper;
 	private final AuthorizationService authorizationService;
 
@@ -48,7 +51,9 @@ public class TrainerController {
 	@PostMapping
 	public ResponseEntity<TrainerDto> postTrainer(@Valid @RequestBody TrainerDto trainerDto) throws InternalException, ForbiddenException, NoAuthenticationFoundException {
 		authorizationService.assertRoleIn(List.of(UserType.ADMIN));
-		return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(trainerService.insertTrainer(trainerDto), TrainerDto.class));
+		UserEntity admin = authorizationService.getSelectedUser();
+		String adminName = String.join(" ", admin.getFirstName(), admin.getLastName());
+		return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(trainerService.insertTrainer(trainerDto, adminName), TrainerDto.class));
 	}
 
 	@PostMapping(value = "/validate")
@@ -90,6 +95,13 @@ public class TrainerController {
 		List<PrunedAthleteDto> prunedAthletes = athletes.stream()
 				.map(athlete -> objectMapper.convertValue(athlete, PrunedAthleteDto.class))
 				.toList();
-		return ResponseEntity.ok(prunedAthletes);
+        return ResponseEntity.ok(prunedAthletes);
+    }
+
+	@DeleteMapping(value = "/trainer-athlete-connection")
+	public ResponseEntity<Void> removeTrainerAthleteConnection(@RequestParam Long trainerId, @RequestParam Long athleteId) throws Exception {
+		authorizationService.assertUserHasOwnerAccess(trainerId);
+		athleteService.removeConnection(trainerId, athleteId);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
 	}
 }

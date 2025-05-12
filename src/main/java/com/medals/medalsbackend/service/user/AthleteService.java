@@ -64,7 +64,7 @@ public class AthleteService {
         log.info("Inserting {} dummy athletes", DummyData.ATHLETES.size());
         DummyData.ATHLETES.forEach(athlete -> {
             try {
-                userEntityService.save(athlete.getEmail(), athlete);
+                userEntityService.save(athlete.getEmail(), athlete, "SYSTEM");
             } catch (InternalException e) {
                 throw new RuntimeException(e);
             }
@@ -72,12 +72,26 @@ public class AthleteService {
         initializedEntityRepository.save(new InitializedEntity(InitializedEntityType.Athlete));
     }
 
-    public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {
+    public UserEntity insertAthlete(AthleteDto athleteDto, String trainerName) throws InternalException {
         athleteDto.setId(null);
-        Athlete athlete = (Athlete) userEntityService.save(athleteDto.getEmail(), objectMapper.convertValue(athleteDto, Athlete.class));
-        log.info("Inserting Athlete: {}", athlete);
+
+        if (existsByBirthdateAndEmail(athleteDto.getEmail(), athleteDto.getBirthdate())) {
+            throw new InternalException("An athlete with the same email and birthdate already exists.");
+        }
+
+        Athlete athlete = (Athlete) userEntityService.save(
+                athleteDto.getEmail(),
+                objectMapper.convertValue(athleteDto, Athlete.class),
+                trainerName
+        );
+
+        log.info("Inserting Athlete: {} (Invited by: {})", athlete, trainerName);
         athleteWebsocketMessageService.sendAthleteCreation(objectMapper.convertValue(athlete, AthleteDto.class));
         return athlete;
+    }
+
+    public UserEntity insertAthlete(AthleteDto athleteDto) throws InternalException {
+        return insertAthlete(athleteDto, "SYSTEM");
     }
 
     public Athlete[] getAthletes() {
@@ -156,4 +170,17 @@ public class AthleteService {
         return updated;
     }
 
+    public void removeConnection(Long trainerId, Long athleteId) throws Exception {
+        Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
+        Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
+
+        log.info("removing connection between athlete: {} and trainer: {}", athlete, trainer);
+        athlete.getTrainersAssignedTo().removeIf(assignedTrainer -> assignedTrainer.equals(trainer));
+        trainer.getAssignedAthletes().removeIf(assignedAthlete -> assignedAthlete.equals(athlete));
+
+        userEntityService.update(athlete);
+        userEntityService.update(trainer);
+
+        athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteId, trainerId);
+    }
 }

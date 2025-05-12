@@ -60,7 +60,7 @@ public class AdminService {
 
     public Admin createAdmin(Admin admin) throws InternalException {
         admin.setId(null);
-        Admin createdAdmin = (Admin) userEntityService.save(admin.getEmail(), admin);
+        Admin createdAdmin = (Admin) userEntityService.save(admin.getEmail(), admin, "SYSTEM");
         adminWebsocketMessageService.sendAdminCreate(createdAdmin);
         return createdAdmin;
     }
