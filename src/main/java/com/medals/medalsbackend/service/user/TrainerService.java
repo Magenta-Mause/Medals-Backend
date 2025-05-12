@@ -78,7 +78,7 @@ public class TrainerService {
         trainerDto.setId(null);
         Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED, adminName);
         log.info("Inserting Trainer: {} (Inviting admin: {})", trainer, adminName);
-        trainerWebsocketMessageService.sendTrainerCreate(objectMapper.convertValue(trainer, TrainerDto.class));
+        trainerWebsocketMessageService.sendTrainerCreate(objectMapper.convertValue(trainer, Trainer.class));
         return trainer;
     }
 
