@@ -7,6 +7,7 @@ import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.AthleteAccessRequest;
 import com.medals.medalsbackend.entity.users.Trainer;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,15 @@ public class AthleteAccessRequestWebsocketMessageService {
     private final ObjectMapper objectMapper;
 
     public void sendAccessRequestCreation(AthleteAccessRequestDto athleteAccessRequest) {
-        messagingTemplate.convertAndSend("/topics/athlete-access-request/creation", athleteAccessRequest);
+        messagingTemplate.convertAndSend("/topics/athlete-access-request/creation/" + athleteAccessRequest.athlete().getId(), athleteAccessRequest);
+        messagingTemplate.convertAndSend("/topics/athlete-access-request/creation/" + athleteAccessRequest.trainer().getId(), athleteAccessRequest);
         athleteWebsocketMessageService.sendAthleteAssign(athleteAccessRequest.athlete(), athleteAccessRequest.trainer().getId());
     }
 
+    @SneakyThrows
     public void sendAccessRequestAcceptance(Athlete athlete, Trainer trainer, String athleteAccessRequestId) {
-        messagingTemplate.convertAndSend("/topics/athlete-access-request/deletion/" + athlete.getId(), athleteAccessRequestId);
-        messagingTemplate.convertAndSend("/topics/athlete-access-request/deletion/" + trainer.getId(), athleteAccessRequestId);
+        messagingTemplate.convertAndSend("/topics/athlete-access-request/deletion/" + athlete.getId(), objectMapper.writeValueAsString(athleteAccessRequestId));
+        messagingTemplate.convertAndSend("/topics/athlete-access-request/deletion/" + trainer.getId(), objectMapper.writeValueAsString(athleteAccessRequestId));
         athleteWebsocketMessageService.sendAthleteAssign(objectMapper.convertValue(athlete, AthleteDto.class), trainer.getId());
     }
 

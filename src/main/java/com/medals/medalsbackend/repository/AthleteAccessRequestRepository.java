@@ -9,4 +9,6 @@ public interface AthleteAccessRequestRepository extends JpaRepository<AthleteAcc
     Collection<AthleteAccessRequest> findAllByAthleteId(long athleteId);
 
     Collection<AthleteAccessRequest> findAllByTrainerId(long trainerId);
+
+    boolean existsByAthleteIdAndTrainerId(long athleteId, long trainerId);
 }

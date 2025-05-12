@@ -20,6 +20,7 @@ import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
 import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
+import com.medals.medalsbackend.service.websockets.ManagingTrainerWebsocketService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,7 @@ public class AthleteService {
     private final TrainerService trainerService;
     private final PerformanceRecordingRepository performanceRecordingRepository;
     private final AthleteAccessRequestRepository athleteAccessRequestRepository;
+    private final ManagingTrainerWebsocketService managingTrainerWebsocketService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -174,5 +176,6 @@ public class AthleteService {
         userEntityService.update(trainer);
 
         athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteId, trainerId);
+        managingTrainerWebsocketService.sendManagingTrainerDeletion(athleteId, trainerId);
     }
 }

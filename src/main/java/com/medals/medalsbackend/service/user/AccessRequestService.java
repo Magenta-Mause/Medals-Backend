@@ -8,12 +8,14 @@ import com.medals.medalsbackend.entity.users.AthleteAccessRequest;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteAccessRequestNotFoundException;
+import com.medals.medalsbackend.exception.AthleteAlreadyRequestedException;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.websockets.AthleteAccessRequestWebsocketMessageService;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
+import com.medals.medalsbackend.service.websockets.ManagingTrainerWebsocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ public class AccessRequestService {
     private final NotificationService notificationService;
     private final ObjectMapper objectMapper;
     private final AthleteAccessRequestWebsocketMessageService athleteAccessRequestWebsocketMessageService;
+    private final ManagingTrainerWebsocketService managingTrainerWebsocketService;
 
     public AthleteAccessRequest getAthleteAccessRequest(String id) throws AthleteAccessRequestNotFoundException {
         return athleteAccessRequestRepository.findById(id).orElseThrow(() -> new AthleteAccessRequestNotFoundException(id));
@@ -66,6 +69,13 @@ public class AccessRequestService {
 
         Athlete requestedAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
         Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
+
+        if (
+            athleteAccessRequestRepository.existsByAthleteIdAndTrainerId(athleteId, trainerId)
+                || trainer.getAssignedAthletes().stream().anyMatch(athlete -> athlete.getId().equals(athleteId))
+        ) {
+            throw new AthleteAlreadyRequestedException();
+        }
 
         log.info("Sending request to manage athlete {} from trainer {}", requestedAthlete, trainer);
 
@@ -109,5 +119,6 @@ public class AccessRequestService {
         userEntityService.update(trainer);
         athleteAccessRequestRepository.deleteById(athleteAccessRequest.getId());
         athleteAccessRequestWebsocketMessageService.sendAccessRequestAcceptance(athlete, trainer, athleteAccessRequest.getId());
+        managingTrainerWebsocketService.sendManagingTrainerCreation(athlete.getId(), trainer);
     }
 }

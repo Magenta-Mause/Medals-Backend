@@ -2,13 +2,9 @@ package com.medals.medalsbackend.controller.athlete;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.AthleteDto;
-import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.performancerecording.PerformanceRecording;
 import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
-import com.medals.medalsbackend.entity.users.Athlete;
-import com.medals.medalsbackend.entity.users.AthleteAccessRequest;
-import com.medals.medalsbackend.entity.users.UserEntity;
-import com.medals.medalsbackend.entity.users.UserType;
+import com.medals.medalsbackend.entity.users.*;
 import com.medals.medalsbackend.exception.AthleteAccessRequestNotFoundException;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
@@ -94,18 +90,24 @@ public class AthleteController {
         return ResponseEntity.ok(objectMapper.convertValue(athleteService.getAthlete(athleteId), AthleteDto.class));
     }
 
-    @GetMapping(value = "/{athleteId}/medals")
-    public ResponseEntity<MedalCollection> getMedals(@PathVariable Long athleteId) throws AthleteNotFoundException, ForbiddenException, NoAuthenticationFoundException {
-        authorizationService.assertUserHasAccess(athleteId);
-        return ResponseEntity.ok(athleteService.getAthleteMedalCollection(athleteId));
-    }
-
     @GetMapping("/exists")
     public ResponseEntity<Boolean> checkAthleteExists(
         @RequestParam String email,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthdate) throws NoAuthenticationFoundException, ForbiddenException {
         authorizationService.assertRoleIn(List.of(UserType.ADMIN, UserType.TRAINER));
         return ResponseEntity.ok(athleteService.existsByBirthdateAndEmail(email, birthdate));
+    }
+
+    @GetMapping("/approved-trainers")
+    public ResponseEntity<List<Trainer>> getApprovedTrainers() throws AthleteNotFoundException, NoAuthenticationFoundException {
+        long athleteId = authorizationService.getSelectedUser().getId();
+        return ResponseEntity.ok(athleteService.getAthlete(athleteId).getTrainersAssignedTo());
+    }
+
+    @DeleteMapping("/approved-trainers/{trainerId}")
+    public ResponseEntity<Void> removeApprovedTrainer(@PathVariable Long trainerId) throws Exception {
+        athleteService.removeConnection(trainerId, authorizationService.getSelectedUser().getId());
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/performance-recordings/{userId}")
