@@ -83,6 +83,9 @@ public class SecurityConfiguration {
             .addVerifier("/topics/trainer/creation/{userId}", new IdBasedWebsocketVerifier("/topics/trainer/creation/{userId}"))
             .addVerifier("/topics/trainer/update/{userId}", new IdBasedWebsocketVerifier("/topics/trainer/update/{userId}"))
             .addVerifier("/topics/trainer/deletion/{userId}", new IdBasedWebsocketVerifier("/topics/trainer/deletion/{userId}"))
+            .addVerifier("/topics/admin/creation/admin", new RoleBasedWebsocketVerifier(UserType.ADMIN))
+            .addVerifier("/topics/admin/update/admin", new RoleBasedWebsocketVerifier(UserType.ADMIN))
+            .addVerifier("/topics/admin/deletion/admin", new RoleBasedWebsocketVerifier(UserType.ADMIN))
             .addVerifier("/topics/performance-recording/creation/{userId}", new IdBasedWebsocketVerifier("/topics/performance-recording/creation/{userId}"))
             .addVerifier("/topics/performance-recording/update/{userId}", new IdBasedWebsocketVerifier("/topics/performance-recording/update/{userId}"))
             .addVerifier("/topics/performance-recording/deletion/{userId}", new IdBasedWebsocketVerifier("/topics/performance-recording/deletion/{userId}"));
