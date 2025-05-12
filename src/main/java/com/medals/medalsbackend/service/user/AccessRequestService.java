@@ -3,7 +3,6 @@ package com.medals.medalsbackend.service.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.controller.athlete.AthleteAccessRequestDto;
 import com.medals.medalsbackend.dto.TrainerDto;
-import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.AthleteAccessRequest;
 import com.medals.medalsbackend.entity.users.Trainer;
@@ -61,10 +60,7 @@ public class AccessRequestService {
         }
     }
 
-    public void initiateAthleteAccessRequest(TrainerAccessRequestDto trainerAccessRequestDto) throws Exception {
-        Long athleteId = trainerAccessRequestDto.getAthleteId();
-        Long trainerId = trainerAccessRequestDto.getTrainerId();
-
+    public void initiateAthleteAccessRequest(long athleteId, long trainerId) throws Exception {
         userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
         userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
 

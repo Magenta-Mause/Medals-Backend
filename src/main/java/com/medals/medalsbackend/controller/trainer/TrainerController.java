@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.controller.athlete.AthleteAccessRequestDto;
 import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
-import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
@@ -76,14 +75,16 @@ public class TrainerController {
         return ResponseEntity.ok(objectMapper.convertValue(trainerService.getTrainer(trainerId), TrainerDto.class));
     }
 
-    @PostMapping("/access-request")
-    public ResponseEntity<Void> requestAthleteAccess(@RequestBody TrainerAccessRequestDto trainerAccessRequestDto) throws Exception {
-        accessRequestService.initiateAthleteAccessRequest(trainerAccessRequestDto);
+    @PostMapping("/access-request/{userId}")
+    public ResponseEntity<Void> requestAthleteAccess(@PathVariable long userId) throws Exception {
+        authorizationService.assertRoleIn(List.of(UserType.TRAINER));
+        accessRequestService.initiateAthleteAccessRequest(userId, authorizationService.getSelectedUser().getId());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/access-requests")
     public ResponseEntity<Collection<AthleteAccessRequestDto>> getAccessRequests() throws ForbiddenException, NoAuthenticationFoundException {
+        authorizationService.assertRoleIn(List.of(UserType.TRAINER));
         long userId = authorizationService.getSelectedUser().getId();
         return ResponseEntity.ok(accessRequestService.getAthleteAccessRequestsOfTrainer(userId).stream()
             .map(accessRequestService::convertAthleteAccessRequest)

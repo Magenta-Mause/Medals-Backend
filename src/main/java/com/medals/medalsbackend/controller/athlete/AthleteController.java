@@ -123,6 +123,15 @@ public class AthleteController {
             .collect(java.util.stream.Collectors.toList()));
     }
 
+    @GetMapping("/access-requests/{accessRequestId}")
+    public ResponseEntity<AthleteAccessRequestDto> getAccessRequest(@PathVariable String accessRequestId) throws AthleteAccessRequestNotFoundException, ForbiddenException, NoAuthenticationFoundException, AthleteNotFoundException {
+        AthleteAccessRequest accessRequest = accessRequestService.getAthleteAccessRequest(accessRequestId);
+        if (!Objects.equals(athleteService.getAthlete(accessRequest.getAthleteId()).getEmail(), authorizationService.getSelectedUser().getEmail())) {
+            throw new AthleteAccessRequestNotFoundException("Access Request not found");
+        }
+        return ResponseEntity.ok(accessRequestService.convertAthleteAccessRequest(accessRequest));
+    }
+
 
     @PostMapping("/access-requests/{accessRequestId}")
     public ResponseEntity<String> approveTrainerAccessRequest(@PathVariable String accessRequestId) throws AthleteNotFoundException, TrainerNotFoundException, ForbiddenException, NoAuthenticationFoundException, AthleteAccessRequestNotFoundException {

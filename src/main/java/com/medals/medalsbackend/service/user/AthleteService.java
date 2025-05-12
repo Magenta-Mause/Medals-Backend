@@ -135,6 +135,7 @@ public class AthleteService {
 
     public AthleteDto truncateAthlete(Athlete athlete) {
         return AthleteDto.builder()
+            .id(athlete.getId())
             .firstName(athlete.getFirstName())
             .lastName(athlete.getLastName())
             .gender(athlete.getGender())
