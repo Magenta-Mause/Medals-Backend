@@ -8,10 +8,12 @@ import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
+import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
@@ -158,5 +160,19 @@ public class AthleteService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public void removeConnection(Long trainerId, Long athleteId) throws Exception {
+        Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
+        Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
+
+        log.info("removing connection between athlete: {} and trainer: {}", athlete, trainer);
+        athlete.getTrainersAssignedTo().removeIf(assignedTrainer -> assignedTrainer.equals(trainer));
+        trainer.getAssignedAthletes().removeIf(assignedAthlete -> assignedAthlete.equals(athlete));
+
+        userEntityService.update(athlete);
+        userEntityService.update(trainer);
+
+        athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteId, trainerId);
     }
 }

@@ -41,4 +41,8 @@ public class AthleteWebsocketMessageService {
     public void sendAthleteAssign(AthleteDto athlete, long trainerId) {
         messagingTemplate.convertAndSend("/topics/athlete/creation/" + trainerId, athlete);
     }
+
+    public void sendAthleteRemoveConnection(Long athleteId, Long trainerId) {
+        messagingTemplate.convertAndSend("/topics/athlete/deletion/" + trainerId, athleteId);
+    }
 }

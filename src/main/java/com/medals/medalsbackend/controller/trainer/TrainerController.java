@@ -13,6 +13,9 @@ import com.medals.medalsbackend.service.authorization.AuthorizationService;
 import com.medals.medalsbackend.service.authorization.ForbiddenException;
 import com.medals.medalsbackend.service.authorization.NoAuthenticationFoundException;
 import com.medals.medalsbackend.service.user.AccessRequestService;
+import com.medals.medalsbackend.service.user.AthleteService;
+import com.medals.medalsbackend.service.user.AccessRequestService;
+import com.medals.medalsbackend.service.user.AthleteService;
 import com.medals.medalsbackend.service.user.TrainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +33,10 @@ import static com.medals.medalsbackend.controller.BaseController.BASE_PATH;
 @RequestMapping(BASE_PATH + "/trainers")
 @RequiredArgsConstructor
 public class TrainerController {
-    private final TrainerService trainerService;
-    private final ObjectMapper objectMapper;
-    private final AuthorizationService authorizationService;
+	private final TrainerService trainerService;
+	private final AthleteService athleteService;
+	private final ObjectMapper objectMapper;
+	private final AuthorizationService authorizationService;
     private final AccessRequestService accessRequestService;
 
     @GetMapping
@@ -101,4 +105,11 @@ public class TrainerController {
             .toList();
         return ResponseEntity.ok(prunedAthletes);
     }
+
+	@DeleteMapping(value = "/trainer-athlete-connection")
+	public ResponseEntity<Void> removeTrainerAthleteConnection(@RequestParam Long trainerId, @RequestParam Long athleteId) throws Exception {
+		authorizationService.assertUserHasOwnerAccess(trainerId);
+		athleteService.removeConnection(trainerId, athleteId);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+	}
 }
