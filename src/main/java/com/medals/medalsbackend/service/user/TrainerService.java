@@ -71,7 +71,7 @@ public class TrainerService {
     }
 
     public Trainer createTrainer(Trainer trainer) throws InternalException {
-        return createTrainer(trainer, "SYSTEM");
+        return createTrainer(trainer, "the Medals Team");
     }
 
     public UserEntity insertTrainer(TrainerDto trainerDto, String adminName) throws InternalException {

@@ -3,6 +3,7 @@ package com.medals.medalsbackend.service.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
 import com.medals.medalsbackend.dto.AthleteDto;
+import com.medals.medalsbackend.dto.AthleteUpdateDto;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntity;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.medals.MedalCollection;
@@ -124,12 +125,15 @@ public class AthleteService {
         userEntityService.deleteById(athleteId);
     }
 
-    public void updateAthlete(Long athleteId, AthleteDto athleteDto) throws Exception {
+    public Athlete updateAthleteNames(Long athleteId, String firstName, String lastName) throws Exception {
         log.info("Updating athlete with ID: {}", athleteId);
         userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
-        athleteDto.setId(athleteId);
-        Athlete savedAthlete = (Athlete) userEntityService.update(objectMapper.convertValue(athleteDto, Athlete.class));
-        athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(savedAthlete, AthleteDto.class));
+        Athlete athleteToUpdate = userEntityService.findAthleteById(athleteId).orElseThrow();
+        athleteToUpdate.setFirstName(firstName);
+        athleteToUpdate.setLastName(lastName);
+        userEntityService.update(athleteToUpdate);
+        athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(athleteToUpdate, AthleteDto.class));
+        return athleteToUpdate;
     }
 
     public MedalCollection getAthleteMedalCollection(Long athleteId) throws AthleteNotFoundException {
