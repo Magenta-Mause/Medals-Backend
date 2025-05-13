@@ -12,14 +12,14 @@ public class AdminWebsocketMessageService {
     private final SimpMessagingTemplate messagingTemplate;
 
     public void sendAdminDelete(Long adminId) {
-        messagingTemplate.convertAndSend("/topics/admin/deletion", adminId);
+        messagingTemplate.convertAndSend("/topics/admin/deletion/admin", adminId);
     }
 
     public void sendAdminUpdate(Admin admin) {
-        messagingTemplate.convertAndSend("/topics/admin/update", admin);
+        messagingTemplate.convertAndSend("/topics/admin/update/admin", admin);
     }
 
     public void sendAdminCreate(Admin admin) {
-        messagingTemplate.convertAndSend("/topics/admin/creation", admin);
+        messagingTemplate.convertAndSend("/topics/admin/creation/admin", admin);
     }
 }
