@@ -7,6 +7,7 @@ import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.performancerecording.PerformanceRecording;
 import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
@@ -136,5 +137,12 @@ public class AthleteController {
         authorizationService.assertUserHasAccess(athleteId);
         Athlete updatedAthlete = athleteService.updateSwimmingCertificate(athleteId, null);
         return ResponseEntity.ok(objectMapper.convertValue(updatedAthlete, AthleteDto.class));
+    }
+
+    @GetMapping(value = "/{athleteId}/assigned-trainers")
+    public ResponseEntity<List<Trainer>> getTrainerAssignedToAthlete(@PathVariable Long athleteId) throws Exception{
+        authorizationService.assertUserHasAccess(athleteId);
+        return ResponseEntity.ok(athleteService.getTrainerAssignedToAthlete(athleteId));
+
     }
 }

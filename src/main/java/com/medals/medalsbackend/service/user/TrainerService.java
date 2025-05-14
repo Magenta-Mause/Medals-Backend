@@ -76,9 +76,15 @@ public class TrainerService {
 
     public UserEntity insertTrainer(TrainerDto trainerDto, String adminName) throws InternalException {
         trainerDto.setId(null);
+        boolean isFirstRole = userEntityService.getAllByEmail(trainerDto.getEmail()).isEmpty();
+
         Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED, adminName);
         log.info("Inserting Trainer: {} (Inviting admin: {})", trainer, adminName);
         trainerWebsocketMessageService.sendTrainerCreate(objectMapper.convertValue(trainer, Trainer.class));
+
+        if (!isFirstRole)
+            notificationService.sendRoleAddedNotification(trainer.getEmail(), adminName, "administrator", "Trainer");
+
         return trainer;
     }
 
