@@ -11,5 +11,5 @@ public class MailTemplateConfiguration {
     private String trainerRequestAthleteAccessNotification;
     private String resetPasswordNotification;
     private String resetPasswordConfirmationNotification;
-    private String accountAddedNotification;
+    private String roleAddedNotification;
 }
