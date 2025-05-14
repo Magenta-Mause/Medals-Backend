@@ -20,6 +20,7 @@ import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
 import com.medals.medalsbackend.repository.UserEntityRepository;
 import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
+import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class AthleteService {
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
+    private final NotificationService notificationService;
 
     @EventListener(ApplicationReadyEvent.class)
     @Profile("!test")
@@ -74,6 +76,7 @@ public class AthleteService {
 
     public UserEntity insertAthlete(AthleteDto athleteDto, String trainerName) throws InternalException {
         athleteDto.setId(null);
+        boolean isFirstRole = userEntityService.getAllByEmail(athleteDto.getEmail()).isEmpty();
 
         if (existsByBirthdateAndEmail(athleteDto.getEmail(), athleteDto.getBirthdate())) {
             throw new InternalException("An athlete with the same email and birthdate already exists.");
@@ -87,6 +90,10 @@ public class AthleteService {
 
         log.info("Inserting Athlete: {} (Invited by: {})", athlete, trainerName);
         athleteWebsocketMessageService.sendAthleteCreation(objectMapper.convertValue(athlete, AthleteDto.class));
+
+        if (!isFirstRole)
+            notificationService.sendRoleAddedNotification(athlete.getEmail(), trainerName, "trainer", "Athlete");
+
         return athlete;
     }
 
