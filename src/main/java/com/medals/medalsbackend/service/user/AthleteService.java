@@ -129,10 +129,12 @@ public class AthleteService {
         log.info("Updating athlete with ID: {}", athleteId);
         userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
         Athlete athleteToUpdate = userEntityService.findAthleteById(athleteId).orElseThrow();
+
         athleteToUpdate.setFirstName(firstName);
         athleteToUpdate.setLastName(lastName);
         userEntityService.update(athleteToUpdate);
         athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(athleteToUpdate, AthleteDto.class));
+
         return athleteToUpdate;
     }
 
