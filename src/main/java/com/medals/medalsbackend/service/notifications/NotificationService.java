@@ -46,4 +46,9 @@ public class NotificationService {
         String text = templateService.generateRequestAthleteAccessNotification(link, trainer);
         mailService.sendEmail(email, "Medals - Trainer requested access", text);
     }
+
+    public void sendRoleAddedNotification(String email, String creatorName, String creatorRole, String targetRole) {
+        String text = templateService.generateRoleAddedNotification(creatorRole, creatorName, targetRole);
+        mailService.sendEmail(email, "Medals - Role Added", text);
+    }
 }
