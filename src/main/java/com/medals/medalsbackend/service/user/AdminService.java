@@ -7,6 +7,7 @@ import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AdminNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
+import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.websockets.AdminWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -29,6 +30,7 @@ public class AdminService {
     private final AdminCreationConfiguration adminCreationConfiguration;
     private final InitializedEntityRepository initializedEntityRepository;
     private final AdminWebsocketMessageService adminWebsocketMessageService;
+    private final NotificationService notificationService;
 
     @SneakyThrows
     @Profile("!test")
@@ -58,7 +60,13 @@ public class AdminService {
 
     public Admin createAdmin(Admin admin) throws InternalException {
         admin.setId(null);
-        return (Admin) userEntityService.save(admin.getEmail(), admin, "SYSTEM");
+        boolean isFirstRole = userEntityService.getAllByEmail(admin.getEmail()).isEmpty();
+        Admin createdAdmin = (Admin) userEntityService.save(admin.getEmail(), admin, "SYSTEM");
+
+        if (!isFirstRole)
+            notificationService.sendRoleAddedNotification(admin.getEmail(), "system", "", "Admin");
+
+        return createdAdmin;
     }
 
     public void deleteAdmin(Long adminId) throws Exception {
