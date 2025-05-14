@@ -34,6 +34,7 @@ app:
       reset-password-notification: "template_reset_password"
       reset-password-confirmation-notification: "template_reset_password_confirmation"
       trainer-request-athlete-access-notification: "template_trainer_request_athlete_access"
+      account-added-notification: "template_account_added"
   notification:
     front-end-base-url: "http://localhost:5173"
   otc:
