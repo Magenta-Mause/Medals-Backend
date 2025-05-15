@@ -2,8 +2,6 @@ package com.medals.medalsbackend.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.medals.medalsbackend.entity.users.Athlete;
-import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -12,8 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @Builder

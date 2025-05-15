@@ -7,5 +7,4 @@ import lombok.Data;
 @Builder
 public class TrainerAccessRequestDto {
     private Long athleteId;
-    private Long trainerId;
 }

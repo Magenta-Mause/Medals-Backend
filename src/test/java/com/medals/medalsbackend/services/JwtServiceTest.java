@@ -80,7 +80,6 @@ public class JwtServiceTest {
     public void testBuildInviteToken() {
         TrainerAccessRequestDto trainerAccessRequestDto = TrainerAccessRequestDto.builder()
                 .athleteId((long) 2)
-                .trainerId((long) 1)
                 .build();
 
         String dummyToken = "dummyToken";
@@ -93,7 +92,6 @@ public class JwtServiceTest {
 
         assertEquals("test@gmail.com", capturedTokenBody.get("email"));
         assertEquals("Joe", capturedTokenBody.get("trainerName"));
-        assertEquals(trainerAccessRequestDto.getTrainerId(), capturedTokenBody.get("trainerId"));
         assertEquals(trainerAccessRequestDto.getAthleteId(), capturedTokenBody.get("athleteId"));
         assertEquals(JwtTokenBody.TokenType.REQUEST_TOKEN, capturedTokenBody.get("tokenType"));
     }

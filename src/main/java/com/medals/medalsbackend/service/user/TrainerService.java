@@ -3,20 +3,20 @@ package com.medals.medalsbackend.service.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.DummyData;
 import com.medals.medalsbackend.dto.TrainerDto;
-import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntity;
 import com.medals.medalsbackend.entity.initializedentity.InitializedEntityType;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
-import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
-import com.medals.medalsbackend.service.user.login.jwt.JwtService;
+import com.medals.medalsbackend.service.websockets.AthleteAccessRequestWebsocketMessageService;
+import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import com.medals.medalsbackend.service.websockets.TrainerWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +33,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainerService {
 
-    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
     private final UserEntityService userEntityService;
     private final TrainerWebsocketMessageService trainerWebsocketMessageService;
+    private final AthleteAccessRequestRepository athleteAccessRequestRepository;
+    private final AthleteAccessRequestWebsocketMessageService athleteAccessRequestWebsocketMessageService;
+    private final AthleteWebsocketMessageService athleteWebsocketMessageService;
+    private final AthleteService athleteService;
     private final NotificationService notificationService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
@@ -102,6 +105,14 @@ public class TrainerService {
     public void deleteTrainer(Long trainerId) throws Throwable {
         log.info("Executing delete trainer by id {}", trainerId);
         userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
+        athleteAccessRequestRepository.findAllByTrainerId(trainerId).forEach(accessRequest -> {
+            athleteAccessRequestRepository.deleteById(accessRequest.getId());
+            athleteAccessRequestWebsocketMessageService.sendAccessRequestRejection(accessRequest);
+            athleteWebsocketMessageService.sendAthleteRemoveConnection(accessRequest.getAthleteId(), accessRequest.getTrainerId());
+        });
+        for (Athlete athlete : userEntityService.getAthletesAssignedToTrainer(trainerId)) {
+            athleteService.removeConnection(trainerId, athlete.getId());
+        }
         userEntityService.deleteById(trainerId);
         trainerWebsocketMessageService.sendTrainerDelete(trainerId);
     }
@@ -124,24 +135,15 @@ public class TrainerService {
         trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
     }
 
-    public void requestAthleteAccess(TrainerAccessRequestDto trainerAccessRequestDto) throws Exception {
-        Long athleteId = trainerAccessRequestDto.getAthleteId();
-        Long trainerId = trainerAccessRequestDto.getTrainerId();
-
-        userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
-        userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
-
-        Athlete requestedAthlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
-        Trainer trainer = (Trainer) userEntityService.findById(trainerId).orElseThrow(() -> TrainerNotFoundException.fromTrainerId(trainerId));
-
-        log.info("Sending request to manage athlete {} from trainer {}", requestedAthlete, trainer);
-
-        String trainerName = trainer.getFirstName() + " " + trainer.getLastName();
-        String token = jwtService.buildTrainerAccessRequestToken(requestedAthlete.getEmail(), trainerAccessRequestDto, trainerName);
-        notificationService.sendRequestAthleteNotification(requestedAthlete.getEmail(), token, trainerName);
-    }
-
     public List<Athlete> searchAthletes(String athleteSearch) {
         return userEntityService.getAthletes(athleteSearch);
+    }
+
+    public boolean checkExistence(long trainerId) {
+        try {
+            return userEntityService.findById(trainerId).orElseThrow().getType().equals(UserType.TRAINER);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

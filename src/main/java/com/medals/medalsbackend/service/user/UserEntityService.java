@@ -77,7 +77,8 @@ public class UserEntityService {
 
     public void deleteById(Long id) {
         UserEntity userEntity = userEntityRepository.findById(id).orElseThrow();
-        userEntityRepository.delete(userEntity);
+        userEntityRepository.deleteById(id);
+        log.info("Deleted user {}", userEntity);
         if (userEntityRepository.getAllByEmail(userEntity.getEmail()).isEmpty()) {
             loginEntryService.deleteEntry(userEntity.getEmail());
         }
