@@ -14,15 +14,16 @@ import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
 import com.medals.medalsbackend.exception.AthleteNotFoundException;
 import com.medals.medalsbackend.exception.InternalException;
-import com.medals.medalsbackend.exception.JwtTokenInvalidException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
+import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
 import com.medals.medalsbackend.repository.UserEntityRepository;
-import com.medals.medalsbackend.security.jwt.JwtTokenBody;
 import com.medals.medalsbackend.security.jwt.JwtUtils;
 import com.medals.medalsbackend.service.notifications.NotificationService;
+import com.medals.medalsbackend.service.websockets.AthleteAccessRequestWebsocketMessageService;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
+import com.medals.medalsbackend.service.websockets.ManagingTrainerWebsocketService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,21 +34,21 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AthleteService {
 
-    private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
     private final UserEntityRepository userEntityRepository;
-    private final TrainerService trainerService;
     private final PerformanceRecordingRepository performanceRecordingRepository;
+    private final AthleteAccessRequestRepository athleteAccessRequestRepository;
+    private final ManagingTrainerWebsocketService managingTrainerWebsocketService;
+    private final AthleteAccessRequestWebsocketMessageService athleteAccessRequestWebsocketMessageService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -84,9 +85,9 @@ public class AthleteService {
         }
 
         Athlete athlete = (Athlete) userEntityService.save(
-                athleteDto.getEmail(),
-                objectMapper.convertValue(athleteDto, Athlete.class),
-                trainerName
+            athleteDto.getEmail(),
+            objectMapper.convertValue(athleteDto, Athlete.class),
+            trainerName
         );
 
         log.info("Inserting Athlete: {} (Invited by: {})", athlete, trainerName);
@@ -124,12 +125,26 @@ public class AthleteService {
     }
 
     @Transactional
-    public void deleteAthlete(Long athleteId) throws Exception {
-        log.info("Executing delete athlete by id {}", athleteId);
-        userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
-        performanceRecordingRepository.deleteByAthleteId(athleteId);
-        athleteWebsocketMessageService.sendAthleteDelete(athleteId);
-        userEntityService.deleteById(athleteId);
+    public void deleteAthlete(Long athleteId) {
+        try {
+            log.info("Executing delete athlete by id {}", athleteId);
+            userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
+            performanceRecordingRepository.deleteByAthleteId(athleteId);
+            athleteWebsocketMessageService.sendAthleteDelete(athleteId);
+            athleteAccessRequestRepository.findAllByAthleteId(athleteId).forEach(accessRequest -> {
+                log.info("Deleting access request {} ", accessRequest);
+                athleteAccessRequestRepository.deleteById(accessRequest.getId());
+                athleteAccessRequestWebsocketMessageService.sendAccessRequestRejection(accessRequest);
+                athleteWebsocketMessageService.sendAthleteRemoveConnection(accessRequest.getAthleteId(), accessRequest.getTrainerId());
+            });
+            Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
+            for (Trainer trainer : new ArrayList<>(athlete.getTrainersAssignedTo())) {
+                removeConnection(trainer.getId(), athleteId);
+            }
+            userEntityService.deleteById(athleteId);
+        } catch (Exception e) {
+            log.error("Error while trying to delete athlete with id {}:", athleteId, e);
+        }
     }
 
     public Athlete updateAthleteNames(Long athleteId, String firstName, String lastName) throws Exception {
@@ -150,29 +165,15 @@ public class AthleteService {
         return athlete.getMedalCollection();
     }
 
-    public void approveAccessRequest(String token) throws JwtTokenInvalidException, AthleteNotFoundException, TrainerNotFoundException {
-        Map<String, Object> tokenBody = jwtUtils.getTokenContentBody(token, JwtTokenBody.TokenType.REQUEST_TOKEN);
-        long athleteId = ((Integer) tokenBody.get("athleteId")).longValue();
-        long trainerId = ((Integer) tokenBody.get("trainerId")).longValue();
-        Athlete athlete = getAthlete(athleteId);
-        Trainer trainer = trainerService.getTrainer(trainerId);
-        allowTrainerAthleteAccess(athlete, trainer);
-        athleteWebsocketMessageService.sendAthleteAssign(athlete, trainer);
-    }
-
-    private void allowTrainerAthleteAccess(Athlete athlete, Trainer trainer) throws JwtTokenInvalidException {
-        List<Trainer> trainersAssignedToAthlete = athlete.getTrainersAssignedTo();
-        List<Athlete> assignedAthletes = trainer.getAssignedAthletes();
-        if (trainersAssignedToAthlete.contains(trainer)) {
-            throw new JwtTokenInvalidException();
-        }
-
-        trainersAssignedToAthlete.add(trainer);
-        assignedAthletes.add(athlete);
-        athlete.setTrainersAssignedTo(trainersAssignedToAthlete);
-        trainer.setAssignedAthletes(assignedAthletes);
-        userEntityService.update(trainer);
-        userEntityService.update(athlete);
+    public AthleteDto truncateAthlete(Athlete athlete) {
+        return AthleteDto.builder()
+            .id(athlete.getId())
+            .firstName(athlete.getFirstName())
+            .lastName(athlete.getLastName())
+            .gender(athlete.getGender())
+            .birthdate(athlete.getBirthdate())
+            .hasAccess(false)
+            .build();
     }
 
     public Athlete updateSwimmingCertificate(Long athleteId, SwimCertificateType certificate) throws AthleteNotFoundException {
@@ -181,6 +182,14 @@ public class AthleteService {
         Athlete updated = (Athlete) userEntityService.update(athlete);
         athleteWebsocketMessageService.sendAthleteUpdate(objectMapper.convertValue(updated, AthleteDto.class));
         return updated;
+    }
+
+    public boolean checkExistence(long athleteId) {
+        try {
+            return userEntityService.findById(athleteId).orElseThrow().getType().equals(UserType.ATHLETE);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public void removeConnection(Long trainerId, Long athleteId) throws Exception {
@@ -195,10 +204,6 @@ public class AthleteService {
         userEntityService.update(trainer);
 
         athleteWebsocketMessageService.sendAthleteRemoveConnection(athleteId, trainerId);
-    }
-
-    public List<Trainer> getTrainerAssignedToAthlete(Long athleteId) throws AthleteNotFoundException {
-        Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId((athleteId)));
-        return athlete.getTrainersAssignedTo();
+        managingTrainerWebsocketService.sendManagingTrainerDeletion(athleteId, trainerId);
     }
 }
