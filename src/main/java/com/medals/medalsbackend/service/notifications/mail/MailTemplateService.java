@@ -48,4 +48,12 @@ public class MailTemplateService {
         context.setVariable("trainerName", trainer);
         return templateEngine.process(configuration.getTrainerRequestAthleteAccessNotification(), context);
     }
+
+    public String generateRoleAddedNotification(String accountCreatorRole, String creatorName, String targetRole) {
+        Context context = new Context();
+        context.setVariable("accountCreatorRole", accountCreatorRole);
+        context.setVariable("creatorName", creatorName);
+        context.setVariable("targetRole", targetRole);
+        return templateEngine.process(configuration.getRoleAddedNotification(), context);
+    }
 }

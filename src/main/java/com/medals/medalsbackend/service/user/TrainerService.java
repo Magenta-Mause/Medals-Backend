@@ -13,6 +13,7 @@ import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
+import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
 import com.medals.medalsbackend.service.websockets.AthleteAccessRequestWebsocketMessageService;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
@@ -39,6 +40,7 @@ public class TrainerService {
     private final AthleteAccessRequestWebsocketMessageService athleteAccessRequestWebsocketMessageService;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final AthleteService athleteService;
+    private final NotificationService notificationService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -76,9 +78,15 @@ public class TrainerService {
 
     public UserEntity insertTrainer(TrainerDto trainerDto, String adminName) throws InternalException {
         trainerDto.setId(null);
+        boolean isFirstRole = userEntityService.getAllByEmail(trainerDto.getEmail()).isEmpty();
+
         Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED, adminName);
         log.info("Inserting Trainer: {} (Inviting admin: {})", trainer, adminName);
         trainerWebsocketMessageService.sendTrainerCreation(objectMapper.convertValue(trainer, TrainerDto.class));
+
+        if (!isFirstRole)
+            notificationService.sendRoleAddedNotification(trainer.getEmail(), adminName, "administrator", "Trainer");
+
         return trainer;
     }
 
