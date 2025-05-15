@@ -3,6 +3,7 @@ package com.medals.medalsbackend.service.websockets;
 import com.medals.medalsbackend.dto.AthleteDto;
 import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.service.user.TrainerService;
+import com.medals.medalsbackend.service.user.UserEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -12,12 +13,12 @@ import org.springframework.stereotype.Service;
 public class AthleteWebsocketMessageService {
 
     private final SimpMessagingTemplate messagingTemplate;
-    private final TrainerService trainerService;
+    private final UserEntityService userEntityService;
 
     public void sendAthleteCreation(AthleteDto athlete) {
         messagingTemplate.convertAndSend("/topics/athlete/creation", athlete);
         messagingTemplate.convertAndSend("/topics/athlete/creation/" + athlete.getId(), athlete);
-        for (Trainer trainer : trainerService.getAllTrainersAssignedToAthlete(athlete.getId())) {
+        for (Trainer trainer : userEntityService.getAllTrainersAssignedToAthlete(athlete.getId())) {
             messagingTemplate.convertAndSend("/topics/athlete/creation/" + trainer.getId(), athlete);
         }
     }
@@ -25,7 +26,7 @@ public class AthleteWebsocketMessageService {
     public void sendAthleteUpdate(AthleteDto athlete) {
         messagingTemplate.convertAndSend("/topics/athlete/update", athlete);
         messagingTemplate.convertAndSend("/topics/athlete/update/" + athlete.getId(), athlete);
-        for (Trainer trainer : trainerService.getAllTrainersAssignedToAthlete(athlete.getId())) {
+        for (Trainer trainer : userEntityService.getAllTrainersAssignedToAthlete(athlete.getId())) {
             messagingTemplate.convertAndSend("/topics/athlete/update/" + trainer.getId(), athlete);
         }
     }
@@ -33,7 +34,7 @@ public class AthleteWebsocketMessageService {
     public void sendAthleteDelete(Long athleteId) {
         messagingTemplate.convertAndSend("/topics/athlete/deletion", athleteId);
         messagingTemplate.convertAndSend("/topics/athlete/deletion/" + athleteId, athleteId);
-        for (Trainer trainer : trainerService.getAllTrainersAssignedToAthlete(athleteId)) {
+        for (Trainer trainer : userEntityService.getAllTrainersAssignedToAthlete(athleteId)) {
             messagingTemplate.convertAndSend("/topics/athlete/deletion/" + trainer.getId(), athleteId);
         }
     }

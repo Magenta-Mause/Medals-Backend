@@ -13,9 +13,9 @@ import com.medals.medalsbackend.exception.InternalException;
 import com.medals.medalsbackend.exception.TrainerNotFoundException;
 import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
-import com.medals.medalsbackend.service.notifications.NotificationService;
 import com.medals.medalsbackend.service.onetimecode.OneTimeCodeCreationReason;
-import com.medals.medalsbackend.service.user.login.jwt.JwtService;
+import com.medals.medalsbackend.service.websockets.AthleteAccessRequestWebsocketMessageService;
+import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import com.medals.medalsbackend.service.websockets.TrainerWebsocketMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +32,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainerService {
 
-    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
     private final UserEntityService userEntityService;
     private final TrainerWebsocketMessageService trainerWebsocketMessageService;
-    private final NotificationService notificationService;
     private final AthleteAccessRequestRepository athleteAccessRequestRepository;
+    private final AthleteAccessRequestWebsocketMessageService athleteAccessRequestWebsocketMessageService;
+    private final AthleteWebsocketMessageService athleteWebsocketMessageService;
+    private final AthleteService athleteService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -96,6 +97,14 @@ public class TrainerService {
     public void deleteTrainer(Long trainerId) throws Throwable {
         log.info("Executing delete trainer by id {}", trainerId);
         userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
+        athleteAccessRequestRepository.findAllByTrainerId(trainerId).forEach(accessRequest -> {
+            athleteAccessRequestRepository.deleteById(accessRequest.getId());
+            athleteAccessRequestWebsocketMessageService.sendAccessRequestRejection(accessRequest);
+            athleteWebsocketMessageService.sendAthleteRemoveConnection(accessRequest.getAthleteId(), accessRequest.getTrainerId());
+        });
+        for (Athlete athlete : userEntityService.getAthletesAssignedToTrainer(trainerId)) {
+            athleteService.removeConnection(trainerId, athlete.getId());
+        }
         userEntityService.deleteById(trainerId);
         trainerWebsocketMessageService.sendTrainerDelete(trainerId);
     }

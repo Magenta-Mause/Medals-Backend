@@ -1,8 +1,10 @@
 package com.medals.medalsbackend.entity.users;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +22,7 @@ import java.util.List;
 @SuperBuilder
 public class Trainer extends UserEntity {
     @JsonIgnore
-    @ManyToMany(mappedBy = "trainersAssignedTo", cascade =  CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "trainersAssignedTo", fetch = FetchType.LAZY)
     private List<Athlete> assignedAthletes;
 
     protected final UserType type = UserType.TRAINER;

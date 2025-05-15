@@ -18,7 +18,7 @@ import com.medals.medalsbackend.repository.AthleteAccessRequestRepository;
 import com.medals.medalsbackend.repository.InitializedEntityRepository;
 import com.medals.medalsbackend.repository.PerformanceRecordingRepository;
 import com.medals.medalsbackend.repository.UserEntityRepository;
-import com.medals.medalsbackend.security.jwt.JwtUtils;
+import com.medals.medalsbackend.service.websockets.AthleteAccessRequestWebsocketMessageService;
 import com.medals.medalsbackend.service.websockets.AthleteWebsocketMessageService;
 import com.medals.medalsbackend.service.websockets.ManagingTrainerWebsocketService;
 import jakarta.transaction.Transactional;
@@ -31,22 +31,21 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.ArrayList;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AthleteService {
 
-    private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
     private final AthleteWebsocketMessageService athleteWebsocketMessageService;
     private final UserEntityService userEntityService;
     private final UserEntityRepository userEntityRepository;
-    private final TrainerService trainerService;
     private final PerformanceRecordingRepository performanceRecordingRepository;
     private final AthleteAccessRequestRepository athleteAccessRequestRepository;
     private final ManagingTrainerWebsocketService managingTrainerWebsocketService;
+    private final AthleteAccessRequestWebsocketMessageService athleteAccessRequestWebsocketMessageService;
     @Value("${app.dummies.enabled}")
     private boolean insertDummies;
     private final InitializedEntityRepository initializedEntityRepository;
@@ -117,12 +116,26 @@ public class AthleteService {
     }
 
     @Transactional
-    public void deleteAthlete(Long athleteId) throws Exception {
-        log.info("Executing delete athlete by id {}", athleteId);
-        userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
-        performanceRecordingRepository.deleteByAthleteId(athleteId);
-        athleteWebsocketMessageService.sendAthleteDelete(athleteId);
-        userEntityService.deleteById(athleteId);
+    public void deleteAthlete(Long athleteId) {
+        try {
+            log.info("Executing delete athlete by id {}", athleteId);
+            userEntityService.assertUserType(athleteId, UserType.ATHLETE, AthleteNotFoundException.fromAthleteId(athleteId));
+            performanceRecordingRepository.deleteByAthleteId(athleteId);
+            athleteWebsocketMessageService.sendAthleteDelete(athleteId);
+            athleteAccessRequestRepository.findAllByAthleteId(athleteId).forEach(accessRequest -> {
+                log.info("Deleting access request {} ", accessRequest);
+                athleteAccessRequestRepository.deleteById(accessRequest.getId());
+                athleteAccessRequestWebsocketMessageService.sendAccessRequestRejection(accessRequest);
+                athleteWebsocketMessageService.sendAthleteRemoveConnection(accessRequest.getAthleteId(), accessRequest.getTrainerId());
+            });
+            Athlete athlete = (Athlete) userEntityService.findById(athleteId).orElseThrow(() -> AthleteNotFoundException.fromAthleteId(athleteId));
+            for (Trainer trainer : new ArrayList<>(athlete.getTrainersAssignedTo())) {
+                removeConnection(trainer.getId(), athleteId);
+            }
+            userEntityService.deleteById(athleteId);
+        } catch (Exception e) {
+            log.error("Error while trying to delete athlete with id {}:", athleteId, e);
+        }
     }
 
     public void updateAthlete(Long athleteId, AthleteDto athleteDto) throws Exception {
