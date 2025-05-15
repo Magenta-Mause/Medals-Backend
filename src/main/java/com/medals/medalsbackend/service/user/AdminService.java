@@ -19,6 +19,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -66,6 +68,7 @@ public class AdminService {
         if (!isFirstRole)
             notificationService.sendRoleAddedNotification(admin.getEmail(), "system", "", "Admin");
 
+        adminWebsocketMessageService.sendAdminCreate(createdAdmin);
         return createdAdmin;
     }
 
@@ -74,5 +77,26 @@ public class AdminService {
         userEntityService.assertUserType(adminId, UserType.ADMIN, AdminNotFoundException.fromAdminId(adminId));
         userEntityService.deleteById(adminId);
         adminWebsocketMessageService.sendAdminDelete(adminId);
+    }
+
+    public List<Admin> getAllAdmins() {
+        return userEntityService.getAllAdmins();
+    }
+
+    public Admin updateAdmin(Long adminId, String firstName, String lastName) throws AdminNotFoundException {
+        log.info("Updating admin with id {}", adminId);
+        Optional<Admin> adminOptional = userEntityService.findAdminById(adminId);
+        if (adminOptional.isEmpty()) {
+            throw AdminNotFoundException.fromAdminId(adminId);
+        }
+
+        Admin admin = adminOptional.get();
+        admin.setFirstName(firstName);
+        admin.setLastName(lastName);
+
+        Admin updatedAdmin = (Admin) userEntityService.update(admin);
+        adminWebsocketMessageService.sendAdminUpdate(updatedAdmin);
+
+        return updatedAdmin;
     }
 }

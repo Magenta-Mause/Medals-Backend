@@ -1,6 +1,7 @@
 package com.medals.medalsbackend.services;
 
 import com.medals.medalsbackend.dto.AthleteDto;
+import com.medals.medalsbackend.dto.AthleteUpdateDto;
 import com.medals.medalsbackend.entity.users.Athlete;
 import com.medals.medalsbackend.service.user.AthleteService;
 import jakarta.transaction.Transactional;
@@ -68,11 +69,11 @@ public class AthleteServiceTest {
 
     Athlete athleteBeforeChange = (Athlete) athleteService.insertAthlete(athleteDto);
     Long athleteId = athleteBeforeChange.getId();
-    Assertions.assertThat(athleteBeforeChange.getBirthdate()).isEqualTo(LocalDate.of(2005, 5, 13));
-    athleteDto.setBirthdate(LocalDate.of(2005, 4, 13));
-    athleteService.updateAthlete(athleteId, athleteDto);
+    Assertions.assertThat(athleteBeforeChange.getFirstName()).isEqualTo("John");
+    athleteService.updateAthleteNames(athleteId, "JohnUpdate", "DoeUpdate");
     Athlete athleteAfterChange = athleteService.getAthlete(athleteId);
-    Assertions.assertThat(athleteAfterChange.getBirthdate()).isEqualTo(LocalDate.of(2005, 4, 13));
+    Assertions.assertThat(athleteAfterChange.getFirstName()).isEqualTo("JohnUpdate");
+    Assertions.assertThat(athleteAfterChange.getLastName()).isEqualTo("DoeUpdate");
   }
 
   @SneakyThrows

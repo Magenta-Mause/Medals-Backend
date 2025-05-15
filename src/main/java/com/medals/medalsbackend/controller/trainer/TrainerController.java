@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.controller.athlete.AthleteAccessRequestDto;
 import com.medals.medalsbackend.dto.PrunedAthleteDto;
 import com.medals.medalsbackend.dto.TrainerDto;
+import com.medals.medalsbackend.dto.TrainerUpdateDto;
+import com.medals.medalsbackend.dto.authorization.TrainerAccessRequestDto;
 import com.medals.medalsbackend.entity.users.Athlete;
+import com.medals.medalsbackend.entity.users.Trainer;
 import com.medals.medalsbackend.entity.users.AthleteAccessRequest;
 import com.medals.medalsbackend.entity.users.UserEntity;
 import com.medals.medalsbackend.entity.users.UserType;
@@ -84,6 +87,14 @@ public class TrainerController {
         accessRequestService.initiateAthleteAccessRequest(userId, authorizationService.getSelectedUser().getId());
         return ResponseEntity.ok().build();
     }
+
+	@PutMapping("/{trainerId}")
+	public ResponseEntity<TrainerDto> updateTrainer(@PathVariable Long trainerId, @RequestBody @Valid TrainerUpdateDto trainerUpdateDto)
+			throws ForbiddenException, NoAuthenticationFoundException, TrainerNotFoundException {
+		authorizationService.assertRoleIn(List.of(UserType.ADMIN));
+		Trainer updatedTrainer = trainerService.updateTrainer(trainerId, trainerUpdateDto.getFirstName(), trainerUpdateDto.getLastName());
+		return ResponseEntity.ok(objectMapper.convertValue(updatedTrainer, TrainerDto.class));
+	}
 
     @GetMapping("/access-requests")
     public ResponseEntity<Collection<AthleteAccessRequestDto>> getAccessRequests() throws ForbiddenException, NoAuthenticationFoundException {

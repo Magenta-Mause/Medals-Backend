@@ -2,6 +2,8 @@ package com.medals.medalsbackend.controller.athlete;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medals.medalsbackend.dto.AthleteDto;
+import com.medals.medalsbackend.dto.AthleteUpdateDto;
+import com.medals.medalsbackend.entity.medals.MedalCollection;
 import com.medals.medalsbackend.entity.performancerecording.PerformanceRecording;
 import com.medals.medalsbackend.entity.swimCertificate.SwimCertificateType;
 import com.medals.medalsbackend.entity.users.*;
@@ -82,6 +84,13 @@ public class AthleteController {
         authorizationService.assertUserHasAccess(athleteId);
         athleteService.deleteAthlete(athleteId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+    }
+
+    @PutMapping("/{athleteId}")
+    public ResponseEntity<AthleteDto> updateAthlete(@PathVariable Long athleteId, @RequestBody @Valid AthleteUpdateDto athleteUpdateDto) throws Exception {
+        authorizationService.assertUserHasAccess(athleteId);
+        Athlete updatedAthlete = athleteService.updateAthleteNames(athleteId, athleteUpdateDto.getFirstName(), athleteUpdateDto.getLastName());
+        return ResponseEntity.ok(objectMapper.convertValue(updatedAthlete, AthleteDto.class));
     }
 
     @GetMapping(value = "/{athleteId}")

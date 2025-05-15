@@ -27,6 +27,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -82,7 +83,7 @@ public class TrainerService {
 
         Trainer trainer = (Trainer) userEntityService.save(trainerDto.getEmail(), objectMapper.convertValue(trainerDto, Trainer.class), OneTimeCodeCreationReason.ACCOUNT_INVITED, adminName);
         log.info("Inserting Trainer: {} (Inviting admin: {})", trainer, adminName);
-        trainerWebsocketMessageService.sendTrainerCreation(objectMapper.convertValue(trainer, TrainerDto.class));
+        trainerWebsocketMessageService.sendTrainerCreate(objectMapper.convertValue(trainer, Trainer.class));
 
         if (!isFirstRole)
             notificationService.sendRoleAddedNotification(trainer.getEmail(), adminName, "administrator", "Trainer");
@@ -127,12 +128,22 @@ public class TrainerService {
         }
     }
 
-    public void updateTrainer(Long trainerId, TrainerDto trainerDto) throws Exception {
-        log.info("Updating trainer with ID: {}", trainerId);
-        userEntityService.assertUserType(trainerId, UserType.TRAINER, TrainerNotFoundException.fromTrainerId(trainerId));
-        trainerDto.setId(trainerId);
-        Trainer savedTrainer = (Trainer) userEntityService.update(objectMapper.convertValue(trainerDto, Trainer.class));
-        trainerWebsocketMessageService.sendTrainerUpdate(objectMapper.convertValue(savedTrainer, TrainerDto.class));
+    public Trainer updateTrainer(Long trainerId, String firstName, String lastName) throws TrainerNotFoundException {
+        log.info("Updating trainer with ID: {}, firstName: {}, lastName: {}", trainerId, firstName, lastName);
+
+        Optional<Trainer> trainerOptional = userEntityService.findTrainerById(trainerId);
+        if (trainerOptional.isEmpty()) {
+            throw TrainerNotFoundException.fromTrainerId(trainerId);
+        }
+
+        Trainer trainer = trainerOptional.get();
+        trainer.setFirstName(firstName);
+        trainer.setLastName(lastName);
+
+        Trainer updatedTrainer = (Trainer) userEntityService.update(trainer);
+        trainerWebsocketMessageService.sendTrainerUpdate(updatedTrainer);
+
+        return updatedTrainer;
     }
 
     public List<Athlete> searchAthletes(String athleteSearch) {

@@ -51,6 +51,30 @@ public class UserEntityService {
         return userEntityRepository.findById(id);
     }
 
+    public Optional<Admin> findAdminById(long id) {
+        Optional<UserEntity> userEntityOptional = userEntityRepository.findById(id);
+        if (userEntityOptional.isPresent() && userEntityOptional.get() instanceof Admin) {
+            return Optional.of((Admin) userEntityOptional.get());
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Trainer> findTrainerById(long id) {
+        Optional<UserEntity> userEntityOptional = userEntityRepository.findById(id);
+        if (userEntityOptional.isPresent() && userEntityOptional.get() instanceof Trainer) {
+            return Optional.of((Trainer) userEntityOptional.get());
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Athlete> findAthleteById(long id) {
+        Optional<UserEntity> userEntityOptional = userEntityRepository.findById(id);
+        if (userEntityOptional.isPresent() && userEntityOptional.get() instanceof Athlete) {
+            return Optional.of((Athlete) userEntityOptional.get());
+        }
+        return Optional.empty();
+    }
+
     public List<UserEntity> getAll() {
         return userEntityRepository.findAll();
     }
