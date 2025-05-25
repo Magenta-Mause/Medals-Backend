@@ -96,4 +96,4 @@ documentation.
 On every push to main or if the `Build and Test Backend` workflow is dispatched manually one Docker image is 
 published. The image can be found on [Docker Hub](https://hub.docker.com/repository/docker/ecofreshkaese/medals-backend/general).
 
-The can image both be used for the official deployment and for local deployments.
+The image can both be used for the official deployment and for local deployments.
