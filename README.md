@@ -13,6 +13,9 @@
     <img src="https://img.shields.io/badge/License-BSD_3--Clause-blue.svg" alt="License of medals" />
   </a>
   <img src="https://github.com/Magenta-Mause/Medals-Backend/actions/workflows/build_backend.yml/badge.svg">
+  <a href="https://stratssync.com">
+    <img src="https://img.shields.io/website?url=https://stratssync.com" alt="Website Status" />
+  </a>
 </p>
 
 <p align="center">
