@@ -33,7 +33,7 @@
 
 ## Medals
 
-Medals is a application to administer athletes for the [Deutsche Sportabzeichen](https://deutsches-sportabzeichen.de/).
+Medals is an application to administer athletes for the [Deutsche Sportabzeichen](https://deutsches-sportabzeichen.de/).
 Trainers can administer their athletes, track the performances for different disciplines, add/remove swimming 
 certificates, see wether the athlete is eligible to receive a 
 [Deutsche Sportabzeichen](https://deutsches-sportabzeichen.de/). Athletes can see their own performances, wether 
@@ -74,7 +74,7 @@ The backend should now be accessible on `http://localhost:8080`.
 
 ### Official Deployment
 
-Medals has a official deployment that you can find with the following url: 
+Medals has an official deployment that you can find with the following url: 
 [https://stratssync.com/](https://stratssync.com/)
 
 You can only use Medals if you are invited either by an administrator or a trainer. If that is not the case for you, 
