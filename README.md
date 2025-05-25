@@ -38,8 +38,8 @@
 
 Medals is an application to administer athletes for the [Deutsche Sportabzeichen](https://deutsches-sportabzeichen.de/).
 Trainers can administer their athletes, track the performances for different disciplines, add/remove swimming 
-certificates, see wether the athlete is eligible to receive a 
-[Deutsche Sportabzeichen](https://deutsches-sportabzeichen.de/). Athletes can see their own performances, wether 
+certificates, see whether the athlete is eligible to receive a 
+[Deutsche Sportabzeichen](https://deutsches-sportabzeichen.de/). Athletes can see their own performances, whether 
 they have a valid swimming 
 certificate and if they are eligible for a [Deutsche Sportabzeichen](https://deutsches-sportabzeichen.de/), if not 
 what they need to do to be eligible.
