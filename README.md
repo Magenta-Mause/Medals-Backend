@@ -84,10 +84,9 @@ but you still want to use the application you either need to deploy it locally f
 
 ### Custom Deployment
 
-To create your own deployment you need to change the environment variables in the `.env`-file to your respective 
-backend url. After that you have to run `npm run build:image` to create the docker image locally. For further 
-information on how to deploy your own full deployment regard the 
-[Medals-Deployment](https://github.com/Magenta-Mause/Medals-Deployment) documentation.
+If you want to deploy Medals regard the [Medals-Deployment](https://github.com/Magenta-Mause/Medals-Deployment) 
+documentation.
+
 
 ## Published Docker Images
 
