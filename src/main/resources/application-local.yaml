@@ -12,6 +12,3 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: password
-app:
-  email:
-    url: https://projektejwkk.de/_____mailGen
