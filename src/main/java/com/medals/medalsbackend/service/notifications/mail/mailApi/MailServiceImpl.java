@@ -19,6 +19,7 @@ import java.util.Map;
 public class MailServiceImpl implements MailService {
 	private final Environment environment;
 	private final ObjectMapper objectMapper;
+	private final WebClient webClient = WebClient.create();
 	@Value("${app.mailClient.url}")
 	private String mailClientUrl;
 	@Value("${app.mailClient.auth-key}")
@@ -30,7 +31,6 @@ public class MailServiceImpl implements MailService {
 		if (Arrays.stream(environment.getActiveProfiles()).toList().contains("test")) {
 			return;
 		}
-		WebClient webClient = WebClient.create();
 		Map<String, String> body = Map.of(
 				"recipient", receiver,
 				"subject", subject,
