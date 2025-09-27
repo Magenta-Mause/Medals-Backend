@@ -14,10 +14,13 @@ cors:
 app:
   dummies:
     enabled: true
+  mailClient:
+    url: https://jannekeipert.de/mail-service
+    auth-key: ${MAIL_AUTH_KEY:}
   admin:
     enabled: true
     admins:
-      - email: "admin@example.org"
+      - email: "admin@example.com"
         first-name: "Mighty"
         last-name: "God"
   security:
@@ -26,8 +29,6 @@ app:
     athlete-request-token-expiration-time: 2678400000 # 1 month
     secret-key: 2bdff806c775df3d3a9a720924294d3f6dfa4e4e8f65183294bc8b8f043987ac # jwt secret key (REPLACE IN PRODUCTION!!)
   email:
-    url: "https://google.com" # supply with email api endpoint
-    author: "noreply@medals.com"
     templates:
       set-password-notification: "template_account_created"
       invite-trainer-notification: "template_trainer_invitation"
